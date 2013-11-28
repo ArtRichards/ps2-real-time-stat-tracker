@@ -59,6 +59,15 @@
             this.sessionWeaponsGridView = new System.Windows.Forms.DataGridView();
             this.allWeaponsTab = new System.Windows.Forms.TabPage();
             this.weaponsGridView = new System.Windows.Forms.DataGridView();
+            this.miscTab = new System.Windows.Forms.TabPage();
+            this.teamImpactLabel = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.teamRelianceLabel = new System.Windows.Forms.Label();
+            this.teamRelianceTextBox = new System.Windows.Forms.RichTextBox();
+            this.revivesTakenLabel = new System.Windows.Forms.Label();
+            this.kdrReviveLabel = new System.Windows.Forms.Label();
+            this.timesRevivedTextBox = new System.Windows.Forms.RichTextBox();
+            this.reviveKDRTextBox = new System.Windows.Forms.RichTextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.startSessionButton = new System.Windows.Forms.Button();
             this.updatingLabel = new System.Windows.Forms.Label();
@@ -66,6 +75,11 @@
             this.totalKillsLabel = new System.Windows.Forms.Label();
             this.totalKillsTextBox = new System.Windows.Forms.RichTextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.kdrGrowthLabel = new System.Windows.Forms.Label();
+            this.totalKDRLabel = new System.Windows.Forms.Label();
+            this.totalKDRTextBox = new System.Windows.Forms.RichTextBox();
+            this.totalDeathsLabel = new System.Windows.Forms.Label();
+            this.totalDeathsTextBox = new System.Windows.Forms.RichTextBox();
             this.sessionLabel = new System.Windows.Forms.Label();
             this.totalLabel = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -76,6 +90,10 @@
             this.updateWeaponsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.positiveColorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.negativeColorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearUsersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -87,13 +105,16 @@
             this.resizePanelLR = new System.Windows.Forms.Panel();
             this.usernameTextBox = new System.Windows.Forms.ComboBox();
             this.versionLabel = new System.Windows.Forms.Label();
-            this.clearUsersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.cancelOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.sessionWeaponsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sessionWeaponsGridView)).BeginInit();
             this.allWeaponsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.weaponsGridView)).BeginInit();
+            this.miscTab.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogGridView)).BeginInit();
@@ -332,6 +353,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.sessionWeaponsTab);
             this.tabControl1.Controls.Add(this.allWeaponsTab);
+            this.tabControl1.Controls.Add(this.miscTab);
             this.tabControl1.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControl1.Location = new System.Drawing.Point(194, 24);
             this.tabControl1.MinimumSize = new System.Drawing.Size(400, 340);
@@ -403,6 +425,115 @@
             this.weaponsGridView.ShowEditingIcon = false;
             this.weaponsGridView.Size = new System.Drawing.Size(412, 301);
             this.weaponsGridView.TabIndex = 21;
+            // 
+            // miscTab
+            // 
+            this.miscTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.miscTab.Controls.Add(this.teamImpactLabel);
+            this.miscTab.Controls.Add(this.panel3);
+            this.miscTab.Location = new System.Drawing.Point(4, 23);
+            this.miscTab.Name = "miscTab";
+            this.miscTab.Padding = new System.Windows.Forms.Padding(3);
+            this.miscTab.Size = new System.Drawing.Size(424, 313);
+            this.miscTab.TabIndex = 2;
+            this.miscTab.Text = "Miscellaneous";
+            // 
+            // teamImpactLabel
+            // 
+            this.teamImpactLabel.AutoSize = true;
+            this.teamImpactLabel.BackColor = System.Drawing.Color.Transparent;
+            this.teamImpactLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.teamImpactLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.teamImpactLabel.Location = new System.Drawing.Point(6, 4);
+            this.teamImpactLabel.Name = "teamImpactLabel";
+            this.teamImpactLabel.Size = new System.Drawing.Size(76, 14);
+            this.teamImpactLabel.TabIndex = 35;
+            this.teamImpactLabel.Text = "Team Impact";
+            // 
+            // panel3
+            // 
+            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.teamRelianceLabel);
+            this.panel3.Controls.Add(this.teamRelianceTextBox);
+            this.panel3.Controls.Add(this.revivesTakenLabel);
+            this.panel3.Controls.Add(this.kdrReviveLabel);
+            this.panel3.Controls.Add(this.timesRevivedTextBox);
+            this.panel3.Controls.Add(this.reviveKDRTextBox);
+            this.panel3.Location = new System.Drawing.Point(5, 21);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(403, 75);
+            this.panel3.TabIndex = 38;
+            // 
+            // teamRelianceLabel
+            // 
+            this.teamRelianceLabel.AutoSize = true;
+            this.teamRelianceLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.teamRelianceLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.teamRelianceLabel.Location = new System.Drawing.Point(157, 12);
+            this.teamRelianceLabel.Name = "teamRelianceLabel";
+            this.teamRelianceLabel.Size = new System.Drawing.Size(108, 14);
+            this.teamRelianceLabel.TabIndex = 39;
+            this.teamRelianceLabel.Text = "Team Dependence";
+            // 
+            // teamRelianceTextBox
+            // 
+            this.teamRelianceTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.teamRelianceTextBox.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.teamRelianceTextBox.Location = new System.Drawing.Point(160, 29);
+            this.teamRelianceTextBox.Multiline = false;
+            this.teamRelianceTextBox.Name = "teamRelianceTextBox";
+            this.teamRelianceTextBox.ReadOnly = true;
+            this.teamRelianceTextBox.Size = new System.Drawing.Size(47, 23);
+            this.teamRelianceTextBox.TabIndex = 38;
+            this.teamRelianceTextBox.Text = "";
+            // 
+            // revivesTakenLabel
+            // 
+            this.revivesTakenLabel.AutoSize = true;
+            this.revivesTakenLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.revivesTakenLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.revivesTakenLabel.Location = new System.Drawing.Point(15, 12);
+            this.revivesTakenLabel.Name = "revivesTakenLabel";
+            this.revivesTakenLabel.Size = new System.Drawing.Size(48, 14);
+            this.revivesTakenLabel.TabIndex = 35;
+            this.revivesTakenLabel.Text = "Revives";
+            // 
+            // kdrReviveLabel
+            // 
+            this.kdrReviveLabel.AutoSize = true;
+            this.kdrReviveLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.kdrReviveLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.kdrReviveLabel.Location = new System.Drawing.Point(86, 12);
+            this.kdrReviveLabel.Name = "kdrReviveLabel";
+            this.kdrReviveLabel.Size = new System.Drawing.Size(28, 14);
+            this.kdrReviveLabel.TabIndex = 37;
+            this.kdrReviveLabel.Text = "KDR";
+            // 
+            // timesRevivedTextBox
+            // 
+            this.timesRevivedTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.timesRevivedTextBox.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timesRevivedTextBox.Location = new System.Drawing.Point(18, 29);
+            this.timesRevivedTextBox.Multiline = false;
+            this.timesRevivedTextBox.Name = "timesRevivedTextBox";
+            this.timesRevivedTextBox.ReadOnly = true;
+            this.timesRevivedTextBox.Size = new System.Drawing.Size(47, 23);
+            this.timesRevivedTextBox.TabIndex = 34;
+            this.timesRevivedTextBox.Text = "";
+            // 
+            // reviveKDRTextBox
+            // 
+            this.reviveKDRTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.reviveKDRTextBox.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.reviveKDRTextBox.Location = new System.Drawing.Point(89, 29);
+            this.reviveKDRTextBox.Multiline = false;
+            this.reviveKDRTextBox.Name = "reviveKDRTextBox";
+            this.reviveKDRTextBox.ReadOnly = true;
+            this.reviveKDRTextBox.Size = new System.Drawing.Size(47, 23);
+            this.reviveKDRTextBox.TabIndex = 36;
+            this.reviveKDRTextBox.Text = "";
             // 
             // timer1
             // 
@@ -477,6 +608,11 @@
             // 
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.kdrGrowthLabel);
+            this.panel2.Controls.Add(this.totalKDRLabel);
+            this.panel2.Controls.Add(this.totalKDRTextBox);
+            this.panel2.Controls.Add(this.totalDeathsLabel);
+            this.panel2.Controls.Add(this.totalDeathsTextBox);
             this.panel2.Controls.Add(this.totalKillsLabel);
             this.panel2.Controls.Add(this.totalHSTextBox);
             this.panel2.Controls.Add(this.totalKillsTextBox);
@@ -484,8 +620,64 @@
             this.panel2.Controls.Add(this.hsrGrowthLabel);
             this.panel2.Location = new System.Drawing.Point(12, 219);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(180, 100);
+            this.panel2.Size = new System.Drawing.Size(180, 124);
             this.panel2.TabIndex = 29;
+            // 
+            // kdrGrowthLabel
+            // 
+            this.kdrGrowthLabel.AutoSize = true;
+            this.kdrGrowthLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.kdrGrowthLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.kdrGrowthLabel.Location = new System.Drawing.Point(126, 76);
+            this.kdrGrowthLabel.Name = "kdrGrowthLabel";
+            this.kdrGrowthLabel.Size = new System.Drawing.Size(49, 14);
+            this.kdrGrowthLabel.TabIndex = 33;
+            this.kdrGrowthLabel.Text = "+0.000%";
+            this.kdrGrowthLabel.Visible = false;
+            // 
+            // totalKDRLabel
+            // 
+            this.totalKDRLabel.AutoSize = true;
+            this.totalKDRLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.totalKDRLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.totalKDRLabel.Location = new System.Drawing.Point(76, 56);
+            this.totalKDRLabel.Name = "totalKDRLabel";
+            this.totalKDRLabel.Size = new System.Drawing.Size(28, 14);
+            this.totalKDRLabel.TabIndex = 32;
+            this.totalKDRLabel.Text = "KDR";
+            // 
+            // totalKDRTextBox
+            // 
+            this.totalKDRTextBox.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.totalKDRTextBox.Location = new System.Drawing.Point(79, 73);
+            this.totalKDRTextBox.Multiline = false;
+            this.totalKDRTextBox.Name = "totalKDRTextBox";
+            this.totalKDRTextBox.ReadOnly = true;
+            this.totalKDRTextBox.Size = new System.Drawing.Size(47, 23);
+            this.totalKDRTextBox.TabIndex = 31;
+            this.totalKDRTextBox.Text = "";
+            // 
+            // totalDeathsLabel
+            // 
+            this.totalDeathsLabel.AutoSize = true;
+            this.totalDeathsLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.totalDeathsLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.totalDeathsLabel.Location = new System.Drawing.Point(3, 56);
+            this.totalDeathsLabel.Name = "totalDeathsLabel";
+            this.totalDeathsLabel.Size = new System.Drawing.Size(46, 14);
+            this.totalDeathsLabel.TabIndex = 30;
+            this.totalDeathsLabel.Text = "Deaths";
+            // 
+            // totalDeathsTextBox
+            // 
+            this.totalDeathsTextBox.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.totalDeathsTextBox.Location = new System.Drawing.Point(6, 73);
+            this.totalDeathsTextBox.Multiline = false;
+            this.totalDeathsTextBox.Name = "totalDeathsTextBox";
+            this.totalDeathsTextBox.ReadOnly = true;
+            this.totalDeathsTextBox.Size = new System.Drawing.Size(47, 23);
+            this.totalDeathsTextBox.TabIndex = 29;
+            this.totalDeathsTextBox.Text = "";
             // 
             // sessionLabel
             // 
@@ -549,7 +741,8 @@
             // 
             this.sessionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.updateEventsToolStripMenuItem,
-            this.updateWeaponsToolStripMenuItem});
+            this.updateWeaponsToolStripMenuItem,
+            this.cancelOperationToolStripMenuItem});
             this.sessionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.sessionToolStripMenuItem.Name = "sessionToolStripMenuItem";
             this.sessionToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
@@ -558,14 +751,14 @@
             // updateEventsToolStripMenuItem
             // 
             this.updateEventsToolStripMenuItem.Name = "updateEventsToolStripMenuItem";
-            this.updateEventsToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.updateEventsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.updateEventsToolStripMenuItem.Text = "Update Events";
             this.updateEventsToolStripMenuItem.Click += new System.EventHandler(this.updateEventsToolStripMenuItem_Click);
             // 
             // updateWeaponsToolStripMenuItem
             // 
             this.updateWeaponsToolStripMenuItem.Name = "updateWeaponsToolStripMenuItem";
-            this.updateWeaponsToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.updateWeaponsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.updateWeaponsToolStripMenuItem.Text = "Update Weapons";
             this.updateWeaponsToolStripMenuItem.Click += new System.EventHandler(this.updateWeaponsToolStripMenuItem_Click);
             // 
@@ -573,6 +766,7 @@
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.optionsToolStripMenuItem,
+            this.colorToolStripMenuItem,
             this.clearUsersToolStripMenuItem});
             this.toolsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
@@ -588,6 +782,36 @@
             this.optionsToolStripMenuItem.Visible = false;
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
+            // colorToolStripMenuItem
+            // 
+            this.colorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.positiveColorsToolStripMenuItem,
+            this.negativeColorsToolStripMenuItem});
+            this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.colorToolStripMenuItem.Text = "Color";
+            // 
+            // positiveColorsToolStripMenuItem
+            // 
+            this.positiveColorsToolStripMenuItem.Name = "positiveColorsToolStripMenuItem";
+            this.positiveColorsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.positiveColorsToolStripMenuItem.Text = "Positive Colors";
+            this.positiveColorsToolStripMenuItem.Click += new System.EventHandler(this.positiveColorsToolStripMenuItem_Click);
+            // 
+            // negativeColorsToolStripMenuItem
+            // 
+            this.negativeColorsToolStripMenuItem.Name = "negativeColorsToolStripMenuItem";
+            this.negativeColorsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.negativeColorsToolStripMenuItem.Text = "Negative Colors";
+            this.negativeColorsToolStripMenuItem.Click += new System.EventHandler(this.negativeColorsToolStripMenuItem_Click);
+            // 
+            // clearUsersToolStripMenuItem
+            // 
+            this.clearUsersToolStripMenuItem.Name = "clearUsersToolStripMenuItem";
+            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearUsersToolStripMenuItem.Text = "Clear Users";
+            this.clearUsersToolStripMenuItem.Click += new System.EventHandler(this.clearUsersToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -601,19 +825,21 @@
             // 
             // updateToolStripMenuItem
             // 
+            this.updateToolStripMenuItem.Enabled = false;
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.updateToolStripMenuItem.Text = "Update";
+            this.updateToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(113, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -723,12 +949,12 @@
             this.versionLabel.TabIndex = 34;
             this.versionLabel.Text = "Real Time Stat Tracker V 0.0.0";
             // 
-            // clearUsersToolStripMenuItem
+            // cancelOperationToolStripMenuItem
             // 
-            this.clearUsersToolStripMenuItem.Name = "clearUsersToolStripMenuItem";
-            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.clearUsersToolStripMenuItem.Text = "Clear Users";
-            this.clearUsersToolStripMenuItem.Click += new System.EventHandler(this.clearUsersToolStripMenuItem_Click);
+            this.cancelOperationToolStripMenuItem.Name = "cancelOperationToolStripMenuItem";
+            this.cancelOperationToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.cancelOperationToolStripMenuItem.Text = "Cancel Operation";
+            this.cancelOperationToolStripMenuItem.Click += new System.EventHandler(this.cancelOperationToolStripMenuItem_Click);
             // 
             // GUIMain
             // 
@@ -757,9 +983,10 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(948, 300);
+            this.MinimumSize = new System.Drawing.Size(948, 330);
             this.Name = "GUIMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.Text = "Real Time Stat Tracker";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
@@ -767,6 +994,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.sessionWeaponsGridView)).EndInit();
             this.allWeaponsTab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.weaponsGridView)).EndInit();
+            this.miscTab.ResumeLayout(false);
+            this.miscTab.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -833,6 +1064,25 @@
         private System.Windows.Forms.ToolStripMenuItem updateEventsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateWeaponsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearUsersToolStripMenuItem;
+        private System.Windows.Forms.Label kdrGrowthLabel;
+        private System.Windows.Forms.Label totalKDRLabel;
+        private System.Windows.Forms.RichTextBox totalKDRTextBox;
+        private System.Windows.Forms.Label totalDeathsLabel;
+        private System.Windows.Forms.RichTextBox totalDeathsTextBox;
+        private System.Windows.Forms.ToolStripMenuItem colorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem positiveColorsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem negativeColorsToolStripMenuItem;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.TabPage miscTab;
+        private System.Windows.Forms.Label revivesTakenLabel;
+        private System.Windows.Forms.RichTextBox timesRevivedTextBox;
+        private System.Windows.Forms.Label kdrReviveLabel;
+        private System.Windows.Forms.RichTextBox reviveKDRTextBox;
+        private System.Windows.Forms.Label teamImpactLabel;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label teamRelianceLabel;
+        private System.Windows.Forms.RichTextBox teamRelianceTextBox;
+        private System.Windows.Forms.ToolStripMenuItem cancelOperationToolStripMenuItem;
 
     }
 }

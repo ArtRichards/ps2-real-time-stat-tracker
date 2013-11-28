@@ -74,7 +74,7 @@ namespace PS2StatTracker
             location,
             faction;
 
-        public
+        public  
         bool headshot,
             death,
             suicide;
@@ -83,7 +83,7 @@ namespace PS2StatTracker
     public partial class GUIMain : Form
     {
         // Update this with new versions.
-        string VERSION_NUM = "0.4.0";
+        string VERSION_NUM = "0.4.5";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         GeckoWebBrowser m_browser;
         List<EventLog> m_eventLog;
@@ -98,17 +98,24 @@ namespace PS2StatTracker
         string m_userFaction;
         string m_userID;
         float m_totalKills;
+        float m_totalDeaths;
+        float m_totalDeathsWithRevives;
         float m_totalHS;
         float m_sessionStartHSR;          // Start of session headshot ratio.
+        float m_sessionStartKDR;
         int m_activeSeconds;
+        int m_timeout;
         bool m_lastEventFound;
         bool m_sessionStarted;
-        bool m_killsUpdated;             // Set to true everytime the kills are updated. False when kill updates are asked.
         bool m_weaponsUpdated;           // Set to true when weapons are first updated. False on disconnect.
+        bool m_updatingEvents = false;
+        bool m_updatingWeapons = false;
         bool m_initialized;
         bool m_pageLoaded;
         bool m_dragging;
         bool m_resizing;
+        Color m_highColor;
+        Color m_lowColor;
         Point m_dragCursorPoint;
         Point m_dragFormPoint;
         public GUIMain()
@@ -116,7 +123,8 @@ namespace PS2StatTracker
             InitializeComponent();
             // Load version.
             this.versionLabel.Text = PROGRAM_TITLE + " V " + VERSION_NUM;
-
+            m_highColor = Color.FromArgb(0, 192, 0);
+            m_lowColor = Color.Red;
             m_eventLog = new List<EventLog>();
             m_weapons = new Dictionary<string, Weapon>();
             m_sessionWeapons = new Dictionary<string, Weapon>();
@@ -124,7 +132,6 @@ namespace PS2StatTracker
             m_browser = new GeckoWebBrowser();
             m_currentEvent = new EventLog();
             m_sessionStarted = false;
-            m_killsUpdated = false;
             m_lastEventFound = false;
             m_initialized = false;
             m_pageLoaded = false;
@@ -132,9 +139,13 @@ namespace PS2StatTracker
             m_dragging = false;
             m_resizing = false;
             m_totalHS = 0;
-            m_totalKills = 0;
+            m_totalKills = 0.0f;
+            m_totalDeaths = 0.0f;
+            m_totalDeathsWithRevives = 0.0f;
             m_activeSeconds = 0;
+            m_timeout = 0;
             m_sessionStartHSR = 0.0f;
+            m_sessionStartKDR = 0.0f;
             m_username = "";
             m_userID = "";
             m_userFaction = "";
@@ -209,15 +220,17 @@ namespace PS2StatTracker
             // Prevent unecessary calculations.
             if (m_browser.Url.AbsolutePath == "blank")
             {
+                m_updatingEvents = false;
+                m_updatingWeapons = false;
                 return;
             }
+
             // Update eventlog first.
-            if (!m_killsUpdated)
+            if (m_updatingEvents)
             {
-                m_killsUpdated = true;
                 UpdateEventLog(m_username.Length == 0);
             }
-            else
+            else if(m_updatingWeapons)
             {
                 UpdateWeapons();
             }
@@ -232,6 +245,10 @@ namespace PS2StatTracker
 
             if (!this.startSessionButton.Enabled && m_lastEventFound && m_weaponsUpdated)
                 this.startSessionButton.Enabled = true;
+
+            m_updatingEvents = false;
+            m_updatingWeapons = false;
+            m_timeout = 0;
         }
 
         private void ClearUsers()
@@ -256,6 +273,10 @@ namespace PS2StatTracker
         private void timer1_Tick(object sender, EventArgs e)
         {
             m_activeSeconds += (timer1.Interval / 1000);
+            if(!m_pageLoaded)
+                m_timeout += (timer1.Interval / 1000);
+            if (m_timeout >= 30)
+                HandleUpdateChoice();
             // Update weapons every 30 minutes. Currently hardcoded. May eventually add sliders under options.
             // Also may eventually add options.
             if (m_activeSeconds % 1800 == 0)
@@ -342,6 +363,25 @@ namespace PS2StatTracker
             about.SetTitle(PROGRAM_TITLE);
             about.SetVersion("Version " + VERSION_NUM);
             about.ShowDialog(this);
+        }
+
+        private void positiveColorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.colorDialog1.AllowFullOpen = true;
+            if(this.colorDialog1.ShowDialog(this) == DialogResult.OK)
+                m_highColor = this.colorDialog1.Color;
+        }
+
+        private void negativeColorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.colorDialog1.AllowFullOpen = true;
+            if (this.colorDialog1.ShowDialog(this) == DialogResult.OK)
+            m_lowColor = this.colorDialog1.Color;
+        }
+
+        private void cancelOperationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CancelOperation();
         }
     }
 }

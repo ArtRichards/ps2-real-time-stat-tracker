@@ -12,7 +12,6 @@ namespace PS2StatTracker
 {
     public partial class GUIMain
     {
-    
         void UpdateWeapons()
         {
             GeckoElement collection = (GeckoElement)m_browser.Document.GetElementById("weaponsInfo");
@@ -96,10 +95,12 @@ namespace PS2StatTracker
             {
                 // Reset overall hsr so it can be updated again.
                 m_sessionStartHSR = 0.0f;
-                UpdateOverallStats(totalKills, totalHS);
+                m_sessionStartKDR = 0.0f;
+                UpdateOverallStats(0, totalHS, 0);
             }
 
             m_weaponsUpdated = true;
+            m_updatingWeapons = false;
         }
 
         void UpdateEventLog(bool getName = false)
@@ -194,8 +195,9 @@ namespace PS2StatTracker
                 newEvent.method = RemoveWhiteSurroundingSpace(newEvent.method);
 
                 // Check for suicide.
-                if (newEvent.userName == m_username)
+                if (newEvent.userName == m_username || newEvent.method == "Suicide")
                 {
+                    newEvent.death = true;
                     newEvent.suicide = true;
                 }
 
@@ -215,9 +217,8 @@ namespace PS2StatTracker
                 else
                     m_eventLog.Add(newEvent);
 
-                // Add session weapon stats unless this event was a death or team kill.
-                if (!newEvent.death && newEvent.faction != m_userFaction)
-                    AddSessionWeapon(newEvent);
+               // Add session weapon stats unless this event was a death or team kill.
+               AddSessionWeapon(newEvent);
             }
 
             if (m_eventLog.Count > 0)
@@ -237,13 +238,15 @@ namespace PS2StatTracker
                     //this.eventLogGridView.Rows[i].Cells[2].Value = eventlog.headshot;
                     if (eventlog.headshot)
                         ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[2]).Value = Properties.Resources.hsImage;
-                    // Set row color depending on kill or death.
 
+                    // Set row color depending on kill or death.
                     for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++)
                     {
-                        if (eventlog.death)
+                        if (eventlog.death || eventlog.suicide) // Death.
                             this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                        else
+                        else if(eventlog.faction == m_userFaction) // Friendly kill.
+                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
+                        else // Enemy kill.
                             this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;
                     }
 
@@ -255,6 +258,8 @@ namespace PS2StatTracker
             }
 
             m_lastEventFound = true;
+
+            m_updatingEvents = false;
         }
 
         public void UpdateEventTextFields()
@@ -293,9 +298,11 @@ namespace PS2StatTracker
             this.hsTextBox.Text = hs.ToString("#0.###%");
         }
 
-        void UpdateOverallStats(float kills, float headshots)
+        void UpdateOverallStats(float kills, float headshots, float deaths)
         {
             m_totalKills += kills;
+
+            // HSR
             m_totalHS += headshots;
 
             float ratio = m_totalHS / m_totalKills;
@@ -306,17 +313,38 @@ namespace PS2StatTracker
 
             float dif = ratio - m_sessionStartHSR;
 
-            float perDif = dif / m_sessionStartHSR;
             if (dif < 0)
-                this.hsrGrowthLabel.ForeColor = Color.Red;
+                this.hsrGrowthLabel.ForeColor = m_lowColor;
             else if (dif > 0)
-                this.hsrGrowthLabel.ForeColor = Color.Green;
+                this.hsrGrowthLabel.ForeColor = m_highColor;
             else
                 this.hsrGrowthLabel.ForeColor = Color.White;
 
             this.totalKillsTextBox.Text = m_totalKills.ToString();
             this.totalHSTextBox.Text = ratio.ToString("#0.###%");
             this.hsrGrowthLabel.Text = dif.ToString("+#0.###%; -#0.###%");
+
+
+            // KDR
+            m_totalDeaths += deaths;
+            ratio = m_totalKills / m_totalDeaths;
+
+            // Set the start of session kd ratio.
+            if (m_sessionStartKDR == 0.0f)
+                m_sessionStartKDR = ratio;
+
+            dif = ratio - m_sessionStartKDR;
+
+            if (dif < 0)
+                this.kdrGrowthLabel.ForeColor = m_lowColor;
+            else if (dif > 0)
+                this.kdrGrowthLabel.ForeColor = m_highColor;
+            else
+                this.kdrGrowthLabel.ForeColor = Color.White;
+
+            this.totalDeathsTextBox.Text = m_totalDeaths.ToString();
+            this.totalKDRTextBox.Text = ratio.ToString("0.000");
+            this.kdrGrowthLabel.Text = dif.ToString("+#0.0000; -#0.0000");
         }
 
         public void UpdateWeaponTextFields(Dictionary<string, Weapon> weapons, DataGridView gridView)
@@ -374,9 +402,9 @@ namespace PS2StatTracker
                     hsrStr += "\n" + newTotalHSR.ToString("#0.###%") + " " + hsrDif.ToString("+#0.###%; -#0.###%");
 
                     if (hsrDif < 0)
-                        gridView.Rows[i].Cells[2].Style.ForeColor = Color.Red;
+                        gridView.Rows[i].Cells[2].Style.ForeColor = m_lowColor;
                     else if (hsrDif > 0)
-                        gridView.Rows[i].Cells[2].Style.ForeColor = Color.Green;
+                        gridView.Rows[i].Cells[2].Style.ForeColor = m_highColor;
                     else
                         gridView.Rows[i].Cells[2].Style.ForeColor = Color.Black;
 
@@ -391,9 +419,9 @@ namespace PS2StatTracker
                     accStr += "\n" + newTotalACC.ToString("#0.###%") + " " + accDif.ToString("+#0.###%; -#0.###%");
 
                     if (accDif < 0)
-                        gridView.Rows[i].Cells[3].Style.ForeColor = Color.Red;
+                        gridView.Rows[i].Cells[3].Style.ForeColor = m_lowColor;
                     else if (accDif > 0)
-                        gridView.Rows[i].Cells[3].Style.ForeColor = Color.Green;
+                        gridView.Rows[i].Cells[3].Style.ForeColor = m_highColor;
                     else
                         gridView.Rows[i].Cells[3].Style.ForeColor = Color.Black;
                 }
@@ -406,6 +434,26 @@ namespace PS2StatTracker
             }
 
             gridView.ClearSelection();
+        }
+
+        void UpdateMiscFields()
+        {
+            // Times revived.
+            float timesRevived = m_totalDeaths - m_totalDeathsWithRevives;
+
+            this.timesRevivedTextBox.Text = timesRevived.ToString();
+
+            // KDR with revives.
+            float fakeRatio = m_totalKills / m_totalDeathsWithRevives;
+
+            this.reviveKDRTextBox.Text = fakeRatio.ToString("0.000");
+
+            // KDR inflation
+            float realRatio = m_totalKills / m_totalDeaths;
+
+            float inflation = (fakeRatio - realRatio) / realRatio;
+
+            this.teamRelianceTextBox.Text = inflation.ToString("#0.###%");
         }
 
         // [hits, fired]
@@ -457,14 +505,29 @@ namespace PS2StatTracker
             newWeapon.kills += newEvent.IsKill() ? 1 : 0;
             newWeapon.headShots += newEvent.headshot ? 1 : 0;
 
-            // Update overall stats. Should only be called once overall stats have been set initially.
-            // Additionally it will not update a weapon not found in the All Weapons section.
-            if (m_weaponsUpdated && IsWeaponInAllWeapons(newWeapon.name))
+            // Add to total deaths.
+            if (m_sessionStarted)
             {
-                UpdateOverallStats(newWeapon.kills, newWeapon.headShots);
+                if (!newEvent.IsKill())
+                {
+                    UpdateOverallStats(0, 0, 1);
+                }
+                // Update overall stats. Should only be called once overall stats have been set initially.
+                // *Additionally it will not update a weapon not found in the All Weapons section.
+                else
+                {
+                    // * Testing with always updating stats regardless of if weapon was used previously.
+                    //if (m_weaponsUpdated && IsWeaponInAllWeapons(newWeapon.name))
+                    //{
+                    // Do not give kills or headshots for team kills.
+                    if(newEvent.faction != m_userFaction)
+                        UpdateOverallStats(newWeapon.kills, newWeapon.headShots, 0);
+                    //}
+                }
             }
-
-            AddSessionWeapon(newWeapon, oldWeapon);
+            // Add session weapon stats unless this event was a death or team kill.
+            if(!newEvent.death && newEvent.faction != m_userFaction)
+                AddSessionWeapon(newWeapon, oldWeapon);
         }
 
         void AddSessionWeapon(Weapon updatedWeapon, Weapon oldWeapon, bool skipKillsHS = false)

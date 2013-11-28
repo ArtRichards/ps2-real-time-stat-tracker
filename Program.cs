@@ -10,14 +10,15 @@ namespace PS2StatTracker
 {
     static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             // Required for Gecko to work.
+#if DEBUG
             Skybound.Gecko.Xpcom.Initialize("../xulrunner");
+#else
+            Skybound.Gecko.Xpcom.Initialize("xulrunner");
+#endif
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
