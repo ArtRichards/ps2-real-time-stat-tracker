@@ -8,108 +8,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using HtmlAgilityPack;
-using Skybound.Gecko;
-
 namespace PS2StatTracker
 {
-    public struct Weapon
-    {
-        public static bool operator ==(Weapon e1, Weapon e2)
-        {
-            return e1.name == e2.name;
-        }
-        public static bool operator !=(Weapon e1, Weapon e2)
-        {
-            return e1.name != e2.name;
-        }
-        public void Initialize()
-        {
-            name = ""; kills = fireCount = headShots = hitsCount = lastFireCount = 0;
-        }
-        public
-        string name;
-        public
-            float kills,
-            fireCount,
-            headShots, 
-            hitsCount,
-            lastFireCount;
-
-    }
-    public struct EventLog
-    {
-        public static bool operator == (EventLog e1, EventLog e2)
-        {
-            return (e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
-                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.userName == e2.userName);
-        }
-        public static bool operator !=(EventLog e1, EventLog e2)
-        {
-            return !(e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
-                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.userName == e2.userName);
-        }
-
-        public bool IsKill()
-        {
-            return !death;
-        }
-
-        public void Initialize()
-        {
-            timeStamp   = "";
-            userName    = "";
-            method      = "";
-            location    = "";
-            faction     = "";
-            headshot    = false;
-            death       = false;
-            suicide     = false;
-        }
-
-        public
-        string timeStamp,
-            userName,
-            method,
-            location,
-            faction;
-
-        public  
-        bool headshot,
-            death,
-            suicide;
-    };
-
     public partial class GUIMain : Form
     {
         // Update this with new versions.
-        string VERSION_NUM = "0.4.5";
+        string VERSION_NUM = "0.4.X";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
-        GeckoWebBrowser m_browser;
         List<EventLog> m_eventLog;
-        Dictionary<string,
-            Weapon> m_weapons;
         Dictionary<string,
             Weapon> m_sessionWeapons;
         Dictionary<string,
-            Weapon> m_sesStartWeapons;
+            string> m_itemCache;            // Cache of item IDs to their name.
+        Dictionary<string, Player>
+            m_playerCache;                  // Cache of player IDs to their struct. 
         EventLog m_currentEvent;
-        string m_username;
-        string m_userFaction;
+        Player m_player;
+        Player m_startPlayer;
         string m_userID;
-        float m_totalKills;
-        float m_totalDeaths;
-        float m_totalDeathsWithRevives;
-        float m_totalHS;
-        float m_sessionStartHSR;          // Start of session headshot ratio.
+        float m_sessionStartHSR;            // Start of session headshot ratio.
         float m_sessionStartKDR;
         int m_activeSeconds;
         int m_timeout;
         bool m_lastEventFound;
         bool m_sessionStarted;
-        bool m_weaponsUpdated;           // Set to true when weapons are first updated. False on disconnect.
-        bool m_updatingEvents = false;
-        bool m_updatingWeapons = false;
+        bool m_weaponsUpdated;              // Set to true when weapons are first updated. False on disconnect.
         bool m_initialized;
         bool m_pageLoaded;
         bool m_dragging;
@@ -126,11 +49,13 @@ namespace PS2StatTracker
             m_highColor = Color.FromArgb(0, 192, 0);
             m_lowColor = Color.Red;
             m_eventLog = new List<EventLog>();
-            m_weapons = new Dictionary<string, Weapon>();
             m_sessionWeapons = new Dictionary<string, Weapon>();
-            m_sesStartWeapons = new Dictionary<string, Weapon>();
-            m_browser = new GeckoWebBrowser();
+            m_playerCache = new Dictionary<string, Player>();
+            m_itemCache = new Dictionary<string, string>();
             m_currentEvent = new EventLog();
+            m_player = new Player();
+            m_startPlayer = new Player();
+            m_userID = "";
             m_sessionStarted = false;
             m_lastEventFound = false;
             m_initialized = false;
@@ -138,17 +63,10 @@ namespace PS2StatTracker
             m_weaponsUpdated = false;
             m_dragging = false;
             m_resizing = false;
-            m_totalHS = 0;
-            m_totalKills = 0.0f;
-            m_totalDeaths = 0.0f;
-            m_totalDeathsWithRevives = 0.0f;
             m_activeSeconds = 0;
             m_timeout = 0;
             m_sessionStartHSR = 0.0f;
             m_sessionStartKDR = 0.0f;
-            m_username = "";
-            m_userID = "";
-            m_userFaction = "";
 
             // Prevent X images showing up.
             ((DataGridViewImageColumn)this.eventLogGridView.Columns[2]).DefaultCellStyle.NullValue = null;
@@ -203,52 +121,6 @@ namespace PS2StatTracker
             }
 
             m_currentEvent.Initialize();
-            this.Controls.Add(m_browser);
-            // Handler for when page load completes.
-            m_browser.DocumentCompleted += new EventHandler(browser_DocumentCompleted);
-        }
-
-        void browser_DocumentCompleted(object sender, EventArgs e)
-        {
-            HandleUpdateChoice();
-        }
-
-        void HandleUpdateChoice()
-        {
-            m_pageLoaded = true;
-
-            // Prevent unecessary calculations.
-            if (m_browser.Url.AbsolutePath == "blank")
-            {
-                m_updatingEvents = false;
-                m_updatingWeapons = false;
-                return;
-            }
-
-            // Update eventlog first.
-            if (m_updatingEvents)
-            {
-                UpdateEventLog(m_username.Length == 0);
-            }
-            else if(m_updatingWeapons)
-            {
-                UpdateWeapons();
-            }
-
-            if (!m_weaponsUpdated)
-            {
-                GetWeaponStats();
-                return;
-            }
-
-            this.updatingLabel.Visible = false;
-
-            if (!this.startSessionButton.Enabled && m_lastEventFound && m_weaponsUpdated)
-                this.startSessionButton.Enabled = true;
-
-            m_updatingEvents = false;
-            m_updatingWeapons = false;
-            m_timeout = 0;
         }
 
         private void ClearUsers()
@@ -273,16 +145,13 @@ namespace PS2StatTracker
         private void timer1_Tick(object sender, EventArgs e)
         {
             m_activeSeconds += (timer1.Interval / 1000);
-            if(!m_pageLoaded)
-                m_timeout += (timer1.Interval / 1000);
-            if (m_timeout >= 30)
-                HandleUpdateChoice();
+
+            GetEventStats();
+
             // Update weapons every 30 minutes. Currently hardcoded. May eventually add sliders under options.
             // Also may eventually add options.
-            if (m_activeSeconds % 1800 == 0)
-                GetWeaponStats();
-            else
-                GetEventStats();
+            if(m_activeSeconds % 1800 == 0)
+                GetPlayerWeapons();
         }
 
         //////////////////////////////////
@@ -343,7 +212,7 @@ namespace PS2StatTracker
         private void updateWeaponsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (m_sessionStarted)
-                GetWeaponStats();
+                GetPlayerWeapons();
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)

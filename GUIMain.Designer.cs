@@ -30,9 +30,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUIMain));
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.connectButton = new System.Windows.Forms.Button();
@@ -88,6 +88,7 @@
             this.sessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateEventsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateWeaponsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cancelOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,7 +107,6 @@
             this.usernameTextBox = new System.Windows.Forms.ComboBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.cancelOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.sessionWeaponsTab.SuspendLayout();
@@ -537,7 +537,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 30000;
+            this.timer1.Interval = 6000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // startSessionButton
@@ -762,6 +762,13 @@
             this.updateWeaponsToolStripMenuItem.Text = "Update Weapons";
             this.updateWeaponsToolStripMenuItem.Click += new System.EventHandler(this.updateWeaponsToolStripMenuItem_Click);
             // 
+            // cancelOperationToolStripMenuItem
+            // 
+            this.cancelOperationToolStripMenuItem.Name = "cancelOperationToolStripMenuItem";
+            this.cancelOperationToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.cancelOperationToolStripMenuItem.Text = "Cancel Operation";
+            this.cancelOperationToolStripMenuItem.Click += new System.EventHandler(this.cancelOperationToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -777,7 +784,7 @@
             // 
             this.optionsToolStripMenuItem.Enabled = false;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             this.optionsToolStripMenuItem.Visible = false;
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
@@ -788,7 +795,7 @@
             this.positiveColorsToolStripMenuItem,
             this.negativeColorsToolStripMenuItem});
             this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
-            this.colorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.colorToolStripMenuItem.Text = "Color";
             // 
             // positiveColorsToolStripMenuItem
@@ -808,7 +815,7 @@
             // clearUsersToolStripMenuItem
             // 
             this.clearUsersToolStripMenuItem.Name = "clearUsersToolStripMenuItem";
-            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.clearUsersToolStripMenuItem.Text = "Clear Users";
             this.clearUsersToolStripMenuItem.Click += new System.EventHandler(this.clearUsersToolStripMenuItem_Click);
             // 
@@ -852,27 +859,27 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.eventLogGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.eventLogGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.eventLogGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.eventLogGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.eventLogGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.eventLogGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.playerCol,
             this.methodCol,
             this.hsCol});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.eventLogGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.eventLogGridView.DefaultCellStyle = dataGridViewCellStyle6;
             this.eventLogGridView.EnableHeadersVisualStyles = false;
             this.eventLogGridView.Location = new System.Drawing.Point(632, 99);
             this.eventLogGridView.MinimumSize = new System.Drawing.Size(170, 216);
@@ -904,8 +911,8 @@
             // hsCol
             // 
             this.hsCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.hsCol.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.hsCol.DefaultCellStyle = dataGridViewCellStyle5;
             this.hsCol.HeaderText = "HeadShot";
             this.hsCol.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
             this.hsCol.Name = "hsCol";
@@ -948,13 +955,6 @@
             this.versionLabel.Size = new System.Drawing.Size(164, 14);
             this.versionLabel.TabIndex = 34;
             this.versionLabel.Text = "Real Time Stat Tracker V 0.0.0";
-            // 
-            // cancelOperationToolStripMenuItem
-            // 
-            this.cancelOperationToolStripMenuItem.Name = "cancelOperationToolStripMenuItem";
-            this.cancelOperationToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.cancelOperationToolStripMenuItem.Text = "Cancel Operation";
-            this.cancelOperationToolStripMenuItem.Click += new System.EventHandler(this.cancelOperationToolStripMenuItem_Click);
             // 
             // GUIMain
             // 

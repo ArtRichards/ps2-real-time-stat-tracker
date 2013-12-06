@@ -13,13 +13,6 @@ namespace PS2StatTracker
         [STAThread]
         static void Main()
         {
-            // Required for Gecko to work.
-#if DEBUG
-            Skybound.Gecko.Xpcom.Initialize("../xulrunner");
-#else
-            Skybound.Gecko.Xpcom.Initialize("xulrunner");
-#endif
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
