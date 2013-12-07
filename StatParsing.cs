@@ -12,6 +12,16 @@ namespace PS2StatTracker
 {
     public partial class GUIMain
     {
+        public string PercentString(float input, int digits = 3)
+        {
+            string digitCount = "";
+            for(int i = 0; i < digits; i++)
+            {
+                digitCount += "#";
+            }
+            return ((input < 0 ? "-" : "+") + input.ToString("0." + digitCount) + "%");
+        }
+
         public void UpdateEventTextFields()
         {
             int kills = 0;
@@ -72,8 +82,7 @@ namespace PS2StatTracker
 
             this.totalKillsTextBox.Text = m_player.kdr.kills.ToString();
             this.totalHSTextBox.Text = ratio.ToString("#0.###%");
-            this.hsrGrowthLabel.Text = dif.ToString("+#0.###%; -#0.###%");
-
+            this.hsrGrowthLabel.Text = PercentString(dif);
             // KDR
             m_player.kdr.actualDeaths += (int)deaths;
             ratio = (float)m_player.kdr.kills / (float)m_player.kdr.actualDeaths;
@@ -93,13 +102,35 @@ namespace PS2StatTracker
 
             this.totalDeathsTextBox.Text = m_player.kdr.actualDeaths.ToString();
             this.totalKDRTextBox.Text = ratio.ToString("0.000");
-            this.kdrGrowthLabel.Text = dif.ToString("+#0.0000; -#0.0000");
+            this.kdrGrowthLabel.Text = dif.ToString("+#0.0000;-#0.0000");
         }
 
         public void UpdateWeaponTextFields(Dictionary<string, Weapon> weapons, DataGridView gridView)
         {
             if (weapons == null)
                 return;
+
+            DataGridViewColumn oldSortedColumn = gridView.SortedColumn;
+            System.ComponentModel.ListSortDirection direction;
+
+            // If oldColumn is null, then the DataGridView is not currently sorted. 
+            if (oldSortedColumn != null)
+            {
+                // Sort the same column again, reversing the SortOrder. 
+                if (gridView.SortOrder == SortOrder.Ascending)
+                {
+                    direction = System.ComponentModel.ListSortDirection.Ascending;
+                }
+                else
+                {
+                    // Sort a new column and remove the old SortGlyph.
+                    direction = System.ComponentModel.ListSortDirection.Descending;
+                }
+            }
+            else
+            {
+                direction = System.ComponentModel.ListSortDirection.Descending;
+            }
 
             gridView.Columns.Clear();
 
@@ -111,10 +142,19 @@ namespace PS2StatTracker
             gridView.Columns.Add("fireCountCol", "Fired");
             gridView.Columns.Add("hitsCount", "Hits");
 
+            // Sort the new gridview.
+            int sortedIndex = 1;
             for (int i = 1; i < gridView.ColumnCount; i++)
             {
                 // Resize columns.
                 gridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                if (oldSortedColumn != null)
+                {
+                    if (gridView.Columns[i].HeaderText == oldSortedColumn.HeaderText)
+                    {
+                        sortedIndex = i;
+                    }
+                }
             }
 
             // Set the HSR/ACC column to wrap text.
@@ -141,7 +181,7 @@ namespace PS2StatTracker
                 // Calculate hsr change.
                 float currentHSR = weapon.headShots / weapon.kills;
                 string hsrStr = currentHSR.ToString("#0.###%");
-                if (gridView.Name == "sessionWeaponsGridView" && m_sessionStarted)
+                if (gridView.Name == "sessionWeaponsGridView" && (m_sessionStarted || m_countEvents))
                 {
                     // HSR
                     float[] absHSR = GetWeaponHSR(weapon.id, m_startPlayer.weapons);
@@ -184,6 +224,11 @@ namespace PS2StatTracker
                 gridView.Rows[i].Cells[5].Value = weapon.fireCount;
                 gridView.Rows[i].Cells[6].Value = weapon.hitsCount;
             }
+
+            gridView.Sort(gridView.Columns[sortedIndex], direction);
+            gridView.Columns[sortedIndex].HeaderCell.SortGlyphDirection =
+                direction == System.ComponentModel.ListSortDirection.Ascending ?
+                SortOrder.Ascending : SortOrder.Descending;
 
             gridView.ClearSelection();
         }
@@ -258,7 +303,7 @@ namespace PS2StatTracker
             newWeapon.headShots += newEvent.headshot ? 1 : 0;
 
             // Add to total deaths.
-            if (m_sessionStarted)
+            if (m_sessionStarted || m_countEvents)
             {
                 if (!newEvent.IsKill())
                 {

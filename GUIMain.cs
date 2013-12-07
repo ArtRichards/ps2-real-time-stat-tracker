@@ -30,11 +30,10 @@ namespace PS2StatTracker
         float m_sessionStartKDR;
         int m_activeSeconds;
         int m_timeout;
+        bool m_countEvents;
         bool m_lastEventFound;
         bool m_sessionStarted;
-        bool m_weaponsUpdated;              // Set to true when weapons are first updated. False on disconnect.
         bool m_initialized;
-        bool m_pageLoaded;
         bool m_dragging;
         bool m_resizing;
         Color m_highColor;
@@ -59,10 +58,9 @@ namespace PS2StatTracker
             m_sessionStarted = false;
             m_lastEventFound = false;
             m_initialized = false;
-            m_pageLoaded = false;
-            m_weaponsUpdated = false;
             m_dragging = false;
             m_resizing = false;
+            m_countEvents = false;
             m_activeSeconds = 0;
             m_timeout = 0;
             m_sessionStartHSR = 0.0f;
@@ -75,10 +73,11 @@ namespace PS2StatTracker
             this.resizePanelLR.MouseDown += OnMouseDownResize;
             this.resizePanelLR.MouseMove += OnMouseMove;
             this.resizePanelLR.MouseUp += OnMouseUp;
-
+            this.resizePanelLR.MouseLeave += OnMouseLeave;
             MouseMove += OnMouseMove;
             MouseDown += OnMouseDown;
             MouseUp += OnMouseUp;
+            MouseLeave += OnMouseLeave;
             foreach (Control ctrl in this.Controls)
             {
                 if (ctrl.GetType() == typeof(Label))
@@ -86,16 +85,19 @@ namespace PS2StatTracker
                     ctrl.MouseMove += OnMouseMove;
                     ctrl.MouseDown += OnMouseDown;
                     ctrl.MouseUp += OnMouseUp;
+                    ctrl.MouseLeave += OnMouseLeave;
                 }
             }
 
             this.menuStrip1.MouseMove += OnMouseMove;
             this.menuStrip1.MouseDown += OnMouseDown;
             this.menuStrip1.MouseUp += OnMouseUp;
+            this.menuStrip1.MouseLeave += OnMouseLeave;
 
             this.panel1.MouseMove += OnMouseMove;
             this.panel1.MouseDown += OnMouseDown;
             this.panel1.MouseUp += OnMouseUp;
+            this.panel1.MouseLeave += OnMouseLeave;
 
             foreach (Control ctrl in this.panel1.Controls)
             {
@@ -104,12 +106,13 @@ namespace PS2StatTracker
                     ctrl.MouseMove += OnMouseMove;
                     ctrl.MouseDown += OnMouseDown;
                     ctrl.MouseUp += OnMouseUp;
+                    ctrl.MouseLeave += OnMouseLeave;
                 }
             }
             this.panel2.MouseMove += OnMouseMove;
             this.panel2.MouseDown += OnMouseDown;
             this.panel2.MouseUp += OnMouseUp;
-
+            this.panel2.MouseLeave += OnMouseLeave;
             foreach (Control ctrl in this.panel2.Controls)
             {
                 if (ctrl.GetType() == typeof(Label))
@@ -117,6 +120,7 @@ namespace PS2StatTracker
                     ctrl.MouseMove += OnMouseMove;
                     ctrl.MouseDown += OnMouseDown;
                     ctrl.MouseUp += OnMouseUp;
+                    ctrl.MouseLeave += OnMouseLeave;
                 }
             }
 
@@ -134,11 +138,13 @@ namespace PS2StatTracker
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Initialize();
+            ResumeSession();
         }
 
         private void startSessionButton_Click(object sender, EventArgs e)
         {
+            if(!m_sessionStarted)
+                Initialize();
             StartSession();
         }
 
@@ -186,6 +192,12 @@ namespace PS2StatTracker
                 this.Size += new Size(dif);
                 m_dragCursorPoint = Cursor.Position;
             }
+        }
+
+        private void OnMouseLeave(object sender, System.EventArgs e)
+        {
+            m_dragging = false;
+            m_resizing = false;
         }
 
         private void OnMouseUp(object sender, MouseEventArgs e)
@@ -251,6 +263,18 @@ namespace PS2StatTracker
         private void cancelOperationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CancelOperation();
+        }
+
+        private void createSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GUISession session = new GUISession();
+            session.ShowDialog(this);
+            if (session.confirmed == true)
+            {
+                m_countEvents = session.countStatsCheckBox.Checked;
+                Initialize((int)session.pastEventsNumber.Value);
+            }
+            ManageSessionButtons();
         }
     }
 }

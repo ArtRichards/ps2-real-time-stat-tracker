@@ -30,9 +30,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUIMain));
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.connectButton = new System.Windows.Forms.Button();
@@ -88,6 +88,7 @@
             this.sessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateEventsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateWeaponsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -129,8 +130,9 @@
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(83, 23);
             this.connectButton.TabIndex = 0;
-            this.connectButton.Text = "Connect";
+            this.connectButton.Text = "Resume";
             this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Visible = false;
             this.connectButton.Click += new System.EventHandler(this.button1_Click);
             // 
             // killsTextBox
@@ -319,9 +321,9 @@
             this.hsrGrowthLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.hsrGrowthLabel.Location = new System.Drawing.Point(126, 28);
             this.hsrGrowthLabel.Name = "hsrGrowthLabel";
-            this.hsrGrowthLabel.Size = new System.Drawing.Size(49, 14);
+            this.hsrGrowthLabel.Size = new System.Drawing.Size(43, 14);
             this.hsrGrowthLabel.TabIndex = 20;
-            this.hsrGrowthLabel.Text = "+0.000%";
+            this.hsrGrowthLabel.Text = "0.000%";
             this.hsrGrowthLabel.Visible = false;
             // 
             // totalHSLabel
@@ -544,13 +546,12 @@
             // 
             this.startSessionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.startSessionButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.startSessionButton.Enabled = false;
             this.startSessionButton.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startSessionButton.Location = new System.Drawing.Point(853, 53);
+            this.startSessionButton.Location = new System.Drawing.Point(853, 50);
             this.startSessionButton.Name = "startSessionButton";
             this.startSessionButton.Size = new System.Drawing.Size(83, 23);
             this.startSessionButton.TabIndex = 25;
-            this.startSessionButton.Text = "Start Session";
+            this.startSessionButton.Text = "Start";
             this.startSessionButton.UseVisualStyleBackColor = true;
             this.startSessionButton.Click += new System.EventHandler(this.startSessionButton_Click);
             // 
@@ -630,9 +631,9 @@
             this.kdrGrowthLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.kdrGrowthLabel.Location = new System.Drawing.Point(126, 76);
             this.kdrGrowthLabel.Name = "kdrGrowthLabel";
-            this.kdrGrowthLabel.Size = new System.Drawing.Size(49, 14);
+            this.kdrGrowthLabel.Size = new System.Drawing.Size(43, 14);
             this.kdrGrowthLabel.TabIndex = 33;
-            this.kdrGrowthLabel.Text = "+0.000%";
+            this.kdrGrowthLabel.Text = "0.000%";
             this.kdrGrowthLabel.Visible = false;
             // 
             // totalKDRLabel
@@ -742,6 +743,7 @@
             this.sessionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.updateEventsToolStripMenuItem,
             this.updateWeaponsToolStripMenuItem,
+            this.createSessionToolStripMenuItem,
             this.cancelOperationToolStripMenuItem});
             this.sessionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.sessionToolStripMenuItem.Name = "sessionToolStripMenuItem";
@@ -761,6 +763,13 @@
             this.updateWeaponsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.updateWeaponsToolStripMenuItem.Text = "Update Weapons";
             this.updateWeaponsToolStripMenuItem.Click += new System.EventHandler(this.updateWeaponsToolStripMenuItem_Click);
+            // 
+            // createSessionToolStripMenuItem
+            // 
+            this.createSessionToolStripMenuItem.Name = "createSessionToolStripMenuItem";
+            this.createSessionToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.createSessionToolStripMenuItem.Text = "Create Session";
+            this.createSessionToolStripMenuItem.Click += new System.EventHandler(this.createSessionToolStripMenuItem_Click);
             // 
             // cancelOperationToolStripMenuItem
             // 
@@ -859,27 +868,27 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.eventLogGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.eventLogGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.eventLogGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.eventLogGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.eventLogGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.eventLogGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.playerCol,
             this.methodCol,
             this.hsCol});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.eventLogGridView.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.eventLogGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.eventLogGridView.EnableHeadersVisualStyles = false;
             this.eventLogGridView.Location = new System.Drawing.Point(632, 99);
             this.eventLogGridView.MinimumSize = new System.Drawing.Size(170, 216);
@@ -911,8 +920,8 @@
             // hsCol
             // 
             this.hsCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.hsCol.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.hsCol.DefaultCellStyle = dataGridViewCellStyle2;
             this.hsCol.HeaderText = "HeadShot";
             this.hsCol.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
             this.hsCol.Name = "hsCol";
@@ -1083,6 +1092,7 @@
         private System.Windows.Forms.Label teamRelianceLabel;
         private System.Windows.Forms.RichTextBox teamRelianceTextBox;
         private System.Windows.Forms.ToolStripMenuItem cancelOperationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createSessionToolStripMenuItem;
 
     }
 }

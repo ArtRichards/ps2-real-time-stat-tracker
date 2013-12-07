@@ -355,8 +355,11 @@ namespace PS2StatTracker
                     "&stat_name=deaths&c:show=all_time&c:limit=100");
 
                 jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
-                jTokenArr = jObject["characters_stat_history_list"].ToArray();
-                kdr.reviveDeaths = Int32.Parse(Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(jTokenArr[0].ToString())["all_time"]);
+                if (jObject.HasValues)
+                {
+                    jTokenArr = jObject["characters_stat_history_list"].ToArray();
+                    kdr.reviveDeaths = Int32.Parse(Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(jTokenArr[0].ToString())["all_time"]);
+                }
             }
             return kdr;
         }
@@ -366,8 +369,8 @@ namespace PS2StatTracker
             this.updatingLabel.Text = text;
             this.updatingLabel.Visible = true;
             this.Refresh();
-            m_dragging = false;
-            m_resizing = false;
+            //m_dragging = false;
+            //m_resizing = false;
         }
 
         void HideUpdateText()
@@ -375,12 +378,12 @@ namespace PS2StatTracker
             this.updatingLabel.Visible = false;
         }
 
-        void GetEventStats()
+        void GetEventStats(int numEvents = 100)
         {
             //ShowUpdateText("Updating Events...");
 
             string result = SiteToString("http://census.soe.com/get/ps2/characters_event/?character_id=" + GetUserID(this.usernameTextBox.Text) +
-                "&c:limit=100&type=KILL,DEATH");
+                "&c:limit="+numEvents+"&type=KILL,DEATH");
 
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
             Newtonsoft.Json.Linq.JToken jToken = jObject["characters_event_list"];
@@ -493,13 +496,15 @@ namespace PS2StatTracker
         {
         }
 
-        void Initialize()
+        void Initialize(int numEvents = 1)
         {
             if (this.usernameTextBox.Text.Length > 0)
             {
+                if (numEvents <= 0) numEvents = 1;
                 ShowUpdateText("Initializing...");
                 m_player = null;
                 m_startPlayer = null;
+                m_playerCache.Clear();
                 m_sessionStartHSR = 0.0f;
                 m_sessionStartKDR = 0.0f;
                 Disconnect();
@@ -517,13 +522,47 @@ namespace PS2StatTracker
                 // Update text relating to API.
                 UpdateMiscFields();
                 // Load events.
-                GetEventStats();
-                if (!this.startSessionButton.Enabled && m_lastEventFound)
-                    this.startSessionButton.Enabled = true;
+                GetEventStats(numEvents);
+                if (m_countEvents)
+                {
+                    this.hsrGrowthLabel.Visible = true;
+                    this.kdrGrowthLabel.Visible = true;
+                }
+                //if (!this.startSessionButton.Enabled && m_lastEventFound)
+                //    this.startSessionButton.Enabled = true;
                 SaveUserName();
                 m_initialized = true;
                 HideUpdateText();
             }
+        }
+
+        private void ManageSessionButtons()
+        {
+            if (m_lastEventFound)
+            {
+                if (m_sessionStarted)
+                {
+                    this.startSessionButton.Text = "End Session";
+                    this.connectButton.Visible = false;
+                }
+                else
+                {
+                    this.startSessionButton.Text = "Start";
+                    this.connectButton.Visible = true;
+                }
+            }
+        }
+
+        private void ResumeSession()
+        {
+            m_sessionStarted = true;
+            this.hsrGrowthLabel.Visible = true;
+            this.kdrGrowthLabel.Visible = true;
+            GetEventStats();
+            timer1.Start();
+            UpdateEventTextFields();
+            UpdateOverallStats(0.0f, 0.0f, 0.0f);
+            ManageSessionButtons();
         }
 
         private void StartSession()
@@ -533,9 +572,9 @@ namespace PS2StatTracker
                 if (m_lastEventFound)
                 {
                     ResetSession();
-                    this.startSessionButton.Text = "End Session";
                     this.hsrGrowthLabel.Visible = true;
                     this.kdrGrowthLabel.Visible = true;
+                    m_sessionStartHSR = m_sessionStartKDR = 0.0f;
                     UpdateEventTextFields();
                     UpdateOverallStats(0.0f, 0.0f, 0.0f);
                 }
@@ -544,6 +583,8 @@ namespace PS2StatTracker
             {
                 EndSession();
             }
+
+            ManageSessionButtons();
         }
 
         void ResetSession()
@@ -566,7 +607,7 @@ namespace PS2StatTracker
             m_activeSeconds = 0;
             m_timeout = 0;
             timer1.Stop();
-            this.startSessionButton.Text = "Start Session";
+            ManageSessionButtons();
         }
 
         private void Disconnect()
@@ -577,10 +618,9 @@ namespace PS2StatTracker
             m_player = null;
             m_startPlayer = null;
             m_currentEvent.Initialize();
-            m_weaponsUpdated = false;
             this.eventLogGridView.Rows.Clear();
             this.sessionWeaponsGridView.Columns.Clear();
-            this.startSessionButton.Enabled = false;
+            //this.startSessionButton.Enabled = false;
             this.playerNameLabel.Visible = false;
         }
     }
