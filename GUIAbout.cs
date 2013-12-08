@@ -37,5 +37,11 @@ namespace PS2StatTracker
         {
             Process.Start("http://recursion.recursion.tk/");
         }
+
+        private void changelogButton_Click(object sender, EventArgs e)
+        {
+            GUIChangelog changes = new GUIChangelog();
+            changes.ShowDialog(this);
+        }
     }
 }

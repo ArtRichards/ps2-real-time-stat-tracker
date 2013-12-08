@@ -50,16 +50,10 @@
     <ApplicationIcon>recursion.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\HtmlAgilityPack.1.4.6\Net45\HtmlAgilityPack.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Json50r8\Bin\Net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Skybound.Gecko">
-      <HintPath>..\Skybound.GeckoFX.src.v1.9.1.0\bin\Skybound.Gecko.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,6 +74,12 @@
     </Compile>
     <Compile Include="GUIAbout.Designer.cs">
       <DependentUpon>GUIAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIChangelog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIChangelog.Designer.cs">
+      <DependentUpon>GUIChangelog.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIMain.cs">
       <SubType>Form</SubType>
@@ -112,9 +112,15 @@
     </Compile>
     <EmbeddedResource Include="GUIAbout.resx">
       <DependentUpon>GUIAbout.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIChangelog.resx">
+      <DependentUpon>GUIChangelog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIMain.resx">
       <DependentUpon>GUIMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIOptions.resx">
       <DependentUpon>GUIOptions.cs</DependentUpon>

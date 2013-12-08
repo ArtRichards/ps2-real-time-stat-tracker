@@ -734,7 +734,7 @@
             this.exitToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.exitToolStripMenuItem.ForeColor = System.Drawing.SystemColors.WindowText;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -776,6 +776,7 @@
             this.cancelOperationToolStripMenuItem.Name = "cancelOperationToolStripMenuItem";
             this.cancelOperationToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.cancelOperationToolStripMenuItem.Text = "Cancel Operation";
+            this.cancelOperationToolStripMenuItem.Visible = false;
             this.cancelOperationToolStripMenuItem.Click += new System.EventHandler(this.cancelOperationToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
@@ -793,7 +794,7 @@
             // 
             this.optionsToolStripMenuItem.Enabled = false;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             this.optionsToolStripMenuItem.Visible = false;
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
@@ -804,7 +805,7 @@
             this.positiveColorsToolStripMenuItem,
             this.negativeColorsToolStripMenuItem});
             this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
-            this.colorToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.colorToolStripMenuItem.Text = "Color";
             // 
             // positiveColorsToolStripMenuItem
@@ -824,7 +825,7 @@
             // clearUsersToolStripMenuItem
             // 
             this.clearUsersToolStripMenuItem.Name = "clearUsersToolStripMenuItem";
-            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.clearUsersToolStripMenuItem.Text = "Clear Users";
             this.clearUsersToolStripMenuItem.Click += new System.EventHandler(this.clearUsersToolStripMenuItem_Click);
             // 
@@ -843,19 +844,19 @@
             // 
             this.updateToolStripMenuItem.Enabled = false;
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.updateToolStripMenuItem.Text = "Update";
             this.updateToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(113, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
