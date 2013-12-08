@@ -36,7 +36,8 @@ namespace PS2StatTracker
             this.killsNumber.Text = kills;
             this.deathsNum.Text = deaths;
             this.kdrNum.Text = float.Parse(kdr).ToString("0.00"); // Drops a decimal place.
-            this.hsrNum.Text = hsr;
+            string hsrNoPercent = hsr.Remove(hsr.Length - 1, 1);
+            this.hsrNum.Text = float.Parse(hsrNoPercent).ToString("0.00") + "%"; // Drops a decimal place.
             this.eventLogGridView.Rows.Clear();
             for (int i = 0; i < killboard.RowCount; i++)
             {

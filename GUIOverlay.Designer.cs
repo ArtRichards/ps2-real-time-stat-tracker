@@ -143,7 +143,7 @@
             this.hsrNum.AutoSize = true;
             this.hsrNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.hsrNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.hsrNum.Location = new System.Drawing.Point(164, 29);
+            this.hsrNum.Location = new System.Drawing.Point(160, 29);
             this.hsrNum.Name = "hsrNum";
             this.hsrNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.hsrNum.Size = new System.Drawing.Size(17, 19);
@@ -155,7 +155,7 @@
             this.hsrLabel.AutoSize = true;
             this.hsrLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.hsrLabel.ForeColor = System.Drawing.Color.DarkGreen;
-            this.hsrLabel.Location = new System.Drawing.Point(164, 9);
+            this.hsrLabel.Location = new System.Drawing.Point(160, 9);
             this.hsrLabel.Name = "hsrLabel";
             this.hsrLabel.Size = new System.Drawing.Size(36, 19);
             this.hsrLabel.TabIndex = 6;
