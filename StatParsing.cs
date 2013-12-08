@@ -316,12 +316,13 @@ namespace PS2StatTracker
             newWeapon.Initialize();
             if (newEvent.isVehicle)
             {
-                newWeapon.id = newEvent.methodID;
+                newWeapon.id = "0";
                 newWeapon.vehicleId = newEvent.methodID;
             }
             else
                 newWeapon.id = newEvent.methodID;
 
+            newWeapon.name = GetItemName(GetBestWeaponID(newWeapon));
             newWeapon.kills += newEvent.IsKill() ? 1 : 0;
             newWeapon.headShots += newEvent.headshot ? 1 : 0;
 
@@ -378,6 +379,8 @@ namespace PS2StatTracker
 
             sessionWeapon.fireCount += fired;
             sessionWeapon.hitsCount += hits;
+
+            sessionWeapon.name = GetItemName(GetBestWeaponID(sessionWeapon));
 
             m_sessionWeapons[id] = sessionWeapon;
         }

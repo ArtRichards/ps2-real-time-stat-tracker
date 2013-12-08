@@ -108,6 +108,8 @@
             this.usernameTextBox = new System.Windows.Forms.ComboBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.streamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.sessionWeaponsTab.SuspendLayout();
@@ -710,6 +712,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.sessionToolStripMenuItem,
+            this.streamingToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
@@ -794,7 +797,7 @@
             // 
             this.optionsToolStripMenuItem.Enabled = false;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             this.optionsToolStripMenuItem.Visible = false;
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
@@ -805,7 +808,7 @@
             this.positiveColorsToolStripMenuItem,
             this.negativeColorsToolStripMenuItem});
             this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
-            this.colorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.colorToolStripMenuItem.Text = "Color";
             // 
             // positiveColorsToolStripMenuItem
@@ -825,7 +828,7 @@
             // clearUsersToolStripMenuItem
             // 
             this.clearUsersToolStripMenuItem.Name = "clearUsersToolStripMenuItem";
-            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearUsersToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.clearUsersToolStripMenuItem.Text = "Clear Users";
             this.clearUsersToolStripMenuItem.Click += new System.EventHandler(this.clearUsersToolStripMenuItem_Click);
             // 
@@ -966,6 +969,22 @@
             this.versionLabel.TabIndex = 34;
             this.versionLabel.Text = "Real Time Stat Tracker V 0.0.0";
             // 
+            // streamingToolStripMenuItem
+            // 
+            this.streamingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startOverlayToolStripMenuItem});
+            this.streamingToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.streamingToolStripMenuItem.Name = "streamingToolStripMenuItem";
+            this.streamingToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
+            this.streamingToolStripMenuItem.Text = "Streaming";
+            // 
+            // startOverlayToolStripMenuItem
+            // 
+            this.startOverlayToolStripMenuItem.Name = "startOverlayToolStripMenuItem";
+            this.startOverlayToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.startOverlayToolStripMenuItem.Text = "Start Overlay";
+            this.startOverlayToolStripMenuItem.Click += new System.EventHandler(this.startOverlayToolStripMenuItem_Click);
+            // 
             // GUIMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1094,6 +1113,8 @@
         private System.Windows.Forms.RichTextBox teamRelianceTextBox;
         private System.Windows.Forms.ToolStripMenuItem cancelOperationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createSessionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem streamingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startOverlayToolStripMenuItem;
 
     }
 }

@@ -93,6 +93,12 @@
     <Compile Include="GUIOptions.Designer.cs">
       <DependentUpon>GUIOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUIOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIOverlay.Designer.cs">
+      <DependentUpon>GUIOverlay.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUISession.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,6 +130,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUIOptions.resx">
       <DependentUpon>GUIOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIOverlay.resx">
+      <DependentUpon>GUIOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUISession.resx">
       <DependentUpon>GUISession.cs</DependentUpon>

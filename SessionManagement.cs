@@ -11,6 +11,135 @@ using Newtonsoft;
 
 namespace PS2StatTracker
 {
+    public class kdrJson
+    {
+        public int kills,
+            actualDeaths,
+            reviveDeaths;
+    }
+
+    public struct EventLog
+    {
+        public static bool operator ==(EventLog e1, EventLog e2)
+        {
+            return (e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
+                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
+                e1.defender.name == e2.defender.name);
+        }
+        public static bool operator !=(EventLog e1, EventLog e2)
+        {
+            return !(e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
+                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
+                e1.defender.name == e2.defender.name);
+        }
+
+        public bool IsKill()
+        {
+            return !death;
+        }
+
+        public void Initialize()
+        {
+            timeStamp = "";
+            method = "";
+            methodID = "";
+            location = "";
+            headshot = false;
+            death = false;
+            suicide = false;
+            isVehicle = false;
+        }
+
+        public
+            Player attacker,
+            defender;
+
+        public
+            bool isVehicle;
+        public
+        string timeStamp,
+            method,
+            methodID,
+            location;
+
+        public
+        bool headshot,
+            death,
+            suicide;
+    };
+
+
+    public struct Weapon : ICloneable
+    {
+        public void Initialize()
+        {
+            kills = fireCount = headShots = hitsCount = lastFireCount = playTime = deaths = 0.0f;
+        }
+        public bool IsNull()
+        {
+            if (kills == 0.0f && deaths == 0.0f)
+            {
+                return true;
+            }
+            return false;
+        }
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+        public
+            string id,
+            vehicleId,
+            name;
+        public
+            float kills,
+            killsNC,
+            killsTR,
+            killsVS,
+            deaths,
+            fireCount,
+            headShots,
+            hitsCount,
+            lastFireCount,
+            playTime;
+    }
+
+    public class Player : ICloneable
+    {
+        public string name,
+            id,
+            faction;
+        public int battleRank;
+        public float battleRankPer;
+        public float totalHeadshots;
+        public kdrJson kdr;
+        public Dictionary<String,
+            Weapon> weapons;
+
+        public void CalculateHeadshots()
+        {
+            float val = 0;
+            foreach (KeyValuePair<string, Weapon> weapon in weapons)
+            {
+                val += weapon.Value.headShots;
+            }
+            totalHeadshots = val;
+        }
+        public object Clone()
+        {
+            Player outPlayer = new Player();
+            outPlayer = (Player)this.MemberwiseClone();
+            outPlayer.weapons = new Dictionary<string, Weapon>();
+            foreach (KeyValuePair<string, Weapon> element in this.weapons)
+            {
+                Weapon weapon = new Weapon();
+                weapon = (Weapon)element.Value.Clone();
+                outPlayer.weapons.Add(element.Key, weapon);
+            }
+            return outPlayer;
+        }
+    }
+
     public partial class GUIMain
     {
         public const string VEHICLE_OFFSET = "V";
@@ -64,134 +193,6 @@ namespace PS2StatTracker
             public brJson battle_rank { get; set; }
             public weaponListJson stats { get; set; }
         }
-
-        public class kdrJson
-        {
-            public int kills,
-                actualDeaths,
-                reviveDeaths;
-        }
-
-        public struct Weapon : ICloneable
-        {
-            public void Initialize()
-            {
-                kills = fireCount = headShots = hitsCount = lastFireCount = playTime = deaths = 0.0f;
-            }
-            public bool IsNull()
-            {
-                if (kills == 0.0f && deaths == 0.0f)
-                {
-                    return true;
-                }
-                return false;
-            }
-            public object Clone()
-            {
-                return this.MemberwiseClone();
-            }
-            public
-                string id,
-                vehicleId;
-            public
-                float kills,
-                killsNC,
-                killsTR,
-                killsVS,
-                deaths,
-                fireCount,
-                headShots,
-                hitsCount,
-                lastFireCount,
-                playTime;
-
-        }
-
-        public class Player : ICloneable
-        {
-            public string name,
-                id,
-                faction;
-            public int battleRank;
-            public float battleRankPer;
-            public float totalHeadshots;
-            public kdrJson kdr;
-            public Dictionary<String,
-                Weapon> weapons;
-
-            public void CalculateHeadshots()
-            {
-                float val = 0;
-                foreach (KeyValuePair<string, Weapon> weapon in weapons)
-                {
-                    val += weapon.Value.headShots;
-                }
-                totalHeadshots = val;
-            }
-            public object Clone()
-            {
-                Player outPlayer = new Player();
-                outPlayer = (Player)this.MemberwiseClone();
-                outPlayer.weapons = new Dictionary<string, Weapon>();
-                foreach (KeyValuePair<string, Weapon> element in this.weapons)
-                {
-                    Weapon weapon = new Weapon();
-                    weapon = (Weapon)element.Value.Clone();
-                    outPlayer.weapons.Add(element.Key, weapon);
-                }
-                return outPlayer;
-            }
-        }
-
-        public struct EventLog
-        {
-            public static bool operator ==(EventLog e1, EventLog e2)
-            {
-                return (e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
-                    e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
-                    e1.defender.name == e2.defender.name);
-            }
-            public static bool operator !=(EventLog e1, EventLog e2)
-            {
-                return !(e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
-                    e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
-                    e1.defender.name == e2.defender.name);
-            }
-
-            public bool IsKill()
-            {
-                return !death;
-            }
-
-            public void Initialize()
-            {
-                timeStamp = "";
-                method = "";
-                methodID = "";
-                location = "";
-                headshot = false;
-                death = false;
-                suicide = false;
-                isVehicle = false;
-            }
-
-            public
-                Player attacker,
-                defender;
-
-            public
-                bool isVehicle;
-            public
-            string timeStamp,
-                method,
-                methodID,
-                location;
-
-            public
-            bool headshot,
-                death,
-                suicide;
-        };
 
         HttpWebRequest GetWebRequest(string site)
         {
@@ -555,6 +556,8 @@ namespace PS2StatTracker
             }
 
             m_lastEventFound = true;
+
+            UpdateOverlay();
         }
 
         void GetPlayerWeapons()
@@ -576,6 +579,7 @@ namespace PS2StatTracker
             UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
             UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
             HideUpdateText();
+            UpdateOverlay();
         }
 
         void CancelOperation()
