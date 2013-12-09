@@ -145,7 +145,19 @@ namespace PS2StatTracker
         public const string VEHICLE_OFFSET = "V";
         public class eventJson
         {
-            public string attacker_character_id {get; set;}
+            public eventJson()
+            {
+                attacker_character_id = "0";
+                attacker_vehicle_id = "0";
+                character_id = "0";
+                is_critical = "0";
+                is_headshot = "0";
+                timestamp = "0";
+                table_type = "0";
+                world_id = "0";
+                zone_id = "0";
+            }
+            public string attacker_character_id { get; set; }
             public string attacker_vehicle_id {get; set;}
             public string attacker_weapon_id {get; set;}
             public string character_id {get; set;}
@@ -441,145 +453,166 @@ namespace PS2StatTracker
             this.updatingLabel.Visible = false;
         }
 
-        void GetEventStats(int numEvents = 100)
+        void GetEventStats(int numEvents = 50)
         {
-            string result = SiteToString("http://census.soe.com/get/ps2/characters_event/?character_id=" + GetUserID(this.usernameTextBox.Text) +
-                "&c:limit="+numEvents+"&type=KILL,DEATH");
-
-            Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
-            Newtonsoft.Json.Linq.JToken jToken = jObject["characters_event_list"];
-
-            // Create a list of each json object.
-            List<eventJson> jsonEvents = new List<eventJson>();
-            jsonEvents = Newtonsoft.Json.JsonConvert.DeserializeObject<List<eventJson>>(jToken.ToString());
-
-            int i = 0;
-            // Convert the json object into an event with IDs resolved.
-            foreach (eventJson jsonEvent in jsonEvents)
+            try
             {
-                // Initialize new event.
-                EventLog newEvent = new EventLog();
-                newEvent.Initialize();
+                string result = SiteToString("http://census.soe.com/get/ps2/characters_event/?character_id=" + GetUserID(this.usernameTextBox.Text) +
+                    "&c:limit="+numEvents+"&type=KILL,DEATH");
 
-                Player attacker = GetPlayer(jsonEvent.attacker_character_id);
-                Player defender = GetPlayer(jsonEvent.character_id);
+                Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
-                // Weapon IDs take priority over vehicle IDs. Weapon IDs such as breaker rocket pods
-                // also show up with vehicle IDs like Reavers. A Reaver should only count if no
-                // other weapon was used.
-                if (jsonEvent.attacker_vehicle_id != "0" && jsonEvent.attacker_weapon_id == "0")
+                if (!jObject.HasValues)
+                    return;
+
+                Newtonsoft.Json.Linq.JToken jToken = jObject["characters_event_list"];
+
+                if (!jToken.HasValues)
+                    return;
+
+                // Create a list of each json object.
+                List<eventJson> jsonEvents = new List<eventJson>();
+                jsonEvents = Newtonsoft.Json.JsonConvert.DeserializeObject<List<eventJson>>(jToken.ToString());
+
+                int i = 0;
+                // Convert the json object into an event with IDs resolved.
+                foreach (eventJson jsonEvent in jsonEvents)
                 {
-                    newEvent.methodID = jsonEvent.attacker_vehicle_id;
-                    newEvent.method = GetVehicleName(jsonEvent.attacker_vehicle_id);
-                    newEvent.isVehicle = true;
-                }
-                else
-                {
-                    newEvent.methodID = jsonEvent.attacker_weapon_id;
-                    newEvent.method = GetItemName(jsonEvent.attacker_weapon_id);
-                }
-                newEvent.headshot = Int32.Parse(jsonEvent.is_headshot) == 1 ? true : false;
-                newEvent.timeStamp = jsonEvent.timestamp;
-                newEvent.attacker = attacker;
-                newEvent.defender = defender;
-                newEvent.death = defender == m_player;
+                    // Initialize new event.
+                    EventLog newEvent = new EventLog();
+                    newEvent.Initialize();
 
-                // Check for suicide.
-                if ((attacker == m_player && defender == m_player))
-                {
-                    newEvent.death = true;
-                    newEvent.suicide = true;
-                    newEvent.method = "Suicide";
-                }
+                    Player attacker = GetPlayer(jsonEvent.attacker_character_id);
+                    Player defender = GetPlayer(jsonEvent.character_id);
 
-                // Check if the new event being added is the latest event. A full check needs to be done
-                // if the current event doesn't match. Rarely the site may first report the items in the wrong order.
-                if (newEvent == m_currentEvent)
-                    break;
-
-                // Don't add the same event. The API can sometimes report it twice.
-                if (m_eventLog.Contains(newEvent))
-                    continue;
-
-                // Determine the order in which to add the event.
-                if (m_sessionStarted)
-                {
-                    if (i < m_eventLog.Count)
-                        m_eventLog.Insert(i, newEvent);
-                    else
-                        m_eventLog.Add(newEvent);
-                }
-                else
-                    m_eventLog.Add(newEvent);
-
-                // Add session weapon stats unless this event was a death or team kill.
-                AddSessionWeapon(newEvent);
-                i++;
-            }
-
-            // Display the killboard.
-            // Only update the fields if a change in events occurred.
-            if (i > 0)
-            {
-                m_currentEvent = m_eventLog[0];
-                // Update killboard.
-                this.eventLogGridView.Rows.Clear();
-                this.eventLogGridView.Rows.Add(m_eventLog.Count);
-                i = 0;
-                foreach (EventLog eventlog in m_eventLog)
-                {
-                    string eventName = eventlog.death ? eventlog.attacker.name : eventlog.defender.name;
-
-                    this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
-                    this.eventLogGridView.Rows[i].Cells[1].Value = eventlog.method;
-                    this.eventLogGridView.Rows[i].Cells[1].Style.ForeColor = Color.Beige;
-                    if (eventlog.headshot)
-                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[2]).Value = Properties.Resources.hsImage;
-
-                    // Set row color depending on kill or death.
-                    for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++)
+                    // Weapon IDs take priority over vehicle IDs. Weapon IDs such as breaker rocket pods
+                    // also show up with vehicle IDs like Reavers. A Reaver should only count if no
+                    // other weapon was used.
+                    if (jsonEvent.attacker_vehicle_id != "0" && jsonEvent.attacker_weapon_id == "0")
                     {
-                        if (eventlog.death || eventlog.suicide) // Death.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                        else if (eventlog.defender.faction == m_player.faction) // Friendly kill.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
-                        else // Enemy kill.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;
+                        newEvent.methodID = jsonEvent.attacker_vehicle_id;
+                        newEvent.method = GetVehicleName(jsonEvent.attacker_vehicle_id);
+                        newEvent.isVehicle = true;
+                    }
+                    else
+                    {
+                        newEvent.methodID = jsonEvent.attacker_weapon_id;
+                        newEvent.method = GetItemName(jsonEvent.attacker_weapon_id);
+                    }
+                    newEvent.headshot = Int32.Parse(jsonEvent.is_headshot) == 1 ? true : false;
+                    newEvent.timeStamp = jsonEvent.timestamp;
+                    newEvent.attacker = attacker;
+                    newEvent.defender = defender;
+                    newEvent.death = defender == m_player;
+
+                    // Check for suicide.
+                    if ((attacker == m_player && defender == m_player))
+                    {
+                        newEvent.death = true;
+                        newEvent.suicide = true;
+                        newEvent.method = "Suicide";
                     }
 
+                    // Check if the new event being added is the latest event. A full check needs to be done
+                    // if the current event doesn't match. Rarely the site may first report the items in the wrong order.
+                    if (newEvent == m_currentEvent)
+                        break;
+
+                    // Don't add the same event. The API can sometimes report it twice.
+                    if (m_eventLog.Contains(newEvent))
+                        continue;
+
+                    // Determine the order in which to add the event.
+                    if (m_sessionStarted)
+                    {
+                        if (i < m_eventLog.Count)
+                            m_eventLog.Insert(i, newEvent);
+                        else
+                            m_eventLog.Add(newEvent);
+                    }
+                    else
+                        m_eventLog.Add(newEvent);
+
+                    // Add session weapon stats unless this event was a death or team kill.
+                    AddSessionWeapon(newEvent);
                     i++;
                 }
-                this.eventLogGridView.ClearSelection();
 
-                UpdateEventTextFields();
-                UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
+                // Display the killboard.
+                // Only update the fields if a change in events occurred.
+                if (i > 0)
+                {
+                    m_currentEvent = m_eventLog[0];
+                    // Update killboard.
+                    this.eventLogGridView.Rows.Clear();
+                    this.eventLogGridView.Rows.Add(m_eventLog.Count);
+                    i = 0;
+                    foreach (EventLog eventlog in m_eventLog)
+                    {
+                        string eventName = eventlog.death ? eventlog.attacker.name : eventlog.defender.name;
+
+                        this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
+                        this.eventLogGridView.Rows[i].Cells[1].Value = eventlog.method;
+                        this.eventLogGridView.Rows[i].Cells[1].Style.ForeColor = Color.Beige;
+                        if (eventlog.headshot)
+                            ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[2]).Value = Properties.Resources.hsImage;
+
+                        // Set row color depending on kill or death.
+                        for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++)
+                        {
+                            if (eventlog.death || eventlog.suicide) // Death.
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
+                            else if (eventlog.defender.faction == m_player.faction) // Friendly kill.
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
+                            else // Enemy kill.
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;
+                        }
+
+                        i++;
+                    }
+                    this.eventLogGridView.ClearSelection();
+
+                    UpdateEventTextFields();
+                    UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
+                }
+
+                m_lastEventFound = true;
+
+                UpdateOverlay();
             }
+            catch
+            {
 
-            m_lastEventFound = true;
-
-            UpdateOverlay();
+            }
         }
 
         void GetPlayerWeapons()
         {
             ShowUpdateText("Updating Weapons...");
-            m_player = GetPlayer(m_player.id, true, true);
-            // Update stats of the session weapon other than headshots/kills.
-            foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons)
+            try
             {
-                string id = GetBestWeaponID(currentWep.Value);
-                if (m_sessionWeapons.ContainsKey(id))
+                m_player = GetPlayer(m_player.id, true, true);
+                // Update stats of the session weapon other than headshots/kills.
+                foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons)
                 {
-                    if (m_startPlayer.weapons.ContainsKey(id))
-                        AddSessionWeapon(currentWep.Value, m_startPlayer.weapons[id], true);
-                    else
-                        m_startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
+                    string id = GetBestWeaponID(currentWep.Value);
+                    if (m_sessionWeapons.ContainsKey(id))
+                    {
+                        if (m_startPlayer.weapons.ContainsKey(id))
+                            AddSessionWeapon(currentWep.Value, m_startPlayer.weapons[id], true);
+                        else
+                            m_startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
+                    }
                 }
+                UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
+                UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
+                HideUpdateText();
+                UpdateOverlay();
             }
-            UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
-            UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
-            HideUpdateText();
-            UpdateOverlay();
+            catch
+            {
+
+            }
         }
 
         void CancelOperation()

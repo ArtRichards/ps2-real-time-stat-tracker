@@ -90,6 +90,8 @@
             this.updateWeaponsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.streamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,8 +110,6 @@
             this.usernameTextBox = new System.Windows.Forms.ComboBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.streamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.startOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.sessionWeaponsTab.SuspendLayout();
@@ -541,7 +541,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 6000;
+            this.timer1.Interval = 5000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // startSessionButton
@@ -737,7 +737,7 @@
             this.exitToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.exitToolStripMenuItem.ForeColor = System.Drawing.SystemColors.WindowText;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -781,6 +781,22 @@
             this.cancelOperationToolStripMenuItem.Text = "Cancel Operation";
             this.cancelOperationToolStripMenuItem.Visible = false;
             this.cancelOperationToolStripMenuItem.Click += new System.EventHandler(this.cancelOperationToolStripMenuItem_Click);
+            // 
+            // streamingToolStripMenuItem
+            // 
+            this.streamingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startOverlayToolStripMenuItem});
+            this.streamingToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.streamingToolStripMenuItem.Name = "streamingToolStripMenuItem";
+            this.streamingToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
+            this.streamingToolStripMenuItem.Text = "Streaming";
+            // 
+            // startOverlayToolStripMenuItem
+            // 
+            this.startOverlayToolStripMenuItem.Name = "startOverlayToolStripMenuItem";
+            this.startOverlayToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.startOverlayToolStripMenuItem.Text = "Start Overlay";
+            this.startOverlayToolStripMenuItem.Click += new System.EventHandler(this.startOverlayToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -847,19 +863,19 @@
             // 
             this.updateToolStripMenuItem.Enabled = false;
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.updateToolStripMenuItem.Text = "Update";
             this.updateToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(113, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -968,22 +984,6 @@
             this.versionLabel.Size = new System.Drawing.Size(164, 14);
             this.versionLabel.TabIndex = 34;
             this.versionLabel.Text = "Real Time Stat Tracker V 0.0.0";
-            // 
-            // streamingToolStripMenuItem
-            // 
-            this.streamingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startOverlayToolStripMenuItem});
-            this.streamingToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.streamingToolStripMenuItem.Name = "streamingToolStripMenuItem";
-            this.streamingToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
-            this.streamingToolStripMenuItem.Text = "Streaming";
-            // 
-            // startOverlayToolStripMenuItem
-            // 
-            this.startOverlayToolStripMenuItem.Name = "startOverlayToolStripMenuItem";
-            this.startOverlayToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.startOverlayToolStripMenuItem.Text = "Start Overlay";
-            this.startOverlayToolStripMenuItem.Click += new System.EventHandler(this.startOverlayToolStripMenuItem_Click);
             // 
             // GUIMain
             // 

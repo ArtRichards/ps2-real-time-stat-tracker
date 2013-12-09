@@ -13,7 +13,7 @@ namespace PS2StatTracker
     public partial class GUIMain : Form
     {
         // Update this with new versions.
-        string VERSION_NUM = "0.5.1";
+        string VERSION_NUM = "0.5.2";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         List<EventLog> m_eventLog;
         Dictionary<string,

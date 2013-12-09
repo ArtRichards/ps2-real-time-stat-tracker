@@ -480,7 +480,7 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Gray;
-            this.ClientSize = new System.Drawing.Size(213, 292);
+            this.ClientSize = new System.Drawing.Size(213, 282);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.eventLogGridView);
             this.Controls.Add(this.hsrNum);
@@ -494,6 +494,7 @@
             this.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Green;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(229, 320);
             this.MinimumSize = new System.Drawing.Size(229, 320);
             this.Name = "GUIOverlay";
             this.Text = "Streaming Overlay";

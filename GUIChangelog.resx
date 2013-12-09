@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>V 0.5.1
+    <value>V 0.5.2
+Crash fix and some improved error handling around the API.
+Killboard refresh speed increased to 5 seconds.
+
+V 0.5.1
 Added streaming overlay.
 Road kills now show up for the session.
 
