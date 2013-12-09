@@ -50,23 +50,19 @@
     <ApplicationIcon>recursion.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\HtmlAgilityPack.1.4.6\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="log4net">
+      <HintPath>.\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Newtonsoft.Json.dll</HintPath>
       <HintPath>..\Json50r8\Bin\Net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Skybound.Gecko">
-      <HintPath>..\Skybound.GeckoFX.src.v1.9.1.0\bin\Skybound.Gecko.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -163,10 +159,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="db_Headshot1.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="avatar.png" />
+    <None Include="Properties\Resources\defaultlog4netconfig.xml" />
+    <None Include="Properties\Resources\avatar.png" />
+    <None Include="Properties\Resources\hsImage.jpg" />
     <Content Include="recursion.ico" />
   </ItemGroup>
   <ItemGroup>

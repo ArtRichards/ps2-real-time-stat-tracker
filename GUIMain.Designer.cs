@@ -104,7 +104,6 @@
             this.playerCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.methodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.hsCol = new System.Windows.Forms.DataGridViewImageColumn();
-            this.resizePanelLR = new System.Windows.Forms.Panel();
             this.usernameTextBox = new System.Windows.Forms.ComboBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
@@ -930,16 +929,6 @@
             this.hsCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.hsCol.Width = 80;
             // 
-            // resizePanelLR
-            // 
-            this.resizePanelLR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.resizePanelLR.BackColor = System.Drawing.Color.Transparent;
-            this.resizePanelLR.Cursor = System.Windows.Forms.Cursors.SizeAll;
-            this.resizePanelLR.Location = new System.Drawing.Point(930, 357);
-            this.resizePanelLR.Name = "resizePanelLR";
-            this.resizePanelLR.Size = new System.Drawing.Size(18, 16);
-            this.resizePanelLR.TabIndex = 32;
-            // 
             // usernameTextBox
             // 
             this.usernameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -987,7 +976,6 @@
             this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.resizePanelLR);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1066,7 +1054,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn playerCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn methodCol;
         private System.Windows.Forms.DataGridViewImageColumn hsCol;
-        private System.Windows.Forms.Panel resizePanelLR;
         private System.Windows.Forms.ComboBox usernameTextBox;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.ToolStripMenuItem sessionToolStripMenuItem;

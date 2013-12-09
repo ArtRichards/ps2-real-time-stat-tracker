@@ -28,14 +28,18 @@ namespace PS2StatTracker
             this.versionLabel.Text = version;
         }
 
-        private void closeButton_Click(object sender, EventArgs e)
+        private void closeButton_Click(object sender, EventArgs evt)
         {
             this.Close();
         }
 
-        private void websiteLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void websiteLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs evt)
         {
-            Process.Start("http://recursion.recursion.tk/");
+            try {
+                Process.Start("http://recursion.recursion.tk/");
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
         }
     }
 }

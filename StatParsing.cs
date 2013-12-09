@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
-using HtmlAgilityPack;
-using Skybound.Gecko;
 
 namespace PS2StatTracker
 {

@@ -4,14 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PS2StatTracker
 {
-    public partial class GUIMain : Form
-    {
+    public partial class GUIMain : Form {
         // Update this with new versions.
         string VERSION_NUM = "0.4.X";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
@@ -34,14 +34,11 @@ namespace PS2StatTracker
         bool m_lastEventFound;
         bool m_sessionStarted;
         bool m_initialized;
-        bool m_dragging;
-        bool m_resizing;
         Color m_highColor;
         Color m_lowColor;
-        Point m_dragCursorPoint;
-        Point m_dragFormPoint;
-        public GUIMain()
-        {
+        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public GUIMain() {
             InitializeComponent();
             // Load version.
             this.versionLabel.Text = PROGRAM_TITLE + " V " + VERSION_NUM;
@@ -58,8 +55,6 @@ namespace PS2StatTracker
             m_sessionStarted = false;
             m_lastEventFound = false;
             m_initialized = false;
-            m_dragging = false;
-            m_resizing = false;
             m_countEvents = false;
             m_activeSeconds = 0;
             m_timeout = 0;
@@ -70,211 +65,192 @@ namespace PS2StatTracker
             ((DataGridViewImageColumn)this.eventLogGridView.Columns[2]).DefaultCellStyle.NullValue = null;
 
             // Handle mouse movement and resizing on borderless window.
-            this.resizePanelLR.MouseDown += OnMouseDownResize;
-            this.resizePanelLR.MouseMove += OnMouseMove;
-            this.resizePanelLR.MouseUp += OnMouseUp;
-            this.resizePanelLR.MouseLeave += OnMouseLeave;
-            MouseMove += OnMouseMove;
-            MouseDown += OnMouseDown;
-            MouseUp += OnMouseUp;
-            MouseLeave += OnMouseLeave;
-            foreach (Control ctrl in this.Controls)
-            {
-                if (ctrl.GetType() == typeof(Label))
-                {
-                    ctrl.MouseMove += OnMouseMove;
-                    ctrl.MouseDown += OnMouseDown;
-                    ctrl.MouseUp += OnMouseUp;
-                    ctrl.MouseLeave += OnMouseLeave;
-                }
-            }
-
-            this.menuStrip1.MouseMove += OnMouseMove;
             this.menuStrip1.MouseDown += OnMouseDown;
-            this.menuStrip1.MouseUp += OnMouseUp;
-            this.menuStrip1.MouseLeave += OnMouseLeave;
-
-            this.panel1.MouseMove += OnMouseMove;
-            this.panel1.MouseDown += OnMouseDown;
-            this.panel1.MouseUp += OnMouseUp;
-            this.panel1.MouseLeave += OnMouseLeave;
-
-            foreach (Control ctrl in this.panel1.Controls)
-            {
-                if (ctrl.GetType() == typeof(Label))
-                {
-                    ctrl.MouseMove += OnMouseMove;
-                    ctrl.MouseDown += OnMouseDown;
-                    ctrl.MouseUp += OnMouseUp;
-                    ctrl.MouseLeave += OnMouseLeave;
-                }
-            }
-            this.panel2.MouseMove += OnMouseMove;
-            this.panel2.MouseDown += OnMouseDown;
-            this.panel2.MouseUp += OnMouseUp;
-            this.panel2.MouseLeave += OnMouseLeave;
-            foreach (Control ctrl in this.panel2.Controls)
-            {
-                if (ctrl.GetType() == typeof(Label))
-                {
-                    ctrl.MouseMove += OnMouseMove;
-                    ctrl.MouseDown += OnMouseDown;
-                    ctrl.MouseUp += OnMouseUp;
-                    ctrl.MouseLeave += OnMouseLeave;
-                }
-            }
 
             m_currentEvent.Initialize();
         }
 
-        private void ClearUsers()
-        {
+        private void ClearUsers() {
             usernameTextBox.Items.Clear();
+        }
+
+        //////////////////////////////////
+        // Enables borderless dragging
+        // For details: http://stackoverflow.com/questions/1592876
+        //////////////////////////////////
+        private const int WM_NCLBUTTONDOWN = 0xA1;
+        private const int HT_CAPTION = 0x2;
+        [DllImportAttribute("user32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImportAttribute("user32.dll")]
+        private static extern bool ReleaseCapture();
+
+        private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs evt) {
+            try {
+                if (evt.Button == MouseButtons.Left) {
+                    ReleaseCapture();
+                    SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                }
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        //////////////////////////////////
+        // Enables borderless resizing
+        // For details: http://stackoverflow.com/questions/1535826
+        //////////////////////////////////
+        protected override void WndProc(ref Message m) {
+            const int wmNcHitTest = 0x84;
+            const int htBottomLeft = 16;
+            const int htBottomRight = 17;
+            if (m.Msg == wmNcHitTest) {
+                int x = (int)(m.LParam.ToInt64() & 0xFFFF);
+                int y = (int)((m.LParam.ToInt64() & 0xFFFF0000) >> 16);
+                Point pt = PointToClient(new Point(x, y));
+                Size clientSize = ClientSize;
+                if (pt.X >= clientSize.Width - 16 && pt.Y >= clientSize.Height - 16 && clientSize.Height >= 16) {
+                    m.Result = (IntPtr)(IsMirrored ? htBottomLeft : htBottomRight);
+                    return;
+                }
+            }
+            base.WndProc(ref m);
         }
 
         //////////////////////////////////
         // Button clicks.
         //////////////////////////////////
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ResumeSession();
-        }
-
-        private void startSessionButton_Click(object sender, EventArgs e)
-        {
-            if(!m_sessionStarted)
-                Initialize();
-            StartSession();
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            m_activeSeconds += (timer1.Interval / 1000);
-
-            GetEventStats();
-
-            // Update weapons every 30 minutes. Currently hardcoded. May eventually add sliders under options.
-            // Also may eventually add options.
-            if(m_activeSeconds % 1800 == 0)
-                GetPlayerWeapons();
-        }
-
-        //////////////////////////////////
-        // Mouse handlers
-        //////////////////////////////////
-        private void OnMouseDown(object sender, MouseEventArgs e)
-        {
-            m_dragging = true;
-            m_resizing = false;
-            m_dragCursorPoint = Cursor.Position;
-            m_dragFormPoint = this.Location;
-        }
-
-        private void OnMouseDownResize(object sender, MouseEventArgs e)
-        {
-            m_dragging = false;
-            m_resizing = true;
-            m_dragCursorPoint = Cursor.Position;
-        }
-
-        private void OnMouseMove(object sender, MouseEventArgs e)
-        {
-            if (m_dragging)
-            {
-                Point dif = Point.Subtract(Cursor.Position, new Size(m_dragCursorPoint));
-                this.Location = Point.Add(m_dragFormPoint, new Size(dif));
-            }
-
-            if (m_resizing)
-            {
-                Point dif = Point.Subtract(Cursor.Position, new Size(m_dragCursorPoint));
-                this.Size += new Size(dif);
-                m_dragCursorPoint = Cursor.Position;
+        private void button1_Click(object sender, EventArgs evt) {
+            try {
+                ResumeSession();
+            } catch (Exception e) {
+                Program.HandleException(e);
             }
         }
 
-        private void OnMouseLeave(object sender, System.EventArgs e)
-        {
-            m_dragging = false;
-            m_resizing = false;
+        private void startSessionButton_Click(object sender, EventArgs evt) {
+            try {
+                if (!m_sessionStarted)
+                    Initialize();
+                StartSession();
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
         }
 
-        private void OnMouseUp(object sender, MouseEventArgs e)
-        {
-            m_dragging = false;
-            m_resizing = false;
+        private void timer1_Tick(object sender, EventArgs evt) {
+            try {
+                m_activeSeconds += (timer1.Interval / 1000);
+
+                GetEventStats();
+
+                // Update weapons every 30 minutes. Currently hardcoded. May eventually add sliders under options.
+                // Also may eventually add options.
+                if (m_activeSeconds % 1800 == 0)
+                    GetPlayerWeapons();
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
         }
 
         //////////////////////////////////
         // Tool strip button clicks.
         //////////////////////////////////
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+            log.Info("Program quitting");
             Application.Exit();
         }
 
-        private void updateEventsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if(m_sessionStarted)
-                GetEventStats();
-        }
-
-        private void updateWeaponsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (m_sessionStarted)
-                GetPlayerWeapons();
-        }
-
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GUIOptions config = new GUIOptions();
-            config.ShowDialog(this);
-        }
-
-        private void clearUsersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ClearUsers();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GUIAbout about = new GUIAbout();
-            about.SetTitle(PROGRAM_TITLE);
-            about.SetVersion("Version " + VERSION_NUM);
-            about.ShowDialog(this);
-        }
-
-        private void positiveColorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.colorDialog1.AllowFullOpen = true;
-            if(this.colorDialog1.ShowDialog(this) == DialogResult.OK)
-                m_highColor = this.colorDialog1.Color;
-        }
-
-        private void negativeColorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.colorDialog1.AllowFullOpen = true;
-            if (this.colorDialog1.ShowDialog(this) == DialogResult.OK)
-            m_lowColor = this.colorDialog1.Color;
-        }
-
-        private void cancelOperationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CancelOperation();
-        }
-
-        private void createSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GUISession session = new GUISession();
-            session.ShowDialog(this);
-            if (session.confirmed == true)
-            {
-                m_countEvents = session.countStatsCheckBox.Checked;
-                Initialize((int)session.pastEventsNumber.Value);
+        private void updateEventsToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                if (m_sessionStarted)
+                    GetEventStats();
+            } catch (Exception e) {
+                Program.HandleException(e);
             }
-            ManageSessionButtons();
+        }
+
+        private void updateWeaponsToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                if (m_sessionStarted)
+                    GetPlayerWeapons();
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                GUIOptions config = new GUIOptions();
+                config.ShowDialog(this);
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        private void clearUsersToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                ClearUsers();
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                using (GUIAbout about = new GUIAbout()) {
+                    about.SetTitle(PROGRAM_TITLE);
+                    about.SetVersion("Version " + VERSION_NUM);
+                    about.ShowDialog(this);
+                }
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        private void positiveColorsToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                this.colorDialog1.AllowFullOpen = true;
+                if (this.colorDialog1.ShowDialog(this) == DialogResult.OK)
+                    m_highColor = this.colorDialog1.Color;
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        private void negativeColorsToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                this.colorDialog1.AllowFullOpen = true;
+                if (this.colorDialog1.ShowDialog(this) == DialogResult.OK)
+                    m_lowColor = this.colorDialog1.Color;
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        private void cancelOperationToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                CancelOperation();
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
+        }
+
+        private void createSessionToolStripMenuItem_Click(object sender, EventArgs evt) {
+            try {
+                using (GUISession session = new GUISession()) {
+                    session.ShowDialog(this);
+                    if (session.confirmed == true) {
+                        m_countEvents = session.countStatsCheckBox.Checked;
+                        Initialize((int)session.pastEventsNumber.Value);
+                    }
+                }
+                ManageSessionButtons();
+            } catch (Exception e) {
+                Program.HandleException(e);
+            }
         }
     }
 }
