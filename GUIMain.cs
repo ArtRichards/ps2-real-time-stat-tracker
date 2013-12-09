@@ -13,7 +13,7 @@ namespace PS2StatTracker
 {
     public partial class GUIMain : Form {
         // Update this with new versions.
-        string VERSION_NUM = "0.4.X";
+        string VERSION_NUM = "0.5.2";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         List<EventLog> m_eventLog;
         Dictionary<string,
@@ -23,6 +23,7 @@ namespace PS2StatTracker
         Dictionary<string, Player>
             m_playerCache;                  // Cache of player IDs to their struct. 
         EventLog m_currentEvent;
+        GUIOverlay m_overlay;
         Player m_player;
         Player m_startPlayer;
         string m_userID;
@@ -40,6 +41,7 @@ namespace PS2StatTracker
 
         public GUIMain() {
             InitializeComponent();
+            m_overlay = null;
             // Load version.
             this.versionLabel.Text = PROGRAM_TITLE + " V " + VERSION_NUM;
             m_highColor = Color.FromArgb(0, 192, 0);
@@ -250,6 +252,32 @@ namespace PS2StatTracker
                 ManageSessionButtons();
             } catch (Exception e) {
                 Program.HandleException(e);
+            }
+        }
+
+        private void startOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_overlay == null)
+            {
+                m_overlay = new GUIOverlay();
+                m_overlay.FormClosed += new FormClosedEventHandler(overlay_FormClosed);
+                m_overlay.Show(this);
+            }
+        }
+
+        private void overlay_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            m_overlay.Dispose();
+            m_overlay = null;
+        }
+
+        // Called from UpdateEvents and UpdateWeapons.
+        private void UpdateOverlay()
+        {
+            if (m_overlay != null && m_player != null && m_sessionStarted)
+            {
+                m_overlay.SetStats(m_player, this.killsTextBox.Text, this.deathsTextBox.Text, this.kdrTextBox.Text,
+                    this.hsTextBox.Text, this.eventLogGridView, m_sessionWeapons, m_eventLog);
             }
         }
     }

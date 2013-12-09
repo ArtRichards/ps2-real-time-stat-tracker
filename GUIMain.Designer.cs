@@ -90,6 +90,8 @@
             this.updateWeaponsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cancelOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.streamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -538,7 +540,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 6000;
+            this.timer1.Interval = 5000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // startSessionButton
@@ -709,6 +711,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.sessionToolStripMenuItem,
+            this.streamingToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
@@ -775,7 +778,24 @@
             this.cancelOperationToolStripMenuItem.Name = "cancelOperationToolStripMenuItem";
             this.cancelOperationToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.cancelOperationToolStripMenuItem.Text = "Cancel Operation";
+            this.cancelOperationToolStripMenuItem.Visible = false;
             this.cancelOperationToolStripMenuItem.Click += new System.EventHandler(this.cancelOperationToolStripMenuItem_Click);
+            // 
+            // streamingToolStripMenuItem
+            // 
+            this.streamingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startOverlayToolStripMenuItem});
+            this.streamingToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.streamingToolStripMenuItem.Name = "streamingToolStripMenuItem";
+            this.streamingToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
+            this.streamingToolStripMenuItem.Text = "Streaming";
+            // 
+            // startOverlayToolStripMenuItem
+            // 
+            this.startOverlayToolStripMenuItem.Name = "startOverlayToolStripMenuItem";
+            this.startOverlayToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.startOverlayToolStripMenuItem.Text = "Start Overlay";
+            this.startOverlayToolStripMenuItem.Click += new System.EventHandler(this.startOverlayToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -1080,6 +1100,8 @@
         private System.Windows.Forms.RichTextBox teamRelianceTextBox;
         private System.Windows.Forms.ToolStripMenuItem cancelOperationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createSessionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem streamingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startOverlayToolStripMenuItem;
 
     }
 }

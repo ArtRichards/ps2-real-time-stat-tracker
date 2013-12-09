@@ -34,6 +34,7 @@
             this.closeButton = new System.Windows.Forms.Button();
             this.developerLabel = new System.Windows.Forms.Label();
             this.websiteLabel = new System.Windows.Forms.LinkLabel();
+            this.changelogButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // titleLabel
@@ -67,9 +68,9 @@
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.closeButton.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.closeButton.ForeColor = System.Drawing.Color.Snow;
-            this.closeButton.Location = new System.Drawing.Point(162, 173);
+            this.closeButton.Location = new System.Drawing.Point(157, 173);
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(52, 23);
+            this.closeButton.Size = new System.Drawing.Size(57, 23);
             this.closeButton.TabIndex = 2;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = false;
@@ -100,6 +101,22 @@
             this.websiteLabel.Text = "Website";
             this.websiteLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.websiteLabel_LinkClicked);
             // 
+            // changelogButton
+            // 
+            this.changelogButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.changelogButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.changelogButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.changelogButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.changelogButton.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.changelogButton.ForeColor = System.Drawing.Color.Snow;
+            this.changelogButton.Location = new System.Drawing.Point(157, 31);
+            this.changelogButton.Name = "changelogButton";
+            this.changelogButton.Size = new System.Drawing.Size(57, 23);
+            this.changelogButton.TabIndex = 5;
+            this.changelogButton.Text = "Changes";
+            this.changelogButton.UseVisualStyleBackColor = false;
+            this.changelogButton.Click += new System.EventHandler(this.changelogButton_Click);
+            // 
             // GUIAbout
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -107,6 +124,7 @@
             this.BackgroundImage = global::PS2StatTracker.Properties.Resources.avatar;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(226, 208);
+            this.Controls.Add(this.changelogButton);
             this.Controls.Add(this.websiteLabel);
             this.Controls.Add(this.developerLabel);
             this.Controls.Add(this.titleLabel);
@@ -130,5 +148,6 @@
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Label developerLabel;
         private System.Windows.Forms.LinkLabel websiteLabel;
+        private System.Windows.Forms.Button changelogButton;
     }
 }

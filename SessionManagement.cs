@@ -11,11 +11,153 @@ using Newtonsoft;
 
 namespace PS2StatTracker
 {
+    public class kdrJson
+    {
+        public int kills,
+            actualDeaths,
+            reviveDeaths;
+    }
+
+    public struct EventLog
+    {
+        public static bool operator ==(EventLog e1, EventLog e2)
+        {
+            return (e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
+                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
+                e1.defender.name == e2.defender.name);
+        }
+        public static bool operator !=(EventLog e1, EventLog e2)
+        {
+            return !(e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
+                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
+                e1.defender.name == e2.defender.name);
+        }
+
+        public bool IsKill()
+        {
+            return !death;
+        }
+
+        public void Initialize()
+        {
+            timeStamp = "";
+            method = "";
+            methodID = "";
+            location = "";
+            headshot = false;
+            death = false;
+            suicide = false;
+            isVehicle = false;
+        }
+
+        public
+            Player attacker,
+            defender;
+
+        public
+            bool isVehicle;
+        public
+        string timeStamp,
+            method,
+            methodID,
+            location;
+
+        public
+        bool headshot,
+            death,
+            suicide;
+    };
+
+
+    public struct Weapon : ICloneable
+    {
+        public void Initialize()
+        {
+            kills = fireCount = headShots = hitsCount = lastFireCount = playTime = deaths = 0.0f;
+        }
+        public bool IsNull()
+        {
+            if (kills == 0.0f && deaths == 0.0f)
+            {
+                return true;
+            }
+            return false;
+        }
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+        public
+            string id,
+            vehicleId,
+            name;
+        public
+            float kills,
+            killsNC,
+            killsTR,
+            killsVS,
+            deaths,
+            fireCount,
+            headShots,
+            hitsCount,
+            lastFireCount,
+            playTime;
+    }
+
+    public class Player : ICloneable
+    {
+        public string name,
+            id,
+            faction;
+        public int battleRank;
+        public float battleRankPer;
+        public float totalHeadshots;
+        public kdrJson kdr;
+        public Dictionary<String,
+            Weapon> weapons;
+
+        public void CalculateHeadshots()
+        {
+            float val = 0;
+            foreach (KeyValuePair<string, Weapon> weapon in weapons)
+            {
+                val += weapon.Value.headShots;
+            }
+            totalHeadshots = val;
+        }
+        public object Clone()
+        {
+            Player outPlayer = new Player();
+            outPlayer = (Player)this.MemberwiseClone();
+            outPlayer.weapons = new Dictionary<string, Weapon>();
+            foreach (KeyValuePair<string, Weapon> element in this.weapons)
+            {
+                Weapon weapon = new Weapon();
+                weapon = (Weapon)element.Value.Clone();
+                outPlayer.weapons.Add(element.Key, weapon);
+            }
+            return outPlayer;
+        }
+    }
+
     public partial class GUIMain
     {
+        public const string VEHICLE_OFFSET = "V";
         public class eventJson
         {
-            public string attacker_character_id {get; set;}
+            public eventJson()
+            {
+                attacker_character_id = "0";
+                attacker_vehicle_id = "0";
+                character_id = "0";
+                is_critical = "0";
+                is_headshot = "0";
+                timestamp = "0";
+                table_type = "0";
+                world_id = "0";
+                zone_id = "0";
+            }
+            public string attacker_character_id { get; set; }
             public string attacker_vehicle_id {get; set;}
             public string attacker_weapon_id {get; set;}
             public string character_id {get; set;}
@@ -63,117 +205,6 @@ namespace PS2StatTracker
             public brJson battle_rank { get; set; }
             public weaponListJson stats { get; set; }
         }
-
-        public class kdrJson
-        {
-            public int kills,
-                actualDeaths,
-                reviveDeaths;
-        }
-
-        public struct Weapon
-        {
-            public void Initialize()
-            {
-                kills = fireCount = headShots = hitsCount = lastFireCount = playTime = deaths = 0.0f;
-            }
-            public bool IsNull()
-            {
-                if (kills == 0.0f && deaths == 0.0f)
-                {
-                    return true;
-                }
-                return false;
-            }
-            public
-                string id;
-            public
-                float kills,
-                killsNC,
-                killsTR,
-                killsVS,
-                deaths,
-                fireCount,
-                headShots,
-                hitsCount,
-                lastFireCount,
-                playTime;
-
-        }
-
-        public class Player : ICloneable
-        {
-            public string name,
-                id,
-                faction;
-            public int battleRank;
-            public float battleRankPer;
-            public float totalHeadshots;
-            public kdrJson kdr;
-            public Dictionary<String,
-                Weapon> weapons;
-
-            public void CalculateHeadshots()
-            {
-                float val = 0;
-                foreach (KeyValuePair<string, Weapon> weapon in weapons)
-                {
-                    val += weapon.Value.headShots;
-                }
-                totalHeadshots = val;
-            }
-            public object Clone()
-            {
-                return this.MemberwiseClone();
-            }
-        }
-
-        public struct EventLog
-        {
-            public static bool operator ==(EventLog e1, EventLog e2)
-            {
-                return (e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
-                    e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
-                    e1.defender.name == e2.defender.name);
-            }
-            public static bool operator !=(EventLog e1, EventLog e2)
-            {
-                return !(e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
-                    e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
-                    e1.defender.name == e2.defender.name);
-            }
-
-            public bool IsKill()
-            {
-                return !death;
-            }
-
-            public void Initialize()
-            {
-                timeStamp = "";
-                method = "";
-                methodID = "";
-                location = "";
-                headshot = false;
-                death = false;
-                suicide = false;
-            }
-
-            public
-                Player attacker,
-                defender;
-
-            public
-            string timeStamp,
-                method,
-                methodID,
-                location;
-
-            public
-            bool headshot,
-                death,
-                suicide;
-        };
 
         HttpWebRequest GetWebRequest(string site)
         {
@@ -247,9 +278,12 @@ namespace PS2StatTracker
                         currentWep.deaths = float.Parse(jweapon.value);
 
                     currentWep.id = jweapon.item_id;
+                    currentWep.vehicleId = jweapon.vehicle_id;
 
                     if (!currentWep.IsNull())
-                        player.weapons[jweapon.item_id] = currentWep;
+                    {
+                        player.weapons[GetBestWeaponID(currentWep)] = currentWep;
+                    }
                 }
 
                 // Update faction specific stats.
@@ -271,9 +305,12 @@ namespace PS2StatTracker
                     }
 
                     currentWep.id = jweapon.item_id;
+                    currentWep.vehicleId = jweapon.vehicle_id;
 
                     if (!currentWep.IsNull())
-                        player.weapons[jweapon.item_id] = currentWep;
+                    {
+                        player.weapons[GetBestWeaponID(currentWep)] = currentWep;
+                    }
                 }
 
                 player.CalculateHeadshots();
@@ -287,20 +324,60 @@ namespace PS2StatTracker
 
         string GetItemName(string id)
         {
+            string useId = id;
+
+            if (useId.Contains(VEHICLE_OFFSET))
+            {
+                return GetVehicleName(useId);
+            }
+
             // Check local cache.
             if (m_itemCache.ContainsKey(id))
                 return m_itemCache[id];
 
-            string result = SiteToString("http://census.soe.com/get/ps2:v2/item/?item_id=" + id +
+            string result = SiteToString("http://census.soe.com/get/ps2:v2/item/?item_id=" + useId +
                 "&c:show=name.en");
 
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
             if (jObject["item_list"].HasValues)
             {
-                string name = jObject["item_list"][0]["name"]["en"].ToString();
-                // Add the object to the local cache.
-                m_itemCache[id] = name;
-                return name;
+                if (jObject["item_list"][0].HasValues && jObject["item_list"][0]["name"].HasValues)
+                {
+                    string name = jObject["item_list"][0]["name"]["en"].ToString();
+                    // Add the object to the local cache.
+                    m_itemCache[id] = name;
+                    return name;
+                }
+            }
+            return "Unknown";
+        }
+
+        string GetVehicleName(string id)
+        {
+            // Check local cache.
+            if (id != null)
+            {
+                if (m_itemCache.ContainsKey(id))
+                    return m_itemCache[id];
+
+                string useId = id;
+
+                if (useId.Contains(VEHICLE_OFFSET))
+                {
+                    useId = useId.Remove(0, 1);
+                }
+
+                string result = SiteToString("http://census.soe.com/get/ps2:v2/vehicle/?vehicle_id=" + useId +
+                    "&c:show=name.en");
+
+                Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
+                if (jObject["vehicle_list"].HasValues)
+                {
+                    string name = jObject["vehicle_list"][0]["name"]["en"].ToString();
+                    // Add the object to the local cache.
+                    m_itemCache[VEHICLE_OFFSET + useId] = name;
+                    return name;
+                }
             }
             return "Unknown";
         }
@@ -369,8 +446,6 @@ namespace PS2StatTracker
             this.updatingLabel.Text = text;
             this.updatingLabel.Visible = true;
             this.Refresh();
-            //m_dragging = false;
-            //m_resizing = false;
         }
 
         void HideUpdateText()
@@ -378,118 +453,166 @@ namespace PS2StatTracker
             this.updatingLabel.Visible = false;
         }
 
-        void GetEventStats(int numEvents = 100)
+        void GetEventStats(int numEvents = 50)
         {
-            //ShowUpdateText("Updating Events...");
-
-            string result = SiteToString("http://census.soe.com/get/ps2/characters_event/?character_id=" + GetUserID(this.usernameTextBox.Text) +
-                "&c:limit="+numEvents+"&type=KILL,DEATH");
-
-            Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
-            Newtonsoft.Json.Linq.JToken jToken = jObject["characters_event_list"];
-
-            // Create a list of each json object.
-            List<eventJson> jsonEvents = new List<eventJson>();
-            jsonEvents = Newtonsoft.Json.JsonConvert.DeserializeObject<List<eventJson>>(jToken.ToString());
-
-            int i = 0;
-            // Convert the json object into an event with IDs resolved.
-            foreach (eventJson jsonEvent in jsonEvents)
+            try
             {
-                // Initialize new event.
-                EventLog newEvent = new EventLog();
-                newEvent.Initialize();
+                string result = SiteToString("http://census.soe.com/get/ps2/characters_event/?character_id=" + GetUserID(this.usernameTextBox.Text) +
+                    "&c:limit="+numEvents+"&type=KILL,DEATH");
 
-                Player attacker = GetPlayer(jsonEvent.attacker_character_id);
-                Player defender = GetPlayer(jsonEvent.character_id);
-                newEvent.method = GetItemName(jsonEvent.attacker_weapon_id);
-                newEvent.headshot = Int32.Parse(jsonEvent.is_headshot) == 1 ? true : false;
-                newEvent.timeStamp = jsonEvent.timestamp;
-                newEvent.attacker = attacker;
-                newEvent.defender = defender;
-                newEvent.methodID = jsonEvent.attacker_weapon_id;
-                newEvent.death = defender == m_player;
+                Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
-                // Check for suicide.
-                if ((attacker == m_player && defender == m_player))
+                if (!jObject.HasValues)
+                    return;
+
+                Newtonsoft.Json.Linq.JToken jToken = jObject["characters_event_list"];
+
+                if (!jToken.HasValues)
+                    return;
+
+                // Create a list of each json object.
+                List<eventJson> jsonEvents = new List<eventJson>();
+                jsonEvents = Newtonsoft.Json.JsonConvert.DeserializeObject<List<eventJson>>(jToken.ToString());
+
+                int i = 0;
+                // Convert the json object into an event with IDs resolved.
+                foreach (eventJson jsonEvent in jsonEvents)
                 {
-                    newEvent.death = true;
-                    newEvent.suicide = true;
-                    newEvent.method = "Suicide";
-                }
+                    // Initialize new event.
+                    EventLog newEvent = new EventLog();
+                    newEvent.Initialize();
 
-                // Check if the new event being added is the latest event. A full check needs to be done
-                // if the current event doesn't match. Rarely the site may first report the items in the wrong order.
-                if (newEvent == m_currentEvent)
-                    break;
+                    Player attacker = GetPlayer(jsonEvent.attacker_character_id);
+                    Player defender = GetPlayer(jsonEvent.character_id);
 
-                // Don't add the same event. The API can sometimes report it twice.
-                if (m_eventLog.Contains(newEvent))
-                    continue;
-
-                // Determine the order in which to add the event.
-                if (m_sessionStarted)
-                {
-                    if (i < m_eventLog.Count)
-                        m_eventLog.Insert(i, newEvent);
-                    else
-                        m_eventLog.Add(newEvent);
-                }
-                else
-                    m_eventLog.Add(newEvent);
-
-                // Add session weapon stats unless this event was a death or team kill.
-                AddSessionWeapon(newEvent);
-                i++;
-            }
-
-            // Display the killboard.
-            if (m_eventLog.Count > 0)
-            {
-                m_currentEvent = m_eventLog[0];
-                // Update killboard.
-                this.eventLogGridView.Rows.Clear();
-                this.eventLogGridView.Rows.Add(m_eventLog.Count);
-                i = 0;
-                foreach (EventLog eventlog in m_eventLog)
-                {
-                    string eventName = eventlog.death ? eventlog.attacker.name : eventlog.defender.name;
-
-                    this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
-                    this.eventLogGridView.Rows[i].Cells[1].Value = eventlog.method;
-                    this.eventLogGridView.Rows[i].Cells[1].Style.ForeColor = Color.Beige;
-                    if (eventlog.headshot)
-                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[2]).Value = Properties.Resources.hsImage;
-
-                    // Set row color depending on kill or death.
-                    for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++)
+                    // Weapon IDs take priority over vehicle IDs. Weapon IDs such as breaker rocket pods
+                    // also show up with vehicle IDs like Reavers. A Reaver should only count if no
+                    // other weapon was used.
+                    if (jsonEvent.attacker_vehicle_id != "0" && jsonEvent.attacker_weapon_id == "0")
                     {
-                        if (eventlog.death || eventlog.suicide) // Death.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                        else if (eventlog.defender.faction == m_player.faction) // Friendly kill.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
-                        else // Enemy kill.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;
+                        newEvent.methodID = jsonEvent.attacker_vehicle_id;
+                        newEvent.method = GetVehicleName(jsonEvent.attacker_vehicle_id);
+                        newEvent.isVehicle = true;
+                    }
+                    else
+                    {
+                        newEvent.methodID = jsonEvent.attacker_weapon_id;
+                        newEvent.method = GetItemName(jsonEvent.attacker_weapon_id);
+                    }
+                    newEvent.headshot = Int32.Parse(jsonEvent.is_headshot) == 1 ? true : false;
+                    newEvent.timeStamp = jsonEvent.timestamp;
+                    newEvent.attacker = attacker;
+                    newEvent.defender = defender;
+                    newEvent.death = defender == m_player;
+
+                    // Check for suicide.
+                    if ((attacker == m_player && defender == m_player))
+                    {
+                        newEvent.death = true;
+                        newEvent.suicide = true;
+                        newEvent.method = "Suicide";
                     }
 
+                    // Check if the new event being added is the latest event. A full check needs to be done
+                    // if the current event doesn't match. Rarely the site may first report the items in the wrong order.
+                    if (newEvent == m_currentEvent)
+                        break;
+
+                    // Don't add the same event. The API can sometimes report it twice.
+                    if (m_eventLog.Contains(newEvent))
+                        continue;
+
+                    // Determine the order in which to add the event.
+                    if (m_sessionStarted)
+                    {
+                        if (i < m_eventLog.Count)
+                            m_eventLog.Insert(i, newEvent);
+                        else
+                            m_eventLog.Add(newEvent);
+                    }
+                    else
+                        m_eventLog.Add(newEvent);
+
+                    // Add session weapon stats unless this event was a death or team kill.
+                    AddSessionWeapon(newEvent);
                     i++;
                 }
-                this.eventLogGridView.ClearSelection();
-                UpdateEventTextFields();
-                UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
-            }
 
-            m_lastEventFound = true;
-            //HideUpdateText();
+                // Display the killboard.
+                // Only update the fields if a change in events occurred.
+                if (i > 0)
+                {
+                    m_currentEvent = m_eventLog[0];
+                    // Update killboard.
+                    this.eventLogGridView.Rows.Clear();
+                    this.eventLogGridView.Rows.Add(m_eventLog.Count);
+                    i = 0;
+                    foreach (EventLog eventlog in m_eventLog)
+                    {
+                        string eventName = eventlog.death ? eventlog.attacker.name : eventlog.defender.name;
+
+                        this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
+                        this.eventLogGridView.Rows[i].Cells[1].Value = eventlog.method;
+                        this.eventLogGridView.Rows[i].Cells[1].Style.ForeColor = Color.Beige;
+                        if (eventlog.headshot)
+                            ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[2]).Value = Properties.Resources.hsImage;
+
+                        // Set row color depending on kill or death.
+                        for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++)
+                        {
+                            if (eventlog.death || eventlog.suicide) // Death.
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
+                            else if (eventlog.defender.faction == m_player.faction) // Friendly kill.
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
+                            else // Enemy kill.
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;
+                        }
+
+                        i++;
+                    }
+                    this.eventLogGridView.ClearSelection();
+
+                    UpdateEventTextFields();
+                    UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
+                }
+
+                m_lastEventFound = true;
+
+                UpdateOverlay();
+            }
+            catch
+            {
+
+            }
         }
 
         void GetPlayerWeapons()
         {
             ShowUpdateText("Updating Weapons...");
-            m_player = GetPlayer(m_player.id, true, true);
-            UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
-            UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
-            HideUpdateText();
+            try
+            {
+                m_player = GetPlayer(m_player.id, true, true);
+                // Update stats of the session weapon other than headshots/kills.
+                foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons)
+                {
+                    string id = GetBestWeaponID(currentWep.Value);
+                    if (m_sessionWeapons.ContainsKey(id))
+                    {
+                        if (m_startPlayer.weapons.ContainsKey(id))
+                            AddSessionWeapon(currentWep.Value, m_startPlayer.weapons[id], true);
+                        else
+                            m_startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
+                    }
+                }
+                UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
+                UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
+                HideUpdateText();
+                UpdateOverlay();
+            }
+            catch
+            {
+
+            }
         }
 
         void CancelOperation()
@@ -516,10 +639,11 @@ namespace PS2StatTracker
                 this.playerNameLabel.Visible = true;
                 // Copy player information so it can be compared to later.
                 m_startPlayer = (Player)m_player.Clone();
+                // Update weapon text information.
                 UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
                 // Update total stats.
                 UpdateOverallStats(0.0f, 0.0f, 0.0f);
-                // Update text relating to API.
+                // Update misc tab.
                 UpdateMiscFields();
                 // Load events.
                 GetEventStats(numEvents);
@@ -528,8 +652,6 @@ namespace PS2StatTracker
                     this.hsrGrowthLabel.Visible = true;
                     this.kdrGrowthLabel.Visible = true;
                 }
-                //if (!this.startSessionButton.Enabled && m_lastEventFound)
-                //    this.startSessionButton.Enabled = true;
                 SaveUserName();
                 m_initialized = true;
                 HideUpdateText();
@@ -620,7 +742,6 @@ namespace PS2StatTracker
             m_currentEvent.Initialize();
             this.eventLogGridView.Rows.Clear();
             this.sessionWeaponsGridView.Columns.Clear();
-            //this.startSessionButton.Enabled = false;
             this.playerNameLabel.Visible = false;
         }
     }

@@ -41,5 +41,11 @@ namespace PS2StatTracker
                 Program.HandleException(e);
             }
         }
+
+        private void changelogButton_Click(object sender, EventArgs e)
+        {
+            GUIChangelog changes = new GUIChangelog();
+            changes.ShowDialog(this);
+        }
     }
 }

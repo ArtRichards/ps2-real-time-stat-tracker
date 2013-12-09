@@ -10,6 +10,20 @@ namespace PS2StatTracker
 {
     public partial class GUIMain
     {
+        public string GetBestWeaponID(Weapon weapon)
+        {
+            if (weapon.id != null && weapon.id != "0")
+            {
+                return weapon.id;
+            }
+            if (weapon.vehicleId != null && weapon.vehicleId != "0")
+            {
+                return VEHICLE_OFFSET + weapon.vehicleId;
+            }
+
+            return "0";
+        }
+
         public string PercentString(float input, int digits = 3)
         {
             string digitCount = "";
@@ -17,7 +31,7 @@ namespace PS2StatTracker
             {
                 digitCount += "#";
             }
-            return ((input < 0 ? "-" : "+") + input.ToString("0." + digitCount) + "%");
+            return ((input >= 0 ? "+" : "") + input.ToString("0." + digitCount) + "%");
         }
 
         public void UpdateEventTextFields()
@@ -170,7 +184,11 @@ namespace PS2StatTracker
             for (int i = 0; i < weapons.Count; i++)
             {
                 Weapon weapon = weapons.ElementAt(i).Value;
-                gridView.Rows[i].Cells[0].Value = GetItemName(weapon.id);
+                string bestID = GetBestWeaponID(weapon);
+
+                // Will get either item or vehicle name.
+                gridView.Rows[i].Cells[0].Value = GetItemName(GetBestWeaponID(weapon));
+
                 gridView.Rows[i].Cells[1].Value = weapon.kills;
 
                 // Calculate acc change.
@@ -182,7 +200,7 @@ namespace PS2StatTracker
                 if (gridView.Name == "sessionWeaponsGridView" && (m_sessionStarted || m_countEvents))
                 {
                     // HSR
-                    float[] absHSR = GetWeaponHSR(weapon.id, m_startPlayer.weapons);
+                    float[] absHSR = GetWeaponHSR(GetBestWeaponID(weapon), m_startPlayer.weapons);
                     float oldTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
                     absHSR[0] += weapon.headShots;
                     absHSR[1] += weapon.kills;
@@ -199,7 +217,7 @@ namespace PS2StatTracker
                         gridView.Rows[i].Cells[2].Style.ForeColor = Color.Black;
 
                     // ACC
-                    float[] absACC = GetWeaponACC(weapon.id, m_startPlayer.weapons);
+                    float[] absACC = GetWeaponACC(GetBestWeaponID(weapon), m_startPlayer.weapons);
                     float oldTotalACC = absACC[0] / (absACC[1] == 0.0f ? 1 : absACC[1]);
                     absACC[0] += weapon.hitsCount;
                     absACC[1] += weapon.fireCount;
@@ -296,7 +314,15 @@ namespace PS2StatTracker
             Weapon oldWeapon = new Weapon();
             oldWeapon.Initialize();
             newWeapon.Initialize();
-            newWeapon.id = newEvent.methodID;
+            if (newEvent.isVehicle)
+            {
+                newWeapon.id = "0";
+                newWeapon.vehicleId = newEvent.methodID;
+            }
+            else
+                newWeapon.id = newEvent.methodID;
+
+            newWeapon.name = GetItemName(GetBestWeaponID(newWeapon));
             newWeapon.kills += newEvent.IsKill() ? 1 : 0;
             newWeapon.headShots += newEvent.headshot ? 1 : 0;
 
@@ -327,16 +353,22 @@ namespace PS2StatTracker
             float hs = updatedWeapon.headShots - oldWeapon.headShots;
             float fired = updatedWeapon.fireCount - oldWeapon.fireCount;
 
+            if (kills < 0 || hits < 0 || hs < 0 || fired < 0)
+                return;
+
+            string id = GetBestWeaponID(updatedWeapon);
+
             Weapon sessionWeapon;
-            if (!m_sessionWeapons.ContainsKey(updatedWeapon.id))
+            if (!m_sessionWeapons.ContainsKey(id))
             {
                 sessionWeapon = new Weapon();
                 sessionWeapon.Initialize();
                 sessionWeapon.id = updatedWeapon.id;
+                sessionWeapon.vehicleId = updatedWeapon.vehicleId;
             }
             else
             {
-                sessionWeapon = m_sessionWeapons[updatedWeapon.id];
+                sessionWeapon = m_sessionWeapons[id];
             }
 
             if (!skipKillsHS)
@@ -348,7 +380,9 @@ namespace PS2StatTracker
             sessionWeapon.fireCount += fired;
             sessionWeapon.hitsCount += hits;
 
-            m_sessionWeapons[updatedWeapon.id] = sessionWeapon;
+            sessionWeapon.name = GetItemName(GetBestWeaponID(sessionWeapon));
+
+            m_sessionWeapons[id] = sessionWeapon;
         }
 
         void SaveUserName()

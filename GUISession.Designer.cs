@@ -39,9 +39,24 @@
             // pastEventsNumber
             // 
             this.pastEventsNumber.Location = new System.Drawing.Point(12, 36);
+            this.pastEventsNumber.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.pastEventsNumber.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.pastEventsNumber.Name = "pastEventsNumber";
             this.pastEventsNumber.Size = new System.Drawing.Size(120, 20);
             this.pastEventsNumber.TabIndex = 0;
+            this.pastEventsNumber.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // eventCountLabel
             // 
@@ -55,7 +70,7 @@
             // confirmButton
             // 
             this.confirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.confirmButton.Location = new System.Drawing.Point(116, 227);
+            this.confirmButton.Location = new System.Drawing.Point(116, 75);
             this.confirmButton.Name = "confirmButton";
             this.confirmButton.Size = new System.Drawing.Size(75, 23);
             this.confirmButton.TabIndex = 19;
@@ -66,7 +81,7 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(197, 227);
+            this.cancelButton.Location = new System.Drawing.Point(197, 75);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 18;
@@ -87,7 +102,7 @@
             // GUISession
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(284, 110);
             this.Controls.Add(this.countStatsCheckBox);
             this.Controls.Add(this.confirmButton);
             this.Controls.Add(this.cancelButton);

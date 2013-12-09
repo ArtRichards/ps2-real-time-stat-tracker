@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Web;
 
-
 namespace PS2StatTracker
 {
     static class Program
