@@ -15,7 +15,7 @@
         {
             if (disposing && (components != null))
             {
-                SaveConfig();
+                httpClient.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -1004,6 +1004,7 @@
             this.Name = "GUIMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Real Time Stat Tracker";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GUIMain_FormClosing);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tabControl1.ResumeLayout(false);

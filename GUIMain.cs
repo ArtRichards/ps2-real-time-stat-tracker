@@ -13,7 +13,7 @@ namespace PS2StatTracker
 {
     public partial class GUIMain : Form {
         // Update this with new versions.
-        string VERSION_NUM = "0.5.2";
+        string VERSION_NUM = "0.6.0";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         List<EventLog> m_eventLog;
         Dictionary<string,
@@ -279,6 +279,10 @@ namespace PS2StatTracker
                 m_overlay.SetStats(m_player, this.killsTextBox.Text, this.deathsTextBox.Text, this.kdrTextBox.Text,
                     this.hsTextBox.Text, this.eventLogGridView, m_sessionWeapons, m_eventLog);
             }
+        }
+
+        private void GUIMain_FormClosing(object sender, FormClosingEventArgs e) {
+            SaveConfig();
         }
     }
 }

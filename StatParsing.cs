@@ -117,7 +117,7 @@ namespace PS2StatTracker
             this.kdrGrowthLabel.Text = dif.ToString("+#0.0000;-#0.0000");
         }
 
-        public void UpdateWeaponTextFields(Dictionary<string, Weapon> weapons, DataGridView gridView)
+        public async void UpdateWeaponTextFields(Dictionary<string, Weapon> weapons, DataGridView gridView)
         {
             if (weapons == null)
                 return;
@@ -187,7 +187,7 @@ namespace PS2StatTracker
                 string bestID = GetBestWeaponID(weapon);
 
                 // Will get either item or vehicle name.
-                gridView.Rows[i].Cells[0].Value = GetItemName(GetBestWeaponID(weapon));
+                gridView.Rows[i].Cells[0].Value = await GetItemName(GetBestWeaponID(weapon));
 
                 gridView.Rows[i].Cells[1].Value = weapon.kills;
 
@@ -308,7 +308,7 @@ namespace PS2StatTracker
             return false;
         }
 
-        void AddSessionWeapon(EventLog newEvent)
+        async void AddSessionWeapon(EventLog newEvent)
         {
             Weapon newWeapon = new Weapon();
             Weapon oldWeapon = new Weapon();
@@ -322,7 +322,7 @@ namespace PS2StatTracker
             else
                 newWeapon.id = newEvent.methodID;
 
-            newWeapon.name = GetItemName(GetBestWeaponID(newWeapon));
+            newWeapon.name = await GetItemName(GetBestWeaponID(newWeapon));
             newWeapon.kills += newEvent.IsKill() ? 1 : 0;
             newWeapon.headShots += newEvent.headshot ? 1 : 0;
 
@@ -346,7 +346,7 @@ namespace PS2StatTracker
                 AddSessionWeapon(newWeapon, oldWeapon);
         }
 
-        void AddSessionWeapon(Weapon updatedWeapon, Weapon oldWeapon, bool skipKillsHS = false)
+        async void AddSessionWeapon(Weapon updatedWeapon, Weapon oldWeapon, bool skipKillsHS = false)
         {
             float kills = updatedWeapon.kills - oldWeapon.kills;
             float hits = updatedWeapon.hitsCount - oldWeapon.hitsCount;
@@ -380,7 +380,7 @@ namespace PS2StatTracker
             sessionWeapon.fireCount += fired;
             sessionWeapon.hitsCount += hits;
 
-            sessionWeapon.name = GetItemName(GetBestWeaponID(sessionWeapon));
+            sessionWeapon.name = await GetItemName(GetBestWeaponID(sessionWeapon));
 
             m_sessionWeapons[id] = sessionWeapon;
         }
