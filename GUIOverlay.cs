@@ -35,9 +35,9 @@ namespace PS2StatTracker
         {
             this.killsNumber.Text = kills;
             this.deathsNum.Text = deaths;
-            this.kdrNum.Text = float.Parse(kdr).ToString("0.00"); // Drops a decimal place.
+            this.kdrNum.Text = float.Parse(kdr).ToString("0.0"); // Drops a decimal place.
             string hsrNoPercent = hsr.Remove(hsr.Length - 1, 1);
-            this.hsrNum.Text = float.Parse(hsrNoPercent).ToString("0.00") + "%"; // Drops a decimal place.
+            this.hsrNum.Text = float.Parse(hsrNoPercent).ToString("0.0") + "%"; // Drops a decimal place.
             this.eventLogGridView.Rows.Clear();
             for (int i = 0; i < killboard.RowCount; i++)
             {
@@ -59,10 +59,10 @@ namespace PS2StatTracker
                 this.weaponName.Text = lastWeapon.name;
                 // Session
                 this.weaponKillsNum.Text = lastWeapon.kills.ToString();
-                this.weaponHSRNum.Text = ((float)lastWeapon.headShots / (float)lastWeapon.kills).ToString("#0.###%");
+                this.weaponHSRNum.Text = ((float)lastWeapon.headShots / (float)lastWeapon.kills).ToString("#0.#%");
                 if (lastWeapon.fireCount > 0)
                 {
-                    this.weaponAccNum.Text = (lastWeapon.hitsCount / lastWeapon.fireCount).ToString("#0.###%");
+                    this.weaponAccNum.Text = (lastWeapon.hitsCount / lastWeapon.fireCount).ToString("#0.#%");
                     this.weaponAccNum.Visible = true;
                     this.weaponAccLabel.Visible = true;
                 }
@@ -77,9 +77,9 @@ namespace PS2StatTracker
                 {
                     Weapon totalWeapon = player.weapons[id];
                     this.weaponKillsTotalNum.Text = totalWeapon.kills.ToString();
-                    this.weaponTotalKDRNum.Text = (totalWeapon.kills / totalWeapon.deaths).ToString("0.00");
-                    this.weaponTotalHSRNum.Text = (totalWeapon.headShots / totalWeapon.kills).ToString("#0.###%");
-                    this.weaponTotalAccNum.Text = (totalWeapon.hitsCount / totalWeapon.fireCount).ToString("#0.###%");
+                    this.weaponTotalKDRNum.Text = (totalWeapon.kills / totalWeapon.deaths).ToString("0.0");
+                    this.weaponTotalHSRNum.Text = (totalWeapon.headShots / totalWeapon.kills).ToString("#0.#%");
+                    this.weaponTotalAccNum.Text = (totalWeapon.hitsCount / totalWeapon.fireCount).ToString("#0.#%");
                     this.panel1.Visible = true;
                 }
             }

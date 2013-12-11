@@ -13,7 +13,7 @@ namespace PS2StatTracker
 {
     public partial class GUIMain : Form {
         // Update this with new versions.
-        string VERSION_NUM = "0.6.0";
+        string VERSION_NUM = "0.5.5";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         List<EventLog> m_eventLog;
         Dictionary<string,
@@ -30,11 +30,12 @@ namespace PS2StatTracker
         float m_sessionStartHSR;            // Start of session headshot ratio.
         float m_sessionStartKDR;
         int m_activeSeconds;
-        int m_timeout;
         bool m_countEvents;
         bool m_lastEventFound;
         bool m_sessionStarted;
         bool m_initialized;
+        bool m_initializing;
+        bool m_preparingSession;
         Color m_highColor;
         Color m_lowColor;
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -57,9 +58,10 @@ namespace PS2StatTracker
             m_sessionStarted = false;
             m_lastEventFound = false;
             m_initialized = false;
+            m_initializing = false;
             m_countEvents = false;
+            m_preparingSession = false;
             m_activeSeconds = 0;
-            m_timeout = 0;
             m_sessionStartHSR = 0.0f;
             m_sessionStartKDR = 0.0f;
 
@@ -68,12 +70,23 @@ namespace PS2StatTracker
 
             // Handle mouse movement and resizing on borderless window.
             this.menuStrip1.MouseDown += OnMouseDown;
+            AddMouseEventDown(this);
 
             m_currentEvent.Initialize();
         }
 
         private void ClearUsers() {
             usernameTextBox.Items.Clear();
+        }
+
+        // Recursively adds mouse events to controls.
+        private void AddMouseEventDown(Control control) {
+            control.MouseDown += OnMouseDown;
+            foreach (Control ctrl in control.Controls) {
+                if (ctrl.GetType() == typeof(Label) || ctrl.GetType() == typeof(Panel)) {
+                    AddMouseEventDown(ctrl);
+                }
+            }
         }
 
         //////////////////////////////////
@@ -133,8 +146,10 @@ namespace PS2StatTracker
 
         private void startSessionButton_Click(object sender, EventArgs evt) {
             try {
-                if (!m_sessionStarted)
+                if (!m_sessionStarted) {
+                    m_preparingSession = true;
                     Initialize();
+                }
                 StartSession();
             } catch (Exception e) {
                 Program.HandleException(e);
@@ -234,7 +249,7 @@ namespace PS2StatTracker
 
         private void cancelOperationToolStripMenuItem_Click(object sender, EventArgs evt) {
             try {
-                CancelOperation();
+                //CancelOperation();
             } catch (Exception e) {
                 Program.HandleException(e);
             }

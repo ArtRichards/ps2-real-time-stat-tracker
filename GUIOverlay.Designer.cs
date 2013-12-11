@@ -72,92 +72,100 @@
             // killsLabel
             // 
             this.killsLabel.AutoSize = true;
-            this.killsLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.killsLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.killsLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.killsLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.killsLabel.ForeColor = System.Drawing.Color.Black;
             this.killsLabel.Location = new System.Drawing.Point(5, 9);
             this.killsLabel.Name = "killsLabel";
-            this.killsLabel.Size = new System.Drawing.Size(36, 19);
+            this.killsLabel.Size = new System.Drawing.Size(35, 18);
             this.killsLabel.TabIndex = 0;
             this.killsLabel.Text = "Kills";
             // 
             // killsNumber
             // 
             this.killsNumber.AutoSize = true;
-            this.killsNumber.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.killsNumber.ForeColor = System.Drawing.Color.DarkGreen;
-            this.killsNumber.Location = new System.Drawing.Point(9, 29);
+            this.killsNumber.BackColor = System.Drawing.Color.DarkGray;
+            this.killsNumber.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.killsNumber.ForeColor = System.Drawing.Color.Black;
+            this.killsNumber.Location = new System.Drawing.Point(4, 25);
             this.killsNumber.Name = "killsNumber";
             this.killsNumber.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.killsNumber.Size = new System.Drawing.Size(17, 19);
+            this.killsNumber.Size = new System.Drawing.Size(20, 20);
             this.killsNumber.TabIndex = 1;
             this.killsNumber.Text = "0";
             // 
             // deathsNum
             // 
             this.deathsNum.AutoSize = true;
-            this.deathsNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.deathsNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.deathsNum.Location = new System.Drawing.Point(54, 29);
+            this.deathsNum.BackColor = System.Drawing.Color.DarkGray;
+            this.deathsNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.deathsNum.ForeColor = System.Drawing.Color.Black;
+            this.deathsNum.Location = new System.Drawing.Point(62, 25);
             this.deathsNum.Name = "deathsNum";
             this.deathsNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.deathsNum.Size = new System.Drawing.Size(17, 19);
+            this.deathsNum.Size = new System.Drawing.Size(20, 20);
             this.deathsNum.TabIndex = 3;
             this.deathsNum.Text = "0";
             // 
             // deathsLabel
             // 
             this.deathsLabel.AutoSize = true;
-            this.deathsLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.deathsLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.deathsLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.deathsLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.deathsLabel.ForeColor = System.Drawing.Color.Black;
             this.deathsLabel.Location = new System.Drawing.Point(54, 9);
             this.deathsLabel.Name = "deathsLabel";
-            this.deathsLabel.Size = new System.Drawing.Size(56, 19);
+            this.deathsLabel.Size = new System.Drawing.Size(60, 18);
             this.deathsLabel.TabIndex = 2;
             this.deathsLabel.Text = "Deaths";
             // 
             // kdrNum
             // 
             this.kdrNum.AutoSize = true;
-            this.kdrNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.kdrNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.kdrNum.Location = new System.Drawing.Point(115, 29);
+            this.kdrNum.BackColor = System.Drawing.Color.DarkGray;
+            this.kdrNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.kdrNum.ForeColor = System.Drawing.Color.Black;
+            this.kdrNum.Location = new System.Drawing.Point(115, 25);
             this.kdrNum.Name = "kdrNum";
             this.kdrNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.kdrNum.Size = new System.Drawing.Size(17, 19);
+            this.kdrNum.Size = new System.Drawing.Size(20, 20);
             this.kdrNum.TabIndex = 5;
             this.kdrNum.Text = "0";
             // 
             // kdrLabel
             // 
             this.kdrLabel.AutoSize = true;
-            this.kdrLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.kdrLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.kdrLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.kdrLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.kdrLabel.ForeColor = System.Drawing.Color.Black;
             this.kdrLabel.Location = new System.Drawing.Point(115, 9);
             this.kdrLabel.Name = "kdrLabel";
-            this.kdrLabel.Size = new System.Drawing.Size(37, 19);
+            this.kdrLabel.Size = new System.Drawing.Size(39, 18);
             this.kdrLabel.TabIndex = 4;
             this.kdrLabel.Text = "KDR";
             // 
             // hsrNum
             // 
             this.hsrNum.AutoSize = true;
-            this.hsrNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hsrNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.hsrNum.Location = new System.Drawing.Point(160, 29);
+            this.hsrNum.BackColor = System.Drawing.Color.DarkGray;
+            this.hsrNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hsrNum.ForeColor = System.Drawing.Color.Black;
+            this.hsrNum.Location = new System.Drawing.Point(158, 25);
             this.hsrNum.Name = "hsrNum";
             this.hsrNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.hsrNum.Size = new System.Drawing.Size(17, 19);
+            this.hsrNum.Size = new System.Drawing.Size(20, 20);
             this.hsrNum.TabIndex = 7;
             this.hsrNum.Text = "0";
             // 
             // hsrLabel
             // 
             this.hsrLabel.AutoSize = true;
-            this.hsrLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hsrLabel.ForeColor = System.Drawing.Color.DarkGreen;
-            this.hsrLabel.Location = new System.Drawing.Point(160, 9);
+            this.hsrLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.hsrLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hsrLabel.ForeColor = System.Drawing.Color.Black;
+            this.hsrLabel.Location = new System.Drawing.Point(158, 9);
             this.hsrLabel.Name = "hsrLabel";
-            this.hsrLabel.Size = new System.Drawing.Size(36, 19);
+            this.hsrLabel.Size = new System.Drawing.Size(39, 18);
             this.hsrLabel.TabIndex = 6;
             this.hsrLabel.Text = "HSR";
             // 
@@ -166,7 +174,7 @@
             this.eventLogGridView.AllowUserToAddRows = false;
             this.eventLogGridView.AllowUserToDeleteRows = false;
             this.eventLogGridView.AllowUserToResizeRows = false;
-            this.eventLogGridView.BackgroundColor = System.Drawing.Color.Gray;
+            this.eventLogGridView.BackgroundColor = System.Drawing.Color.DarkGray;
             this.eventLogGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -203,7 +211,7 @@
             this.eventLogGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
             this.eventLogGridView.ShowEditingIcon = false;
             this.eventLogGridView.ShowRowErrors = false;
-            this.eventLogGridView.Size = new System.Drawing.Size(213, 115);
+            this.eventLogGridView.Size = new System.Drawing.Size(219, 115);
             this.eventLogGridView.TabIndex = 24;
             // 
             // playerCol
@@ -246,7 +254,7 @@
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.Gray;
+            this.panel1.BackColor = System.Drawing.Color.DarkGray;
             this.panel1.Controls.Add(this.weaponAccNum);
             this.panel1.Controls.Add(this.weaponAccLabel);
             this.panel1.Controls.Add(this.weaponTotalAccNum);
@@ -268,219 +276,237 @@
             this.panel1.ForeColor = System.Drawing.Color.DarkGreen;
             this.panel1.Location = new System.Drawing.Point(0, 167);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(212, 124);
+            this.panel1.Size = new System.Drawing.Size(218, 124);
             this.panel1.TabIndex = 25;
             // 
             // weaponAccNum
             // 
             this.weaponAccNum.AutoSize = true;
-            this.weaponAccNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponAccNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponAccNum.Location = new System.Drawing.Point(3, 98);
+            this.weaponAccNum.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponAccNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponAccNum.ForeColor = System.Drawing.Color.Black;
+            this.weaponAccNum.Location = new System.Drawing.Point(2, 93);
             this.weaponAccNum.Name = "weaponAccNum";
             this.weaponAccNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.weaponAccNum.Size = new System.Drawing.Size(17, 19);
+            this.weaponAccNum.Size = new System.Drawing.Size(20, 20);
             this.weaponAccNum.TabIndex = 42;
             this.weaponAccNum.Text = "0";
             // 
             // weaponAccLabel
             // 
             this.weaponAccLabel.AutoSize = true;
-            this.weaponAccLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponAccLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.weaponAccLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponAccLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponAccLabel.ForeColor = System.Drawing.Color.Black;
             this.weaponAccLabel.Location = new System.Drawing.Point(3, 78);
             this.weaponAccLabel.Name = "weaponAccLabel";
-            this.weaponAccLabel.Size = new System.Drawing.Size(33, 19);
+            this.weaponAccLabel.Size = new System.Drawing.Size(34, 18);
             this.weaponAccLabel.TabIndex = 41;
             this.weaponAccLabel.Text = "Acc";
             // 
             // weaponTotalAccNum
             // 
             this.weaponTotalAccNum.AutoSize = true;
-            this.weaponTotalAccNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponTotalAccNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponTotalAccNum.Location = new System.Drawing.Point(147, 98);
+            this.weaponTotalAccNum.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponTotalAccNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponTotalAccNum.ForeColor = System.Drawing.Color.Black;
+            this.weaponTotalAccNum.Location = new System.Drawing.Point(157, 93);
             this.weaponTotalAccNum.Name = "weaponTotalAccNum";
             this.weaponTotalAccNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.weaponTotalAccNum.Size = new System.Drawing.Size(17, 19);
+            this.weaponTotalAccNum.Size = new System.Drawing.Size(20, 20);
             this.weaponTotalAccNum.TabIndex = 40;
             this.weaponTotalAccNum.Text = "0";
             // 
             // weaponTotalAccLabel
             // 
             this.weaponTotalAccLabel.AutoSize = true;
-            this.weaponTotalAccLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponTotalAccLabel.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponTotalAccLabel.Location = new System.Drawing.Point(147, 78);
+            this.weaponTotalAccLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponTotalAccLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponTotalAccLabel.ForeColor = System.Drawing.Color.Black;
+            this.weaponTotalAccLabel.Location = new System.Drawing.Point(158, 78);
             this.weaponTotalAccLabel.Name = "weaponTotalAccLabel";
-            this.weaponTotalAccLabel.Size = new System.Drawing.Size(33, 19);
+            this.weaponTotalAccLabel.Size = new System.Drawing.Size(34, 18);
             this.weaponTotalAccLabel.TabIndex = 39;
             this.weaponTotalAccLabel.Text = "Acc";
             // 
             // weaponSessionLabel
             // 
             this.weaponSessionLabel.AutoSize = true;
-            this.weaponSessionLabel.Font = new System.Drawing.Font("Calibri", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponSessionLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.weaponSessionLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponSessionLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponSessionLabel.ForeColor = System.Drawing.Color.Black;
             this.weaponSessionLabel.Location = new System.Drawing.Point(3, 20);
             this.weaponSessionLabel.Name = "weaponSessionLabel";
-            this.weaponSessionLabel.Size = new System.Drawing.Size(59, 19);
+            this.weaponSessionLabel.Size = new System.Drawing.Size(71, 18);
             this.weaponSessionLabel.TabIndex = 38;
             this.weaponSessionLabel.Text = "Session";
             // 
             // weaponTotalKDRNum
             // 
             this.weaponTotalKDRNum.AutoSize = true;
-            this.weaponTotalKDRNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponTotalKDRNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponTotalKDRNum.Location = new System.Drawing.Point(101, 98);
+            this.weaponTotalKDRNum.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponTotalKDRNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponTotalKDRNum.ForeColor = System.Drawing.Color.Black;
+            this.weaponTotalKDRNum.Location = new System.Drawing.Point(98, 93);
             this.weaponTotalKDRNum.Name = "weaponTotalKDRNum";
             this.weaponTotalKDRNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.weaponTotalKDRNum.Size = new System.Drawing.Size(17, 19);
+            this.weaponTotalKDRNum.Size = new System.Drawing.Size(20, 20);
             this.weaponTotalKDRNum.TabIndex = 37;
             this.weaponTotalKDRNum.Text = "0";
             // 
             // weaponTotalKDRLabel
             // 
             this.weaponTotalKDRLabel.AutoSize = true;
-            this.weaponTotalKDRLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponTotalKDRLabel.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponTotalKDRLabel.Location = new System.Drawing.Point(101, 78);
+            this.weaponTotalKDRLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponTotalKDRLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponTotalKDRLabel.ForeColor = System.Drawing.Color.Black;
+            this.weaponTotalKDRLabel.Location = new System.Drawing.Point(99, 78);
             this.weaponTotalKDRLabel.Name = "weaponTotalKDRLabel";
-            this.weaponTotalKDRLabel.Size = new System.Drawing.Size(37, 19);
+            this.weaponTotalKDRLabel.Size = new System.Drawing.Size(39, 18);
             this.weaponTotalKDRLabel.TabIndex = 36;
             this.weaponTotalKDRLabel.Text = "KDR";
             // 
             // weaponTotalHSRNum
             // 
             this.weaponTotalHSRNum.AutoSize = true;
-            this.weaponTotalHSRNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponTotalHSRNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponTotalHSRNum.Location = new System.Drawing.Point(147, 59);
+            this.weaponTotalHSRNum.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponTotalHSRNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponTotalHSRNum.ForeColor = System.Drawing.Color.Black;
+            this.weaponTotalHSRNum.Location = new System.Drawing.Point(157, 54);
             this.weaponTotalHSRNum.Name = "weaponTotalHSRNum";
             this.weaponTotalHSRNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.weaponTotalHSRNum.Size = new System.Drawing.Size(17, 19);
+            this.weaponTotalHSRNum.Size = new System.Drawing.Size(20, 20);
             this.weaponTotalHSRNum.TabIndex = 35;
             this.weaponTotalHSRNum.Text = "0";
             // 
             // weaponHSRTotal
             // 
             this.weaponHSRTotal.AutoSize = true;
-            this.weaponHSRTotal.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponHSRTotal.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponHSRTotal.Location = new System.Drawing.Point(147, 39);
+            this.weaponHSRTotal.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponHSRTotal.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponHSRTotal.ForeColor = System.Drawing.Color.Black;
+            this.weaponHSRTotal.Location = new System.Drawing.Point(158, 39);
             this.weaponHSRTotal.Name = "weaponHSRTotal";
-            this.weaponHSRTotal.Size = new System.Drawing.Size(36, 19);
+            this.weaponHSRTotal.Size = new System.Drawing.Size(39, 18);
             this.weaponHSRTotal.TabIndex = 34;
             this.weaponHSRTotal.Text = "HSR";
             // 
             // weaponKillsTotalNum
             // 
             this.weaponKillsTotalNum.AutoSize = true;
-            this.weaponKillsTotalNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponKillsTotalNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponKillsTotalNum.Location = new System.Drawing.Point(101, 59);
+            this.weaponKillsTotalNum.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponKillsTotalNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponKillsTotalNum.ForeColor = System.Drawing.Color.Black;
+            this.weaponKillsTotalNum.Location = new System.Drawing.Point(98, 54);
             this.weaponKillsTotalNum.Name = "weaponKillsTotalNum";
             this.weaponKillsTotalNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.weaponKillsTotalNum.Size = new System.Drawing.Size(17, 19);
+            this.weaponKillsTotalNum.Size = new System.Drawing.Size(20, 20);
             this.weaponKillsTotalNum.TabIndex = 33;
             this.weaponKillsTotalNum.Text = "0";
             // 
             // weaponKillsTotalLabel
             // 
             this.weaponKillsTotalLabel.AutoSize = true;
-            this.weaponKillsTotalLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponKillsTotalLabel.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponKillsTotalLabel.Location = new System.Drawing.Point(101, 39);
+            this.weaponKillsTotalLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponKillsTotalLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponKillsTotalLabel.ForeColor = System.Drawing.Color.Black;
+            this.weaponKillsTotalLabel.Location = new System.Drawing.Point(99, 39);
             this.weaponKillsTotalLabel.Name = "weaponKillsTotalLabel";
-            this.weaponKillsTotalLabel.Size = new System.Drawing.Size(36, 19);
+            this.weaponKillsTotalLabel.Size = new System.Drawing.Size(35, 18);
             this.weaponKillsTotalLabel.TabIndex = 32;
             this.weaponKillsTotalLabel.Text = "Kills";
             // 
             // weaponTotalLabel
             // 
             this.weaponTotalLabel.AutoSize = true;
-            this.weaponTotalLabel.Font = new System.Drawing.Font("Calibri", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponTotalLabel.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponTotalLabel.Location = new System.Drawing.Point(101, 20);
+            this.weaponTotalLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponTotalLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponTotalLabel.ForeColor = System.Drawing.Color.Black;
+            this.weaponTotalLabel.Location = new System.Drawing.Point(99, 20);
             this.weaponTotalLabel.Name = "weaponTotalLabel";
-            this.weaponTotalLabel.Size = new System.Drawing.Size(43, 19);
+            this.weaponTotalLabel.Size = new System.Drawing.Size(50, 18);
             this.weaponTotalLabel.TabIndex = 31;
             this.weaponTotalLabel.Text = "Total";
             // 
             // weaponHSRNum
             // 
             this.weaponHSRNum.AutoSize = true;
-            this.weaponHSRNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponHSRNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponHSRNum.Location = new System.Drawing.Point(40, 59);
+            this.weaponHSRNum.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponHSRNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponHSRNum.ForeColor = System.Drawing.Color.Black;
+            this.weaponHSRNum.Location = new System.Drawing.Point(39, 54);
             this.weaponHSRNum.Name = "weaponHSRNum";
             this.weaponHSRNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.weaponHSRNum.Size = new System.Drawing.Size(17, 19);
+            this.weaponHSRNum.Size = new System.Drawing.Size(20, 20);
             this.weaponHSRNum.TabIndex = 30;
             this.weaponHSRNum.Text = "0";
             // 
             // weaponHSRLabel
             // 
             this.weaponHSRLabel.AutoSize = true;
-            this.weaponHSRLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponHSRLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.weaponHSRLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponHSRLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponHSRLabel.ForeColor = System.Drawing.Color.Black;
             this.weaponHSRLabel.Location = new System.Drawing.Point(40, 39);
             this.weaponHSRLabel.Name = "weaponHSRLabel";
-            this.weaponHSRLabel.Size = new System.Drawing.Size(36, 19);
+            this.weaponHSRLabel.Size = new System.Drawing.Size(39, 18);
             this.weaponHSRLabel.TabIndex = 29;
             this.weaponHSRLabel.Text = "HSR";
             // 
             // weaponName
             // 
             this.weaponName.AutoSize = true;
-            this.weaponName.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponName.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponName.Location = new System.Drawing.Point(68, 1);
+            this.weaponName.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponName.ForeColor = System.Drawing.Color.Black;
+            this.weaponName.Location = new System.Drawing.Point(78, 1);
             this.weaponName.Name = "weaponName";
-            this.weaponName.Size = new System.Drawing.Size(49, 19);
+            this.weaponName.Size = new System.Drawing.Size(55, 18);
             this.weaponName.TabIndex = 28;
             this.weaponName.Text = "Name";
             // 
             // weaponKillsNum
             // 
             this.weaponKillsNum.AutoSize = true;
-            this.weaponKillsNum.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponKillsNum.ForeColor = System.Drawing.Color.DarkGreen;
-            this.weaponKillsNum.Location = new System.Drawing.Point(3, 59);
+            this.weaponKillsNum.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponKillsNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponKillsNum.ForeColor = System.Drawing.Color.Black;
+            this.weaponKillsNum.Location = new System.Drawing.Point(2, 54);
             this.weaponKillsNum.Name = "weaponKillsNum";
             this.weaponKillsNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.weaponKillsNum.Size = new System.Drawing.Size(17, 19);
+            this.weaponKillsNum.Size = new System.Drawing.Size(20, 20);
             this.weaponKillsNum.TabIndex = 27;
             this.weaponKillsNum.Text = "0";
             // 
             // lastWeaponLabel
             // 
             this.lastWeaponLabel.AutoSize = true;
-            this.lastWeaponLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lastWeaponLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.lastWeaponLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.lastWeaponLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lastWeaponLabel.ForeColor = System.Drawing.Color.Black;
             this.lastWeaponLabel.Location = new System.Drawing.Point(3, 1);
             this.lastWeaponLabel.Name = "lastWeaponLabel";
-            this.lastWeaponLabel.Size = new System.Drawing.Size(66, 19);
+            this.lastWeaponLabel.Size = new System.Drawing.Size(75, 18);
             this.lastWeaponLabel.TabIndex = 26;
             this.lastWeaponLabel.Text = "Weapon";
             // 
             // weaponKillsLabel
             // 
             this.weaponKillsLabel.AutoSize = true;
-            this.weaponKillsLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weaponKillsLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.weaponKillsLabel.BackColor = System.Drawing.Color.DarkGray;
+            this.weaponKillsLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.weaponKillsLabel.ForeColor = System.Drawing.Color.Black;
             this.weaponKillsLabel.Location = new System.Drawing.Point(3, 39);
             this.weaponKillsLabel.Name = "weaponKillsLabel";
-            this.weaponKillsLabel.Size = new System.Drawing.Size(36, 19);
+            this.weaponKillsLabel.Size = new System.Drawing.Size(35, 18);
             this.weaponKillsLabel.TabIndex = 26;
             this.weaponKillsLabel.Text = "Kills";
             // 
             // GUIOverlay
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.Gray;
-            this.ClientSize = new System.Drawing.Size(213, 282);
+            this.BackColor = System.Drawing.Color.DarkGray;
+            this.ClientSize = new System.Drawing.Size(219, 282);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.eventLogGridView);
             this.Controls.Add(this.hsrNum);
@@ -494,8 +520,8 @@
             this.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Green;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(229, 320);
-            this.MinimumSize = new System.Drawing.Size(229, 320);
+            this.MaximumSize = new System.Drawing.Size(235, 320);
+            this.MinimumSize = new System.Drawing.Size(235, 320);
             this.Name = "GUIOverlay";
             this.Text = "Streaming Overlay";
             ((System.ComponentModel.ISupportInitialize)(this.eventLogGridView)).EndInit();

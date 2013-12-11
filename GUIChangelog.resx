@@ -118,7 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>V 0.5.2
+    <value>V0.5.5
+--------------NullPointer---------------
+Async support added for program operation.
+Improved movement and resizing of window.
+Improved error handling and reporting.
+Config file management improved.
+
+Improved logic around session starting, resuming, switching and ending.
+Invalid IDs are reported and will no longer crash the program.
+Installer updated to include 4th digit version (considered re-install)
+
+V 0.5.2
 Crash fix and some improved error handling around the API.
 Killboard refresh speed increased to 5 seconds.
 
@@ -127,7 +138,6 @@ Added streaming overlay.
 Road kills now show up for the session.
 
 V 0.5.0
-
 New Features
 Uses API completely-- removes need for dependencies on Gecko Web Browser or xulRunner.
 Starting a session is now done in one button click.

@@ -82,18 +82,18 @@
             this.developerLabel.BackColor = System.Drawing.Color.Transparent;
             this.developerLabel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.developerLabel.ForeColor = System.Drawing.Color.LightGray;
-            this.developerLabel.Location = new System.Drawing.Point(12, 123);
+            this.developerLabel.Location = new System.Drawing.Point(12, 122);
             this.developerLabel.Name = "developerLabel";
-            this.developerLabel.Size = new System.Drawing.Size(103, 38);
+            this.developerLabel.Size = new System.Drawing.Size(103, 57);
             this.developerLabel.TabIndex = 3;
-            this.developerLabel.Text = "Developed By\r\n  Silencer";
+            this.developerLabel.Text = "Developed By\r\n  Silencer and\r\n  NullPointer";
             // 
             // websiteLabel
             // 
             this.websiteLabel.AutoSize = true;
             this.websiteLabel.BackColor = System.Drawing.Color.Transparent;
             this.websiteLabel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.websiteLabel.Location = new System.Drawing.Point(13, 173);
+            this.websiteLabel.Location = new System.Drawing.Point(13, 180);
             this.websiteLabel.Name = "websiteLabel";
             this.websiteLabel.Size = new System.Drawing.Size(46, 13);
             this.websiteLabel.TabIndex = 4;

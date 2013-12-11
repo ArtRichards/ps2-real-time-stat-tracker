@@ -259,11 +259,10 @@ namespace PS2StatTracker
             // Assemble a player object taking json values and converting them to correct data types.
             playerJson pJson = await GetPlayerJson(id, updateWeapons);
             Player player = new Player();
-            if (pJson == null)
-            {
-                player.name = "N/A";
-                return player;
+            if (pJson == null) {
+                return null;
             }
+
             kdrJson kdr = await GetTotalKDR(id);
             player.battleRank = Int32.Parse(pJson.battle_rank.value);
             player.battleRankPer = float.Parse(pJson.battle_rank.percent_to_next) / 100.0f;
@@ -405,6 +404,10 @@ namespace PS2StatTracker
 
             string result = await GetAsyncRequest(site);
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
+
+            if (!jObject.HasValues)
+                return null;
+
             Newtonsoft.Json.Linq.JToken jToken = jObject["character_list"];
 
             if(jToken != null && jToken.HasValues)
@@ -466,7 +469,7 @@ namespace PS2StatTracker
 
         async void GetEventStats(int numEvents = 50)
         {
-            string result = await GetAsyncRequest("characters_event/?character_id=" + GetUserID(this.usernameTextBox.Text) + "&c:limit="+numEvents+"&type=KILL,DEATH");
+            string result = await GetAsyncRequest("characters_event/?character_id=" + m_userID + "&c:limit="+numEvents+"&type=KILL,DEATH");
 
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
@@ -586,46 +589,53 @@ namespace PS2StatTracker
 
             m_lastEventFound = true;
 
+            HideUpdateText();
+
+            if (m_preparingSession) {
+                eventLogGridView.Rows.Clear();
+                m_preparingSession = false;
+                StartSession();
+            }
+
+            ManageSessionButtons();
+
             UpdateOverlay();
         }
 
         async void GetPlayerWeapons()
         {
             ShowUpdateText("Updating Weapons...");
-            try
-            {
-                m_player = await GetPlayer(m_player.id, true, true);
-                // Update stats of the session weapon other than headshots/kills.
-                foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons)
-                {
-                    string id = GetBestWeaponID(currentWep.Value);
-                    if (m_sessionWeapons.ContainsKey(id))
-                    {
-                        if (m_startPlayer.weapons.ContainsKey(id))
-                            AddSessionWeapon(currentWep.Value, m_startPlayer.weapons[id], true);
-                        else
-                            m_startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
-                    }
-                }
-                UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
-                UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
-                HideUpdateText();
-                UpdateOverlay();
-            }
-            catch
-            {
 
+            m_player = await GetPlayer(m_player.id, true, true);
+            // Update stats of the session weapon other than headshots/kills.
+            foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons)
+            {
+                string id = GetBestWeaponID(currentWep.Value);
+                if (m_sessionWeapons.ContainsKey(id))
+                {
+                    if (m_startPlayer.weapons.ContainsKey(id))
+                        AddSessionWeapon(currentWep.Value, m_startPlayer.weapons[id], true);
+                    else
+                        m_startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
+                }
             }
+            UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
+            UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
+            HideUpdateText();
+            UpdateOverlay();
         }
 
-        void CancelOperation()
-        {
+        void CancelInitialize() {
+            m_initializing = false;
+            m_preparingSession = false;
+            ManageSessionButtons();
         }
 
         async void Initialize(int numEvents = 1)
         {
             if (this.usernameTextBox.Text.Length > 0)
             {
+                m_initializing = true;
                 if (numEvents <= 0) numEvents = 1;
                 ShowUpdateText("Initializing...");
                 m_player = null;
@@ -638,6 +648,13 @@ namespace PS2StatTracker
                 m_userID = "";
                 // Get this player's information.
                 m_player = await GetPlayer(GetUserID(this.usernameTextBox.Text), true);
+
+                if (m_player == null) {
+                    ShowUpdateText("Invalid ID");
+                    CancelInitialize();
+                    return;
+                }
+
                 this.playerNameLabel.Text = m_player.name;
                 this.playerNameLabel.Visible = true;
                 // Copy player information so it can be compared to later.
@@ -657,21 +674,26 @@ namespace PS2StatTracker
                 }
                 SaveUserName();
                 m_initialized = true;
-                HideUpdateText();
+                m_initializing = false;
             }
         }
 
+        // Determines if a button should be active or visible based
+        // on the current state of the program.
         private void ManageSessionButtons()
         {
-            if (m_lastEventFound)
-            {
-                if (m_sessionStarted)
-                {
+            if (m_preparingSession || m_initializing) {
+                this.connectButton.Enabled = false;
+                this.startSessionButton.Enabled = false;
+            } else {
+                this.connectButton.Enabled = true;
+                this.startSessionButton.Enabled = true;
+            }
+            if (m_lastEventFound) {
+                if (m_sessionStarted) {
                     this.startSessionButton.Text = "End Session";
                     this.connectButton.Visible = false;
-                }
-                else
-                {
+                } else {
                     this.startSessionButton.Text = "Start";
                     this.connectButton.Visible = true;
                 }
@@ -716,7 +738,6 @@ namespace PS2StatTracker
         {
             timer1.Stop();
             m_activeSeconds = 0;
-            m_timeout = 0;
             m_eventLog.Clear();
             m_sessionWeapons.Clear();
             this.eventLogGridView.Rows.Clear();
@@ -730,7 +751,6 @@ namespace PS2StatTracker
         {
             m_sessionStarted = false;
             m_activeSeconds = 0;
-            m_timeout = 0;
             timer1.Stop();
             ManageSessionButtons();
         }
