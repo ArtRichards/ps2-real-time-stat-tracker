@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>V0.5.5
+    <value>V0.5.6
+Better error handling
+
+V0.5.5
 --------------NullPointer---------------
 Async support added for program operation.
 Improved movement and resizing of window.

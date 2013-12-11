@@ -13,7 +13,7 @@ namespace PS2StatTracker
 {
     public partial class GUIMain : Form {
         // Update this with new versions.
-        string VERSION_NUM = "0.5.5";
+        string VERSION_NUM = "0.5.6";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         List<EventLog> m_eventLog;
         Dictionary<string,
@@ -136,36 +136,36 @@ namespace PS2StatTracker
         // Button clicks.
         //////////////////////////////////
 
-        private void button1_Click(object sender, EventArgs evt) {
+        private async void button1_Click(object sender, EventArgs evt) {
             try {
-                ResumeSession();
+                await ResumeSession();
             } catch (Exception e) {
                 Program.HandleException(e);
             }
         }
 
-        private void startSessionButton_Click(object sender, EventArgs evt) {
+        private async void startSessionButton_Click(object sender, EventArgs evt) {
             try {
                 if (!m_sessionStarted) {
                     m_preparingSession = true;
-                    Initialize();
+                    await Initialize();
                 }
-                StartSession();
+                await StartSession();
             } catch (Exception e) {
                 Program.HandleException(e);
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs evt) {
+        private async void timer1_Tick(object sender, EventArgs evt) {
             try {
                 m_activeSeconds += (timer1.Interval / 1000);
 
-                GetEventStats();
+                await GetEventStats();
 
                 // Update weapons every 30 minutes. Currently hardcoded. May eventually add sliders under options.
                 // Also may eventually add options.
                 if (m_activeSeconds % 1800 == 0)
-                    GetPlayerWeapons();
+                    await GetPlayerWeapons();
             } catch (Exception e) {
                 Program.HandleException(e);
             }
@@ -180,19 +180,19 @@ namespace PS2StatTracker
             Application.Exit();
         }
 
-        private void updateEventsToolStripMenuItem_Click(object sender, EventArgs evt) {
+        private async void updateEventsToolStripMenuItem_Click(object sender, EventArgs evt) {
             try {
                 if (m_sessionStarted)
-                    GetEventStats();
+                    await GetEventStats();
             } catch (Exception e) {
                 Program.HandleException(e);
             }
         }
 
-        private void updateWeaponsToolStripMenuItem_Click(object sender, EventArgs evt) {
+        private async void updateWeaponsToolStripMenuItem_Click(object sender, EventArgs evt) {
             try {
                 if (m_sessionStarted)
-                    GetPlayerWeapons();
+                    await GetPlayerWeapons();
             } catch (Exception e) {
                 Program.HandleException(e);
             }
@@ -255,13 +255,13 @@ namespace PS2StatTracker
             }
         }
 
-        private void createSessionToolStripMenuItem_Click(object sender, EventArgs evt) {
+        private async void createSessionToolStripMenuItem_Click(object sender, EventArgs evt) {
             try {
                 using (GUISession session = new GUISession()) {
                     session.ShowDialog(this);
                     if (session.confirmed == true) {
                         m_countEvents = session.countStatsCheckBox.Checked;
-                        Initialize((int)session.pastEventsNumber.Value);
+                        await Initialize((int)session.pastEventsNumber.Value);
                     }
                 }
                 ManageSessionButtons();

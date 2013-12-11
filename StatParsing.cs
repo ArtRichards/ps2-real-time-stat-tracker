@@ -117,7 +117,7 @@ namespace PS2StatTracker
             this.kdrGrowthLabel.Text = dif.ToString("+#0.0000;-#0.0000");
         }
 
-        public async void UpdateWeaponTextFields(Dictionary<string, Weapon> weapons, DataGridView gridView)
+        public async Task UpdateWeaponTextFields(Dictionary<string, Weapon> weapons, DataGridView gridView)
         {
             if (weapons == null)
                 return;
@@ -308,7 +308,7 @@ namespace PS2StatTracker
             return false;
         }
 
-        async void AddSessionWeapon(EventLog newEvent)
+        async Task AddSessionWeapon(EventLog newEvent)
         {
             Weapon newWeapon = new Weapon();
             Weapon oldWeapon = new Weapon();
@@ -343,10 +343,10 @@ namespace PS2StatTracker
             }
             // Add session weapon stats unless this event was a death or team kill.
             if(!newEvent.death && newEvent.defender.faction != m_player.faction)
-                AddSessionWeapon(newWeapon, oldWeapon);
+                await AddSessionWeapon(newWeapon, oldWeapon);
         }
 
-        async void AddSessionWeapon(Weapon updatedWeapon, Weapon oldWeapon, bool skipKillsHS = false)
+        async Task AddSessionWeapon(Weapon updatedWeapon, Weapon oldWeapon, bool skipKillsHS = false)
         {
             float kills = updatedWeapon.kills - oldWeapon.kills;
             float hits = updatedWeapon.hitsCount - oldWeapon.hitsCount;
