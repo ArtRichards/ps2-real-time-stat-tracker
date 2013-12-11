@@ -25,7 +25,7 @@ namespace PS2StatTracker {
             return !MyEquals(e1, e2);
         }
         public override bool Equals(object obj) {
-            if (!(obj is EventLog))
+            if (obj == null || !(obj is EventLog))
                 return false;
             EventLog e2 = (EventLog)obj;
             return MyEquals(this, e2);

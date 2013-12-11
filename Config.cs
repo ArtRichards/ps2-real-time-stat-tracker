@@ -63,10 +63,15 @@ namespace PS2StatTracker {
             } else {
                 m_highColor = Settings.Default.PositiveColor;
                 m_lowColor = Settings.Default.NegativeColor;
-                foreach (string entry in Settings.Default.IDs) {
-                    this.usernameTextBox.Items.Add(entry);
+                if (Settings.Default.IDs == null)
+                    Settings.Default.IDs = new System.Collections.ArrayList();
+                else {
+                    foreach (string entry in Settings.Default.IDs) {
+                        this.usernameTextBox.Items.Add(entry);
+                    }
                 }
-                this.usernameTextBox.SelectedIndex = Settings.Default.LastID;
+                if (Settings.Default.LastID > 0)
+                    this.usernameTextBox.SelectedIndex = Settings.Default.LastID;
             }
         }
 
