@@ -118,16 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>V0.5.6
-Better error handling
+    <value>V 0.5.7.1
+Condensed session functions and corrected a new issue preventing the start session from automatically starting.
+
+V 0.5.7
+Fixed a NullReferenceException.
+Added retry options if an API update fails. After so many retries a user-prompt occurs.
+If a failure occurs and a session is running the update timer will stop running.
+
+V0.5.6
+Better error handling.
 
 V0.5.5
---------------NullPointer---------------
 Async support added for program operation.
 Improved movement and resizing of window.
 Improved error handling and reporting.
 Config file management improved.
-
 Improved logic around session starting, resuming, switching and ending.
 Invalid IDs are reported and will no longer crash the program.
 Installer updated to include 4th digit version (considered re-install)

@@ -13,7 +13,7 @@ namespace PS2StatTracker
 {
     public partial class GUIMain : Form {
         // Update this with new versions.
-        string VERSION_NUM = "0.5.7";
+        string VERSION_NUM = "0.5.7.1";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         List<EventLog> m_eventLog;
         Dictionary<string,
@@ -146,11 +146,7 @@ namespace PS2StatTracker
 
         private async void startSessionButton_Click(object sender, EventArgs evt) {
             try {
-                if (!m_sessionStarted) {
-                    m_preparingSession = true;
-                    await Program.Retry(Initialize(), "Initializing", 2, true);
-                }
-                await StartSession();
+                    await StartSession();
             } catch (Exception e) {
                 Program.HandleException(this, e);
             }

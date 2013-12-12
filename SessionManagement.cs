@@ -527,11 +527,7 @@ namespace PS2StatTracker {
 
             if (m_preparingSession) {
                 eventLogGridView.Rows.Clear();
-                m_preparingSession = false;
-                await StartSession();
             }
-
-            ManageSessionButtons();
 
             UpdateOverlay();
         }
@@ -628,44 +624,48 @@ namespace PS2StatTracker {
             }
         }
 
-        private async Task ResumeSession() {
-            m_sessionStarted = true;
-            this.hsrGrowthLabel.Visible = true;
-            this.kdrGrowthLabel.Visible = true;
-            await GetEventStats();
-            timer1.Start();
-            UpdateEventTextFields();
-            UpdateOverallStats(0.0f, 0.0f, 0.0f);
-            ManageSessionButtons();
-        }
-
         private async Task StartSession() {
             if (m_sessionStarted == false) {
+                m_preparingSession = true;
+                await Program.Retry(Initialize(), "Initializing", 2, true);
                 if (m_lastEventFound) {
-                    await ResetSession();
-                    this.hsrGrowthLabel.Visible = true;
-                    this.kdrGrowthLabel.Visible = true;
-                    m_sessionStartHSR = m_sessionStartKDR = 0.0f;
-                    UpdateEventTextFields();
-                    UpdateOverallStats(0.0f, 0.0f, 0.0f);
+                    ClearSession();
+                    PrepareSession();
+                    m_sessionStarted = true;
+                    timer1.Start();
                 }
             } else {
-                EndSession();
+                if(!m_preparingSession)
+                    EndSession();
             }
 
+            m_preparingSession = false;
             ManageSessionButtons();
         }
 
-        async Task ResetSession() {
+        void PrepareSession() {
+            this.hsrGrowthLabel.Visible = true;
+            this.kdrGrowthLabel.Visible = true;
+            UpdateEventTextFields();
+            UpdateOverallStats(0.0f, 0.0f, 0.0f);
+        }
+
+        private async Task ResumeSession() {
+            m_sessionStarted = true;
+            await GetEventStats();
+            PrepareSession();
+            timer1.Start();
+            ManageSessionButtons();
+        }
+
+        void ClearSession() {
             timer1.Stop();
             m_activeSeconds = 0;
             m_eventLog.Clear();
             m_sessionWeapons.Clear();
+            m_sessionStartHSR = m_sessionStartKDR = 0.0f;
             this.eventLogGridView.Rows.Clear();
             this.sessionWeaponsGridView.Columns.Clear();
-            m_sessionStarted = true;
-            await GetEventStats();
-            timer1.Start();
         }
 
         private void EndSession() {
