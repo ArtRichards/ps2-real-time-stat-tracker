@@ -45,7 +45,7 @@ namespace PS2StatTracker
             {
                 if (eventLog.IsKill())
                 {
-                    if (eventLog.defender.faction != m_player.faction)
+                    if (eventLog.defender != null && eventLog.defender.faction != m_player.faction)
                     {
                         kills++;
                         killHS += eventLog.headshot ? 1 : 0;
@@ -337,12 +337,12 @@ namespace PS2StatTracker
                 else
                 {
                     // Do not give kills or headshots for team kills.
-                    if(newEvent.defender.faction != m_player.faction)
+                    if(newEvent.defender != null && newEvent.defender.faction != m_player.faction)
                         UpdateOverallStats(newWeapon.kills, newWeapon.headShots, 0);
                 }
             }
             // Add session weapon stats unless this event was a death or team kill.
-            if(!newEvent.death && newEvent.defender.faction != m_player.faction)
+            if(!newEvent.death && newEvent.defender != null && newEvent.defender.faction != m_player.faction)
                 await AddSessionWeapon(newWeapon, oldWeapon);
         }
 

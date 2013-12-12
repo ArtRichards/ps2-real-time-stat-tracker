@@ -38,7 +38,7 @@ namespace PS2StatTracker
             try {
                 Process.Start("http://recursion.recursion.tk/");
             } catch (Exception e) {
-                Program.HandleException(e);
+                Program.HandleException(this, e);
             }
         }
 

@@ -32,8 +32,9 @@ namespace PS2StatTracker {
         }
         private static bool MyEquals(EventLog e1, EventLog e2) {
             return (e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
-                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp && e1.attacker.name == e2.attacker.name &&
-                e1.defender.name == e2.defender.name);
+                e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp &&
+                ((e1.attacker == null && e2.attacker == null) || (e1.attacker != null && e2.attacker != null && e1.attacker.name == e2.attacker.name)) &&
+                ((e1.defender == null && e2.defender == null) || (e1.defender != null && e2.defender != null && e1.defender.name == e2.defender.name)));
         }
         public override int GetHashCode() {
             return 0;
@@ -205,30 +206,6 @@ namespace PS2StatTracker {
                 result = await response.Content.ReadAsStringAsync();
             }
             return result;
-        }
-
-        HttpWebRequest GetWebRequest(string site) {
-            HttpWebRequest req = WebRequest.Create(site) as HttpWebRequest;
-            req.Proxy = null;
-            return req;
-        }
-
-        string ResponseString(HttpWebRequest req) {
-            string result = null;
-            using (HttpWebResponse resp = req.GetResponse()
-                                          as HttpWebResponse) {
-                StreamReader reader =
-                    new StreamReader(resp.GetResponseStream());
-                result = reader.ReadToEnd();
-                reader.Close();
-                resp.Close();
-            }
-
-            return result;
-        }
-
-        string SiteToString(string site) {
-            return ResponseString(GetWebRequest(site));
         }
 
         async Task<Player> GetPlayer(string id, bool updateWeapons = false, bool forceUpdate = false) {
@@ -507,7 +484,18 @@ namespace PS2StatTracker {
                 this.eventLogGridView.Rows.Add(m_eventLog.Count);
                 i = 0;
                 foreach (EventLog eventlog in m_eventLog) {
-                    string eventName = eventlog.death ? eventlog.attacker.name : eventlog.defender.name;
+                    string eventName;
+                    if (eventlog.death) {
+                        if (eventlog.attacker == null)
+                            eventName = "n/a";
+                        else
+                            eventName = eventlog.attacker.name;
+                    } else {
+                        if (eventlog.defender == null)
+                            eventName = "n/a";
+                        else
+                            eventName = eventlog.defender.name;
+                    }
 
                     this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
                     this.eventLogGridView.Rows[i].Cells[1].Value = eventlog.method;
@@ -519,7 +507,7 @@ namespace PS2StatTracker {
                     for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++) {
                         if (eventlog.death || eventlog.suicide) // Death.
                             this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                        else if (eventlog.defender.faction == m_player.faction) // Friendly kill.
+                        else if (eventlog.defender != null && eventlog.defender.faction == m_player.faction) // Friendly kill.
                             this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
                         else // Enemy kill.
                             this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;

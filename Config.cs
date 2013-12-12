@@ -58,7 +58,7 @@ namespace PS2StatTracker {
                 try {
                     System.IO.File.Delete("config.ini");
                 } catch (Exception e) {
-                    Program.HandleException(e, true);
+                    Program.HandleException(this, e, true);
                 }
             } else {
                 m_highColor = Settings.Default.PositiveColor;
