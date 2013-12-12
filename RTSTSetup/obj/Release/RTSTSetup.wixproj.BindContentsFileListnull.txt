@@ -1,0 +1,3 @@
+E:/Files/Dropbox/Personal/PS2StatTracker/PS2StatTracker/bin/PS2RTST.exe
+E:/Files/Dropbox/Personal/PS2StatTracker/PS2StatTracker/bin/Newtonsoft.Json.dll
+E:/Files/Dropbox/Personal/PS2StatTracker/PS2StatTracker/bin/log4net.dll

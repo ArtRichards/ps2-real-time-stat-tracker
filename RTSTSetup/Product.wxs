@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<?define CompanyName        = "Recursion"?>
+<?define ProductDir         = "PS2StatTracker"?>
+<?define ProductExe         = "PS2RTST.exe"?>
+<?define ProductFullName    = "PS2 Real Time Stat Tracker"?>
+<?define ProductName        = "PS2 Stat Tracker"?>
+<?define ProductVersion     = "0.5.7.1"?>
+<?define ProductUpgradeCode = "7ABE6142-74CC-4411-B914-326780EBAC2B"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" UpgradeCode="$(var.ProductUpgradeCode)"
+           Name="$(var.ProductFullName)" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" Language="1033">
+    <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" />
+    <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
+    <Icon Id="ProductIcon" SourceFile="E:/Files/Dropbox/Personal/PS2StatTracker/PS2StatTracker/RecursionIcon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="ProductIcon"/>
+    <Property Id="ARPNOREPAIR" Value="1"/>
+    <Upgrade Id="$(var.ProductUpgradeCode)">
+      <UpgradeVersion Minimum="$(var.ProductVersion)" OnlyDetect="yes" IncludeMinimum="no" Property="NEWERVERSIONDETECTED"/>
+      <UpgradeVersion Maximum="$(var.ProductVersion)" OnlyDetect="no" IncludeMaximum="no"
+                      Property="OLDERVERSIONBEINGUPGRADED"/>
+      <!-- Detect for changes in 4th field only -->
+      <UpgradeVersion Property="ANOTHERBUILDINSTALLED"
+               Maximum="$(var.ProductVersion)" Minimum="$(var.ProductVersion)"
+               IncludeMinimum="yes" IncludeMaximum="yes" OnlyDetect="no" />
+    </Upgrade>
+    <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
+
+    <Condition Message= "You need to be an administrator to install this product.">
+      Privileged
+    </Condition>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLPATH" Name="$(var.CompanyName)">
+          <Directory Id="INSTALLDIR" Name="$(var.ProductDir)" >
+            <Component Id="ApplicationFiles" Guid="71E7D54D-A10B-46E5-8927-CD17D9B3AAD8">
+              <CreateFolder>
+                <Permission User="Everyone" GenericAll="yes" />
+              </CreateFolder>
+              <File Id="ApplicationFile1" Source="E:/Files/Dropbox/Personal/PS2StatTracker/PS2StatTracker/bin/$(var.ProductExe)"/>
+              <File Id="ApplicationFile2" Source="E:/Files/Dropbox/Personal/PS2StatTracker/PS2StatTracker/bin/Newtonsoft.Json.dll"/>
+              <File Id="ApplicationFile3" Source="E:/Files/Dropbox/Personal/PS2StatTracker/PS2StatTracker/bin/log4net.dll"/>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      
+      <Directory Id="DesktopFolder" Name="Desktop">
+        <Component Id="DesktopShortcut" Guid="6E47D5F3-4F74-405D-A8B8-7C3F8C9DF913">
+          <Condition>INSTALLDESKTOPSHORTCUT</Condition>
+          <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="$(var.ProductName)" WorkingDirectory="INSTALLDIR" ShortName="DCOMgmt" Target="[INSTALLDIR]$(var.ProductExe)"/>
+          <RegistryKey Root="HKCU" Key="Software\$(var.CompanyName)\$(var.ProductName)" Action="createAndRemoveOnUninstall">
+            <RegistryValue Name="shortcut" Value="1" Type="integer" KeyPath="yes"/>
+          </RegistryKey>
+        </Component>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuSubfolder" Name="$(var.CompanyName)">
+          <Component Id="ApplicationShortcuts" Guid="BDDDCB37-6C41-4FD7-8C76-4D80C3521148">
+            <Shortcut Id="ApplicationShortcut1" Name="$(var.ProductName)" Description="$(var.ProductName)"
+                      Target="[INSTALLDIR]$(var.ProductExe)" WorkingDirectory="INSTALLDIR"/>
+            <RegistryValue Root="HKCU" Key="Software\$(var.CompanyName)\$(var.ProductName)"
+                      Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+            <RemoveFolder Id="ProgramMenuSubfolder" On="uninstall"/>
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Property Id="INSTALLDESKTOPSHORTCUT" Value="1" />
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <UIRef Id="WixUI_InstallDir" />
+
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallValidate"/>
+    </InstallExecuteSequence>
+
+    <Feature Id="DefaultFeature" Level="1">
+      <ComponentRef Id="ApplicationFiles"/>
+      <ComponentRef Id="ApplicationShortcuts"/>
+      <ComponentRef Id="DesktopShortcut"/>
+    </Feature>
+
+    <UI Id="MyWixUI_Mondo">
+      <UIRef Id="MyWixUI_Mondo" />
+
+      <DialogRef Id="ChangelogDlg" />
+
+      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="ChangelogDlg" Order="2">(ANOTHERBUILDINSTALLED OR OLDERVERSIONBEINGUPGRADED) AND LicenseAccepted = "1"</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="ChangelogDlg">OLDERVERSIONBEINGUPGRADED or ANOTHERBUILDINSTALLED</Publish>
+    </UI>
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Property Id="PIDTemplate"><![CDATA[12345<### ###>@@@@@]]></Property>
+
+  </Product>
+</Wix>

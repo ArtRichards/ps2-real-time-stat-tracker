@@ -1,0 +1,2 @@
+E:\Files\Dropbox\Personal\PS2StatTracker\RTSTSetup\bin\Release\PS2RTSTSetup.msi
+E:\Files\Dropbox\Personal\PS2StatTracker\RTSTSetup\bin\Release\PS2RTSTSetup.wixpdb

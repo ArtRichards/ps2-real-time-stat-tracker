@@ -1,0 +1,3 @@
+obj\Debug\Changelog.wixobj
+obj\Debug\MyWixUI_Mondo.wixobj
+obj\Debug\Product.wixobj

@@ -1,0 +1,8 @@
+obj\Release\Changelog.wixobj
+obj\Release\MyWixUI_Mondo.wixobj
+obj\Release\Product.wixobj
+obj\Release\RTSTSetup.wixproj.BindContentsFileListnull.txt
+obj\Release\RTSTSetup.wixproj.BindOutputsFileListnull.txt
+obj\Release\RTSTSetup.wixproj.BindBuiltOutputsFileListnull.txt
+E:\Files\Dropbox\Personal\PS2StatTracker\RTSTSetup\bin\Release\PS2RTSTSetup.msi
+E:\Files\Dropbox\Personal\PS2StatTracker\RTSTSetup\bin\Release\PS2RTSTSetup.wixpdb
