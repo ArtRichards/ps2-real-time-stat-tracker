@@ -332,23 +332,27 @@ namespace PS2StatTracker
                 this.eventLogGridView.Rows.Add(eventLog.Count - 1);
 
                 for (int i = 0; i < eventLog.Count - 1; i++) {
-                    string eventName;
+                    string eventName = "";
                     if (eventLog[i].death) {
                         if (eventLog[i].attacker == null)
                             eventName = "n/a";
                         else
+                        {
                             eventName = eventLog[i].attacker.fullName;
+                        }
                     } else {
                         if (eventLog[i].defender == null)
                             eventName = "n/a";
                         else
+                        {
                             eventName = eventLog[i].defender.fullName;
+                        }
                     }
 
                     if (eventLog[i].opponent != null) {
                         if (eventLog[i].opponent.kdr != null) {
                             float kdr = (float)eventLog[i].opponent.kdr.kills / (float)eventLog[i].opponent.kdr.actualDeaths;
-                            this.eventLogGridView.Rows[i].Cells[4].Value = kdr.ToString("0.0"); 
+                            this.eventLogGridView.Rows[i].Cells[4].Value = kdr.ToString("0.0");
                         }
                         this.eventLogGridView.Rows[i].Cells[0].Value = eventLog[i].opponent.battleRank;
                     }
@@ -518,6 +522,9 @@ namespace PS2StatTracker
 
                 await m_statTracker.StartSession();
                 
+                if(!m_statTracker.HasInitialized())
+                    ShowUpdateText("Invalid ID");
+
                 // Starting session for first time.
                 if (m_statTracker.SessionStarted()) {
                     await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
@@ -652,12 +659,16 @@ namespace PS2StatTracker
                         m_statTracker.SetCountEvents(session.countStatsCheckBox.Checked);
                         m_statTracker.StopPreparing();
                         await m_statTracker.Initialize((int)session.pastEventsNumber.Value + 1);
-                        await PrepareSession();
-                        // Update overall weapons.
-                        await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
-                        UpdateMiscFields();
-                        ManageSessionButtons();
-                        HideUpdateText();
+                        if (m_statTracker.HasInitialized()){
+                            await PrepareSession();
+                            // Update overall weapons.
+                            await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+                            UpdateMiscFields();
+                            ManageSessionButtons();
+                            HideUpdateText();
+                        }
+                        else
+                            ShowUpdateText("Invalid ID");
                     }
                 }
                 ManageSessionButtons();

@@ -71,6 +71,10 @@ namespace PS2StatTracker {
             return m_initializing;
         }
 
+        public bool HasInitialized(){
+            return m_initialized;
+        }
+
         public bool SessionStarted() {
             return m_sessionStarted;
         }
