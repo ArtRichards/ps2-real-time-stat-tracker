@@ -113,7 +113,6 @@
     </Compile>
     <Compile Include="SessionManagement.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="StatParsing.cs" />
     <Compile Include="StatTracker.cs" />
     <EmbeddedResource Include="GUIAbout.resx">
       <DependentUpon>GUIAbout.cs</DependentUpon>
