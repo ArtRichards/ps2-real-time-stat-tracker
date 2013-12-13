@@ -176,7 +176,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\Resources\defaultlog4netconfig.xml" />
+    <None Include="Properties\Resources\defaultlog4netconfig.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Resources\avatar.png" />
     <None Include="Properties\Resources\hsImage.jpg" />
     <Content Include="recursion.ico" />
