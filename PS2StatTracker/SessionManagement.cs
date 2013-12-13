@@ -246,7 +246,10 @@ namespace PS2StatTracker {
                 player.fullName = player.name;
             } else {
                 player.outfit = pJson.outfit.name;
-                player.fullName = string.Format("[{0}] {1}", pJson.outfit.alias, player.name);
+                if (string.IsNullOrEmpty(pJson.outfit.alias))
+                    player.fullName = player.name;
+                else
+                    player.fullName = string.Format("[{0}] {1}", pJson.outfit.alias, player.name);
             }
             player.faction = pJson.faction_id;
             player.id = id;
@@ -363,6 +366,8 @@ namespace PS2StatTracker {
 
             if (getWeapons)
                 site += "?c:resolve=weapon_stat,weapon_stat_by_faction,outfit";
+            else
+                site += "?c:resolve=outfit";
 
             string result = await GetAsyncRequest(site);
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
