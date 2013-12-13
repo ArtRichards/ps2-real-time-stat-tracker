@@ -337,12 +337,12 @@ namespace PS2StatTracker
                         if (eventLog[i].attacker == null)
                             eventName = "n/a";
                         else
-                            eventName = eventLog[i].attacker.name;
+                            eventName = eventLog[i].attacker.fullName;
                     } else {
                         if (eventLog[i].defender == null)
                             eventName = "n/a";
                         else
-                            eventName = eventLog[i].defender.name;
+                            eventName = eventLog[i].defender.fullName;
                     }
 
                     if (eventLog[i].opponent != null) {
@@ -449,7 +449,7 @@ namespace PS2StatTracker
         // Adds the username to the dropdown list.
         void SaveUserName() {
             if (m_statTracker.GetUserID().Length == 0) return;
-            string fullUser = m_statTracker.GetUserID() + " | " + m_statTracker.GetPlayer().name;
+            string fullUser = m_statTracker.GetUserID() + " | " + m_statTracker.GetPlayer().fullName;
             if (!this.usernameTextBox.Items.Contains(fullUser)) {
                 this.usernameTextBox.Items.Add(fullUser);
             }
@@ -470,7 +470,7 @@ namespace PS2StatTracker
         }
 
         void SetPlayerInformation() {
-            this.playerNameLabel.Text = m_statTracker.GetPlayer().name;
+            this.playerNameLabel.Text = m_statTracker.GetPlayer().fullName;
             this.playerNameLabel.Visible = true;
             SaveUserName();
         }

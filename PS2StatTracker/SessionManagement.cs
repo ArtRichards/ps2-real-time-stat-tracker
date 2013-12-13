@@ -33,8 +33,8 @@ namespace PS2StatTracker {
         private static bool MyEquals(EventLog e1, EventLog e2) {
             return (e1.headshot == e2.headshot && e1.location == e2.location && e1.method == e2.method &&
                 e1.suicide == e2.suicide && e1.timeStamp == e2.timeStamp &&
-                ((e1.attacker == null && e2.attacker == null) || (e1.attacker != null && e2.attacker != null && e1.attacker.name == e2.attacker.name)) &&
-                ((e1.defender == null && e2.defender == null) || (e1.defender != null && e2.defender != null && e1.defender.name == e2.defender.name)));
+                ((e1.attacker == null && e2.attacker == null) || (e1.attacker != null && e2.attacker != null && e1.attacker.fullName == e2.attacker.fullName)) &&
+                ((e1.defender == null && e2.defender == null) || (e1.defender != null && e2.defender != null && e1.defender.fullName == e2.defender.fullName)));
         }
         public override int GetHashCode() {
             return 0;
@@ -106,9 +106,11 @@ namespace PS2StatTracker {
     }
 
     public class Player : ICloneable {
-        public string name,
-            id,
-            faction;
+        public string fullName;
+        public string name;
+        public string id;
+        public string faction;
+        public string outfit;
         public int battleRank;
         public float battleRankPer;
         public float totalHeadshots;
@@ -187,11 +189,24 @@ namespace PS2StatTracker {
             public List<weaponJson> weapon_stat_by_faction { get; set; }
         }
 
+        public class outfitJson {
+            public string name { get; set; }
+            public string alias { get; set; }
+            public string alias_lower { get; set; }
+            public string leader_character_id { get; set; }
+            public string member_count { get; set; }
+            public string name_lower { get; set; }
+            public string outfit_id { get; set; }
+            public string time_created { get; set; }
+            public string time_created_date { get; set; }
+        }
+
         public class playerJson {
             public nameJson name { get; set; }
             public string faction_id { get; set; }
             public brJson battle_rank { get; set; }
             public weaponListJson stats { get; set; }
+            public outfitJson outfit { get; set; }
         }
 
         private HttpClient m_httpClient;
@@ -226,6 +241,13 @@ namespace PS2StatTracker {
             player.battleRankPer = float.Parse(pJson.battle_rank.percent_to_next) / 100.0f;
             player.kdr = kdr;
             player.name = pJson.name.first;
+            if (pJson.outfit == null) {
+                player.outfit = "n/a";
+                player.fullName = player.name;
+            } else {
+                player.outfit = pJson.outfit.name;
+                player.fullName = string.Format("[{0}] {1}", pJson.outfit.alias, player.name);
+            }
             player.faction = pJson.faction_id;
             player.id = id;
 
@@ -340,7 +362,7 @@ namespace PS2StatTracker {
             string site = "character/" + id;
 
             if (getWeapons)
-                site += "?c:resolve=weapon_stat,weapon_stat_by_faction";
+                site += "?c:resolve=weapon_stat,weapon_stat_by_faction,outfit";
 
             string result = await GetAsyncRequest(site);
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
