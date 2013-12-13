@@ -22,7 +22,9 @@ namespace PS2StatTracker {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                using (GUIMain form = new GUIMain()) {
+                StatTracker statTracker = new StatTracker();
+
+                using (GUIMain form = new GUIMain(statTracker)) {
                     form.LoadConfig();
                     Application.Run(form);
                 }

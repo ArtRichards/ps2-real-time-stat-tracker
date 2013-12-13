@@ -79,7 +79,7 @@
             this.Name = "GUIChangelog";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Change Log";
+            this.Text = "5";
             this.ResumeLayout(false);
             this.PerformLayout();
 

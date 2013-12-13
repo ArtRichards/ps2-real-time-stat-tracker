@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace PS2StatTracker
 {
     public partial class GUIOverlay : Form
-    {
+    {/*
         public GUIOverlay()
         {
             InitializeComponent();
@@ -108,6 +108,6 @@ namespace PS2StatTracker
             Weapon weapon = new Weapon();
             weapon.Initialize();
             return weapon;
-        }
+        }*/
     }
 }

@@ -135,7 +135,7 @@ namespace PS2StatTracker {
         }
     }
 
-    public partial class GUIMain {
+    public partial class StatTracker {
         public const string VEHICLE_OFFSET = "V";
         public class eventJson {
             public eventJson() {
@@ -193,22 +193,22 @@ namespace PS2StatTracker {
             public weaponListJson stats { get; set; }
         }
 
-        private HttpClient httpClient;
+        private HttpClient m_httpClient;
         internal async Task<string> GetAsyncRequest(string address) {
-            if (httpClient == null) {
+            if (m_httpClient == null) {
                 ServicePointManager.DefaultConnectionLimit = 20000;
-                httpClient = new System.Net.Http.HttpClient();
-                httpClient.BaseAddress = new Uri("http://census.soe.com/get/ps2:v2/");
+                m_httpClient = new System.Net.Http.HttpClient();
+                m_httpClient.BaseAddress = new Uri("http://census.soe.com/get/ps2:v2/");
             }
             string result = null;
-            using (HttpResponseMessage response = await httpClient.GetAsync(address)) {
+            using (HttpResponseMessage response = await m_httpClient.GetAsync(address)) {
                 response.EnsureSuccessStatusCode();
                 result = await response.Content.ReadAsStringAsync();
             }
             return result;
         }
 
-        async Task<Player> GetPlayer(string id, bool updateWeapons = false, bool forceUpdate = false) {
+        async Task<Player> CreatePlayer(string id, bool updateWeapons = false, bool forceUpdate = false) {
             // Check local cache.
             if (!forceUpdate && m_playerCache.ContainsKey(id))
                 return m_playerCache[id];
@@ -285,7 +285,7 @@ namespace PS2StatTracker {
             return player;
         }
 
-        async Task<string> GetItemName(string id) {
+        public async Task<string> GetItemName(string id) {
             string useId = id;
 
             if (useId.Contains(VEHICLE_OFFSET)) {
@@ -310,7 +310,7 @@ namespace PS2StatTracker {
             return "Unknown";
         }
 
-        async Task<string> GetVehicleName(string id) {
+        public async Task<string> GetVehicleName(string id) {
             // Check local cache.
             if (id != null) {
                 if (m_itemCache.ContainsKey(id))
@@ -391,27 +391,17 @@ namespace PS2StatTracker {
             return kdr;
         }
 
-        void ShowUpdateText(String text) {
-            this.updatingLabel.Text = text;
-            this.updatingLabel.Visible = true;
-            this.Refresh();
-        }
-
-        void HideUpdateText() {
-            this.updatingLabel.Visible = false;
-        }
-
-        async Task GetEventStats(int numEvents = 50) {
+        public async Task GetEventStats(int numEvents = 50) {
             string result = await GetAsyncRequest("characters_event/?character_id=" + m_userID + "&c:limit=" + numEvents + "&type=KILL,DEATH");
 
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
-            if (!jObject.HasValues)
+            if (jObject == null || !jObject.HasValues)
                 return;
 
             Newtonsoft.Json.Linq.JToken jToken = jObject["characters_event_list"];
 
-            if (!jToken.HasValues)
+            if (jToken == null || !jToken.HasValues)
                 return;
 
             // Create a list of each json object.
@@ -425,8 +415,8 @@ namespace PS2StatTracker {
                 EventLog newEvent = new EventLog();
                 newEvent.Initialize();
 
-                Player attacker = await GetPlayer(jsonEvent.attacker_character_id);
-                Player defender = await GetPlayer(jsonEvent.character_id);
+                Player attacker = await CreatePlayer(jsonEvent.attacker_character_id);
+                Player defender = await CreatePlayer(jsonEvent.character_id);
 
                 // Weapon IDs take priority over vehicle IDs. Weapon IDs such as breaker rocket pods
                 // also show up with vehicle IDs like Reavers. A Reaver should only count if no
@@ -457,6 +447,9 @@ namespace PS2StatTracker {
                 if (newEvent == m_currentEvent)
                     break;
 
+                // If an iteration has gone through then new information has been gathered.
+                m_hasUpdated = true;
+
                 // Don't add the same event. The API can sometimes report it twice.
                 if (m_eventLog.Contains(newEvent))
                     continue;
@@ -470,8 +463,11 @@ namespace PS2StatTracker {
                 } else
                     m_eventLog.Add(newEvent);
 
-                // Add session weapon stats unless this event was a death or team kill.
-                await AddSessionWeapon(newEvent);
+                if (!m_preparingSession || m_countEvents) {
+                    // Add session weapon stats unless this event was a death or team kill.
+                    if(i < numEvents - 1)
+                        await AddSessionWeapon(newEvent);
+                }
                 i++;
             }
 
@@ -479,160 +475,99 @@ namespace PS2StatTracker {
             // Only update the fields if a change in events occurred.
             if (i > 0) {
                 m_currentEvent = m_eventLog[0];
-                // Update killboard.
-                this.eventLogGridView.Rows.Clear();
-                this.eventLogGridView.Rows.Add(m_eventLog.Count);
-                i = 0;
-                foreach (EventLog eventlog in m_eventLog) {
-                    string eventName;
-                    if (eventlog.death) {
-                        if (eventlog.attacker == null)
-                            eventName = "n/a";
-                        else
-                            eventName = eventlog.attacker.name;
-                    } else {
-                        if (eventlog.defender == null)
-                            eventName = "n/a";
-                        else
-                            eventName = eventlog.defender.name;
-                    }
-
-                    this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
-                    this.eventLogGridView.Rows[i].Cells[1].Value = eventlog.method;
-                    this.eventLogGridView.Rows[i].Cells[1].Style.ForeColor = Color.Beige;
-                    if (eventlog.headshot)
-                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[2]).Value = Properties.Resources.hsImage;
-
-                    // Set row color depending on kill or death.
-                    for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++) {
-                        if (eventlog.death || eventlog.suicide) // Death.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                        else if (eventlog.defender != null && eventlog.defender.faction == m_player.faction) // Friendly kill.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
-                        else // Enemy kill.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;
-                    }
-
-                    i++;
-                }
-                this.eventLogGridView.ClearSelection();
-
-                UpdateEventTextFields();
-                await UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
+                m_lastEventFound = true;
             }
-
-            m_lastEventFound = true;
-
-            HideUpdateText();
-
-            if (m_preparingSession) {
-                eventLogGridView.Rows.Clear();
-            }
-
-            UpdateOverlay();
         }
 
-        async Task GetPlayerWeapons() {
-            ShowUpdateText("Updating Weapons...");
+        public async Task GetPlayerWeapons() {
+            //ShowUpdateText("Updating Weapons...");
 
-            m_player = await GetPlayer(m_player.id, true, true);
+            m_player = await CreatePlayer(m_player.id, true, true);
             // Update stats of the session weapon other than headshots/kills.
             foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons) {
                 string id = GetBestWeaponID(currentWep.Value);
-                if (m_sessionWeapons.ContainsKey(id)) {
-                    if (m_startPlayer.weapons.ContainsKey(id))
-                        await AddSessionWeapon(currentWep.Value, m_startPlayer.weapons[id], true);
+                if (m_sessionStats.weapons.ContainsKey(id)) {
+                    if (m_sessionStats.startPlayer.weapons.ContainsKey(id))
+                        await AddSessionWeapon(currentWep.Value, m_sessionStats.startPlayer.weapons[id], true);
                     else
-                        m_startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
+                        m_sessionStats.startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
                 }
             }
+            /*
             await UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
             await UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
             HideUpdateText();
-            UpdateOverlay();
+            UpdateOverlay();*/
+        }
+
+        void UpdateOverallStats(float kills, float headshots, float deaths) {
+            m_player.kdr.kills += (int)kills;
+
+            // HSR
+            m_player.totalHeadshots += headshots;
+
+            float ratio = m_player.totalHeadshots / (float)m_player.kdr.kills;
+
+            // Set the start of session head shot ratio.
+            if (m_sessionStats.startHSR == 0.0f)
+                m_sessionStats.startHSR = ratio;
+
+            // KDR
+            m_player.kdr.actualDeaths += (int)deaths;
+            ratio = (float)m_player.kdr.kills / (float)m_player.kdr.actualDeaths;
+
+            // Set the start of session kd ratio.
+            if (m_sessionStats.startKDR == 0.0f)
+                m_sessionStats.startKDR = ratio;
         }
 
         void CancelInitialize() {
             m_initializing = false;
             m_preparingSession = false;
-            ManageSessionButtons();
         }
 
-        async Task Initialize(int numEvents = 1) {
-            if (this.usernameTextBox.Text.Length > 0) {
+        public async Task Initialize(int numEvents = 1) {
+            if (m_userID.Length > 0) {
                 m_initializing = true;
                 if (numEvents <= 0)
                     numEvents = 1;
-                ShowUpdateText("Initializing...");
+                //ShowUpdateText("Initializing...");
                 m_player = null;
-                m_startPlayer = null;
+                m_sessionStats.startPlayer = null;
                 m_playerCache.Clear();
-                m_sessionStartHSR = 0.0f;
-                m_sessionStartKDR = 0.0f;
+                ClearSession();
                 Disconnect();
                 m_lastEventFound = false;
-                m_userID = "";
                 // Get this player's information.
-                m_player = await GetPlayer(GetUserID(this.usernameTextBox.Text), true);
+                m_player = await CreatePlayer(m_userID, true);
 
                 if (m_player == null) {
-                    ShowUpdateText("Invalid ID");
+                    //ShowUpdateText("Invalid ID");
                     CancelInitialize();
                     return;
                 }
 
-                this.playerNameLabel.Text = m_player.name;
-                this.playerNameLabel.Visible = true;
                 // Copy player information so it can be compared to later.
-                m_startPlayer = (Player)m_player.Clone();
-                // Update weapon text information.
-                await UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
-                // Update total stats.
-                UpdateOverallStats(0.0f, 0.0f, 0.0f);
-                // Update misc tab.
-                UpdateMiscFields();
+                m_sessionStats.startPlayer = (Player)m_player.Clone();
+
+                // Set start hsr and kdr values.
+                UpdateOverallStats(0, 0, 0);
+
                 // Load events.
                 await GetEventStats(numEvents);
-                if (m_countEvents) {
-                    this.hsrGrowthLabel.Visible = true;
-                    this.kdrGrowthLabel.Visible = true;
-                }
-                SaveUserName();
+
                 m_initialized = true;
                 m_initializing = false;
             }
         }
 
-        // Determines if a button should be active or visible based
-        // on the current state of the program.
-        private void ManageSessionButtons() {
-            if (m_preparingSession || m_initializing) {
-                this.connectButton.Enabled = false;
-                this.startSessionButton.Enabled = false;
-            } else {
-                this.connectButton.Enabled = true;
-                this.startSessionButton.Enabled = true;
-            }
-            if (m_lastEventFound) {
-                if (m_sessionStarted) {
-                    this.startSessionButton.Text = "End Session";
-                    this.connectButton.Visible = false;
-                } else {
-                    this.startSessionButton.Text = "Start";
-                    this.connectButton.Visible = true;
-                }
-            }
-        }
-
-        private async Task StartSession() {
+        public async Task StartSession() {
             if (m_sessionStarted == false) {
                 m_preparingSession = true;
+                ClearSession();
                 await Program.Retry(Initialize(), "Initializing", 2, true);
                 if (m_lastEventFound) {
-                    ClearSession();
-                    PrepareSession();
                     m_sessionStarted = true;
-                    timer1.Start();
                 }
             } else {
                 if(!m_preparingSession)
@@ -640,51 +575,32 @@ namespace PS2StatTracker {
             }
 
             m_preparingSession = false;
-            ManageSessionButtons();
         }
 
-        void PrepareSession() {
-            this.hsrGrowthLabel.Visible = true;
-            this.kdrGrowthLabel.Visible = true;
-            UpdateEventTextFields();
-            UpdateOverallStats(0.0f, 0.0f, 0.0f);
-        }
-
-        private async Task ResumeSession() {
+        public async Task ResumeSession() {
             m_sessionStarted = true;
             await GetEventStats();
-            PrepareSession();
-            timer1.Start();
-            ManageSessionButtons();
         }
 
         void ClearSession() {
-            timer1.Stop();
             m_activeSeconds = 0;
             m_eventLog.Clear();
-            m_sessionWeapons.Clear();
-            m_sessionStartHSR = m_sessionStartKDR = 0.0f;
-            this.eventLogGridView.Rows.Clear();
-            this.sessionWeaponsGridView.Columns.Clear();
+            m_sessionStats.weapons.Clear();
+            m_sessionStats.startHSR = m_sessionStats.startKDR = 0.0f;
         }
 
-        private void EndSession() {
+        public void EndSession() {
             m_sessionStarted = false;
             m_activeSeconds = 0;
-            timer1.Stop();
-            ManageSessionButtons();
         }
 
         private void Disconnect() {
             EndSession();
             m_eventLog.Clear();
-            m_sessionWeapons.Clear();
+            m_sessionStats.weapons.Clear();
             m_player = null;
-            m_startPlayer = null;
+            m_sessionStats.startPlayer = null;
             m_currentEvent.Initialize();
-            this.eventLogGridView.Rows.Clear();
-            this.sessionWeaponsGridView.Columns.Clear();
-            this.playerNameLabel.Visible = false;
         }
     }
 }

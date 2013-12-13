@@ -15,8 +15,8 @@
         {
             if (disposing && (components != null))
             {
-                if(httpClient != null)
-                    httpClient.Dispose();
+                if (m_statTracker != null)
+                    m_statTracker.Shutdown();
                 components.Dispose();
             }
             base.Dispose(disposing);
