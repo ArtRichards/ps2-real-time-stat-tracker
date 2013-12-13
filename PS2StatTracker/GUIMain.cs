@@ -72,7 +72,7 @@ namespace PS2StatTracker
             m_lowColor = Color.Red;
 
             // Prevent X images showing up.
-            ((DataGridViewImageColumn)this.eventLogGridView.Columns[2]).DefaultCellStyle.NullValue = null;
+            ((DataGridViewImageColumn)this.eventLogGridView.Columns[3]).DefaultCellStyle.NullValue = null;
 
             // Handle mouse movement and resizing on borderless window.
             this.menuStrip1.MouseDown += OnMouseDown;
@@ -272,8 +272,8 @@ namespace PS2StatTracker
                 if (gridView.Name == "sessionWeaponsGridView" && (m_statTracker.SessionStarted() ||
                     m_statTracker.CountingEvents())) {
                     // HSR
-                        float[] absHSR = m_statTracker.GetWeaponHSR(m_statTracker.GetBestWeaponID(weapon),
-                            m_statTracker.GetSessionStats().startPlayer.weapons);
+                    float[] absHSR = m_statTracker.GetWeaponHSR(m_statTracker.GetBestWeaponID(weapon),
+                        m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
                     absHSR[0] += weapon.headShots;
                     absHSR[1] += weapon.kills;
@@ -345,11 +345,18 @@ namespace PS2StatTracker
                             eventName = eventLog[i].defender.name;
                     }
 
-                    this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
-                    this.eventLogGridView.Rows[i].Cells[1].Value = eventLog[i].method;
-                    this.eventLogGridView.Rows[i].Cells[1].Style.ForeColor = Color.Beige;
+                    if (eventLog[i].opponent != null) {
+                        if (eventLog[i].opponent.kdr != null) {
+                            float kdr = (float)eventLog[i].opponent.kdr.kills / (float)eventLog[i].opponent.kdr.actualDeaths;
+                            this.eventLogGridView.Rows[i].Cells[4].Value = kdr.ToString("0.0"); 
+                        }
+                        this.eventLogGridView.Rows[i].Cells[0].Value = eventLog[i].opponent.battleRank;
+                    }
+                    this.eventLogGridView.Rows[i].Cells[1].Value = eventName;
+                    this.eventLogGridView.Rows[i].Cells[2].Value = eventLog[i].method;
+                    this.eventLogGridView.Rows[i].Cells[3].Style.ForeColor = Color.Beige;
                     if (eventLog[i].headshot)
-                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[2]).Value = Properties.Resources.hsImage;
+                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[3]).Value = Properties.Resources.hsImage;
 
                     // Set row color depending on kill or death.
                     for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++) {
@@ -374,6 +381,10 @@ namespace PS2StatTracker
 
         void UpdateMiscFields() {
             Player player = m_statTracker.GetPlayer();
+
+            if (player == null || player.kdr == null)
+                return;
+
             // Times revived.
             float timesRevived = (float)player.kdr.actualDeaths - (float)player.kdr.reviveDeaths;
 
@@ -639,12 +650,12 @@ namespace PS2StatTracker
                         }
                         RegisterUserAndPrepareForInitialize();
                         m_statTracker.SetCountEvents(session.countStatsCheckBox.Checked);
+                        m_statTracker.StopPreparing();
                         await m_statTracker.Initialize((int)session.pastEventsNumber.Value + 1);
                         await PrepareSession();
                         // Update overall weapons.
                         await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
                         UpdateMiscFields();
-                        m_statTracker.StopPreparing();
                         ManageSessionButtons();
                         HideUpdateText();
                     }

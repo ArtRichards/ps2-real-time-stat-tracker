@@ -28,8 +28,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -104,12 +103,15 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eventLogGridView = new System.Windows.Forms.DataGridView();
-            this.playerCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.methodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.hsCol = new System.Windows.Forms.DataGridViewImageColumn();
             this.usernameTextBox = new System.Windows.Forms.ComboBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.brCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.playerCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.methodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.hsCol = new System.Windows.Forms.DataGridViewImageColumn();
+            this.kdrCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.sessionWeaponsTab.SuspendLayout();
@@ -121,6 +123,10 @@
             this.panel2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // connectButton
@@ -128,7 +134,7 @@
             this.connectButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.connectButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.connectButton.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.connectButton.Location = new System.Drawing.Point(853, 24);
+            this.connectButton.Location = new System.Drawing.Point(249, 0);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(83, 23);
             this.connectButton.TabIndex = 0;
@@ -271,12 +277,11 @@
             // 
             // usernameLabel
             // 
-            this.usernameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.usernameLabel.AutoSize = true;
             this.usernameLabel.BackColor = System.Drawing.Color.Transparent;
             this.usernameLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.usernameLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.usernameLabel.Location = new System.Drawing.Point(629, 29);
+            this.usernameLabel.Location = new System.Drawing.Point(3, 4);
             this.usernameLabel.Name = "usernameLabel";
             this.usernameLabel.Size = new System.Drawing.Size(55, 14);
             this.usernameLabel.TabIndex = 19;
@@ -284,12 +289,11 @@
             // 
             // killBoardLabel
             // 
-            this.killBoardLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.killBoardLabel.AutoSize = true;
             this.killBoardLabel.BackColor = System.Drawing.Color.Transparent;
             this.killBoardLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.killBoardLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.killBoardLabel.Location = new System.Drawing.Point(629, 83);
+            this.killBoardLabel.Location = new System.Drawing.Point(3, 58);
             this.killBoardLabel.Name = "killBoardLabel";
             this.killBoardLabel.Size = new System.Drawing.Size(60, 14);
             this.killBoardLabel.TabIndex = 20;
@@ -352,18 +356,16 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.sessionWeaponsTab);
             this.tabControl1.Controls.Add(this.allWeaponsTab);
             this.tabControl1.Controls.Add(this.miscTab);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabControl1.Location = new System.Drawing.Point(194, 24);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.MinimumSize = new System.Drawing.Size(400, 340);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(432, 340);
+            this.tabControl1.Size = new System.Drawing.Size(400, 342);
             this.tabControl1.TabIndex = 24;
             // 
             // sessionWeaponsTab
@@ -373,7 +375,7 @@
             this.sessionWeaponsTab.Location = new System.Drawing.Point(4, 23);
             this.sessionWeaponsTab.Name = "sessionWeaponsTab";
             this.sessionWeaponsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.sessionWeaponsTab.Size = new System.Drawing.Size(424, 313);
+            this.sessionWeaponsTab.Size = new System.Drawing.Size(392, 315);
             this.sessionWeaponsTab.TabIndex = 0;
             this.sessionWeaponsTab.Text = "Session Weapons";
             // 
@@ -384,6 +386,7 @@
             this.sessionWeaponsGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.sessionWeaponsGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.sessionWeaponsGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.sessionWeaponsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.sessionWeaponsGridView.Location = new System.Drawing.Point(6, 6);
@@ -395,7 +398,7 @@
             this.sessionWeaponsGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sessionWeaponsGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.Silver;
             this.sessionWeaponsGridView.ShowEditingIcon = false;
-            this.sessionWeaponsGridView.Size = new System.Drawing.Size(412, 301);
+            this.sessionWeaponsGridView.Size = new System.Drawing.Size(380, 303);
             this.sessionWeaponsGridView.TabIndex = 22;
             // 
             // allWeaponsTab
@@ -405,7 +408,7 @@
             this.allWeaponsTab.Location = new System.Drawing.Point(4, 23);
             this.allWeaponsTab.Name = "allWeaponsTab";
             this.allWeaponsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.allWeaponsTab.Size = new System.Drawing.Size(424, 313);
+            this.allWeaponsTab.Size = new System.Drawing.Size(392, 315);
             this.allWeaponsTab.TabIndex = 1;
             this.allWeaponsTab.Text = "All Weapons";
             // 
@@ -427,7 +430,7 @@
             this.weaponsGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponsGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.Silver;
             this.weaponsGridView.ShowEditingIcon = false;
-            this.weaponsGridView.Size = new System.Drawing.Size(412, 301);
+            this.weaponsGridView.Size = new System.Drawing.Size(380, 303);
             this.weaponsGridView.TabIndex = 21;
             // 
             // miscTab
@@ -438,7 +441,7 @@
             this.miscTab.Location = new System.Drawing.Point(4, 23);
             this.miscTab.Name = "miscTab";
             this.miscTab.Padding = new System.Windows.Forms.Padding(3);
-            this.miscTab.Size = new System.Drawing.Size(424, 313);
+            this.miscTab.Size = new System.Drawing.Size(392, 315);
             this.miscTab.TabIndex = 2;
             this.miscTab.Text = "Miscellaneous";
             // 
@@ -467,7 +470,7 @@
             this.panel3.Controls.Add(this.reviveKDRTextBox);
             this.panel3.Location = new System.Drawing.Point(5, 21);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(403, 75);
+            this.panel3.Size = new System.Drawing.Size(371, 75);
             this.panel3.TabIndex = 38;
             // 
             // teamRelianceLabel
@@ -549,7 +552,7 @@
             this.startSessionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.startSessionButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.startSessionButton.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startSessionButton.Location = new System.Drawing.Point(853, 50);
+            this.startSessionButton.Location = new System.Drawing.Point(249, 26);
             this.startSessionButton.Name = "startSessionButton";
             this.startSessionButton.Size = new System.Drawing.Size(83, 23);
             this.startSessionButton.TabIndex = 25;
@@ -564,7 +567,7 @@
             this.updatingLabel.BackColor = System.Drawing.Color.Transparent;
             this.updatingLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.updatingLabel.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.updatingLabel.Location = new System.Drawing.Point(827, 84);
+            this.updatingLabel.Location = new System.Drawing.Point(229, 60);
             this.updatingLabel.Name = "updatingLabel";
             this.updatingLabel.Size = new System.Drawing.Size(103, 14);
             this.updatingLabel.TabIndex = 18;
@@ -573,12 +576,11 @@
             // 
             // playerNameLabel
             // 
-            this.playerNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.playerNameLabel.AutoSize = true;
             this.playerNameLabel.BackColor = System.Drawing.Color.Transparent;
             this.playerNameLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playerNameLabel.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.playerNameLabel.Location = new System.Drawing.Point(685, 29);
+            this.playerNameLabel.Location = new System.Drawing.Point(59, 4);
             this.playerNameLabel.Name = "playerNameLabel";
             this.playerNameLabel.Size = new System.Drawing.Size(77, 14);
             this.playerNameLabel.TabIndex = 26;
@@ -794,7 +796,7 @@
             // startOverlayToolStripMenuItem
             // 
             this.startOverlayToolStripMenuItem.Name = "startOverlayToolStripMenuItem";
-            this.startOverlayToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.startOverlayToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.startOverlayToolStripMenuItem.Text = "Start Overlay";
             this.startOverlayToolStripMenuItem.Click += new System.EventHandler(this.startOverlayToolStripMenuItem_Click);
             // 
@@ -884,8 +886,10 @@
             this.eventLogGridView.AllowUserToAddRows = false;
             this.eventLogGridView.AllowUserToDeleteRows = false;
             this.eventLogGridView.AllowUserToResizeRows = false;
-            this.eventLogGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.eventLogGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.eventLogGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.eventLogGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.eventLogGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -898,9 +902,11 @@
             this.eventLogGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.eventLogGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.eventLogGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.brCol,
             this.playerCol,
             this.methodCol,
-            this.hsCol});
+            this.hsCol,
+            this.kdrCol});
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -910,7 +916,7 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.eventLogGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.eventLogGridView.EnableHeadersVisualStyles = false;
-            this.eventLogGridView.Location = new System.Drawing.Point(632, 99);
+            this.eventLogGridView.Location = new System.Drawing.Point(2, 77);
             this.eventLogGridView.MinimumSize = new System.Drawing.Size(170, 216);
             this.eventLogGridView.Name = "eventLogGridView";
             this.eventLogGridView.ReadOnly = true;
@@ -921,45 +927,20 @@
             this.eventLogGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
             this.eventLogGridView.ShowEditingIcon = false;
             this.eventLogGridView.ShowRowErrors = false;
-            this.eventLogGridView.Size = new System.Drawing.Size(300, 265);
+            this.eventLogGridView.Size = new System.Drawing.Size(330, 263);
             this.eventLogGridView.TabIndex = 23;
-            // 
-            // playerCol
-            // 
-            this.playerCol.HeaderText = "Player";
-            this.playerCol.Name = "playerCol";
-            this.playerCol.ReadOnly = true;
-            this.playerCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // methodCol
-            // 
-            this.methodCol.HeaderText = "Method";
-            this.methodCol.Name = "methodCol";
-            this.methodCol.ReadOnly = true;
-            // 
-            // hsCol
-            // 
-            this.hsCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.hsCol.DefaultCellStyle = dataGridViewCellStyle2;
-            this.hsCol.HeaderText = "HeadShot";
-            this.hsCol.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.hsCol.Name = "hsCol";
-            this.hsCol.ReadOnly = true;
-            this.hsCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.hsCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.hsCol.Width = 80;
             // 
             // usernameTextBox
             // 
-            this.usernameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.usernameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.usernameTextBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.usernameTextBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.usernameTextBox.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.usernameTextBox.FormattingEnabled = true;
-            this.usernameTextBox.Location = new System.Drawing.Point(632, 51);
+            this.usernameTextBox.Location = new System.Drawing.Point(6, 27);
             this.usernameTextBox.Name = "usernameTextBox";
-            this.usernameTextBox.Size = new System.Drawing.Size(205, 22);
+            this.usernameTextBox.Size = new System.Drawing.Size(233, 22);
             this.usernameTextBox.TabIndex = 33;
             // 
             // versionLabel
@@ -969,39 +950,105 @@
             this.versionLabel.BackColor = System.Drawing.Color.Transparent;
             this.versionLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.versionLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.versionLabel.Location = new System.Drawing.Point(12, 346);
+            this.versionLabel.Location = new System.Drawing.Point(12, 355);
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(164, 14);
             this.versionLabel.TabIndex = 34;
             this.versionLabel.Text = "Real Time Stat Tracker V 0.0.0";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.BackColor = System.Drawing.Color.Transparent;
+            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.splitContainer1.Location = new System.Drawing.Point(200, 27);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel1MinSize = 400;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.connectButton);
+            this.splitContainer1.Panel2.Controls.Add(this.usernameLabel);
+            this.splitContainer1.Panel2.Controls.Add(this.usernameTextBox);
+            this.splitContainer1.Panel2.Controls.Add(this.killBoardLabel);
+            this.splitContainer1.Panel2.Controls.Add(this.eventLogGridView);
+            this.splitContainer1.Panel2.Controls.Add(this.startSessionButton);
+            this.splitContainer1.Panel2.Controls.Add(this.updatingLabel);
+            this.splitContainer1.Panel2.Controls.Add(this.playerNameLabel);
+            this.splitContainer1.Panel2MinSize = 310;
+            this.splitContainer1.Size = new System.Drawing.Size(736, 342);
+            this.splitContainer1.SplitterDistance = 400;
+            this.splitContainer1.SplitterWidth = 2;
+            this.splitContainer1.TabIndex = 35;
+            // 
+            // brCol
+            // 
+            this.brCol.FillWeight = 10F;
+            this.brCol.HeaderText = "BR";
+            this.brCol.MinimumWidth = 30;
+            this.brCol.Name = "brCol";
+            this.brCol.ReadOnly = true;
+            // 
+            // playerCol
+            // 
+            this.playerCol.FillWeight = 30F;
+            this.playerCol.HeaderText = "Player";
+            this.playerCol.Name = "playerCol";
+            this.playerCol.ReadOnly = true;
+            this.playerCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // methodCol
+            // 
+            this.methodCol.FillWeight = 30F;
+            this.methodCol.HeaderText = "Method";
+            this.methodCol.Name = "methodCol";
+            this.methodCol.ReadOnly = true;
+            // 
+            // hsCol
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.hsCol.DefaultCellStyle = dataGridViewCellStyle2;
+            this.hsCol.FillWeight = 10F;
+            this.hsCol.HeaderText = "HS";
+            this.hsCol.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.hsCol.MinimumWidth = 30;
+            this.hsCol.Name = "hsCol";
+            this.hsCol.ReadOnly = true;
+            this.hsCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.hsCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // kdrCol
+            // 
+            this.kdrCol.FillWeight = 10F;
+            this.kdrCol.HeaderText = "KDR";
+            this.kdrCol.MinimumWidth = 35;
+            this.kdrCol.Name = "kdrCol";
+            this.kdrCol.ReadOnly = true;
+            // 
             // GUIMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.RoyalBlue;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(948, 371);
+            this.ClientSize = new System.Drawing.Size(948, 380);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.versionLabel);
-            this.Controls.Add(this.usernameTextBox);
-            this.Controls.Add(this.eventLogGridView);
             this.Controls.Add(this.totalLabel);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.playerNameLabel);
-            this.Controls.Add(this.updatingLabel);
-            this.Controls.Add(this.startSessionButton);
-            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.sessionLabel);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.killBoardLabel);
-            this.Controls.Add(this.usernameLabel);
-            this.Controls.Add(this.connectButton);
             this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(948, 330);
+            this.MinimumSize = new System.Drawing.Size(948, 380);
             this.Name = "GUIMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Real Time Stat Tracker";
@@ -1022,6 +1069,11 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eventLogGridView)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1073,9 +1125,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateToolStripMenuItem;
         private System.Windows.Forms.DataGridView eventLogGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn playerCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn methodCol;
-        private System.Windows.Forms.DataGridViewImageColumn hsCol;
         private System.Windows.Forms.ComboBox usernameTextBox;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.ToolStripMenuItem sessionToolStripMenuItem;
@@ -1104,6 +1153,12 @@
         private System.Windows.Forms.ToolStripMenuItem createSessionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem streamingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startOverlayToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn brCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn playerCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn methodCol;
+        private System.Windows.Forms.DataGridViewImageColumn hsCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn kdrCol;
 
     }
 }

@@ -57,7 +57,8 @@ namespace PS2StatTracker {
 
         public
             Player attacker,
-            defender;
+            defender,
+            opponent;           // The best one of the two for information that is not the users.
 
         public
             bool isVehicle;
@@ -112,7 +113,7 @@ namespace PS2StatTracker {
         public float battleRankPer;
         public float totalHeadshots;
         public kdrJson kdr;
-        public Dictionary<String,
+        public Dictionary<string,
             Weapon> weapons;
 
         public void CalculateHeadshots() {
@@ -440,7 +441,15 @@ namespace PS2StatTracker {
                     newEvent.death = true;
                     newEvent.suicide = true;
                     newEvent.method = "Suicide";
+                    newEvent.opponent = m_player;
                 }
+
+                // Determine the best option for new information.
+                if (attacker != null && attacker != m_player)
+                    newEvent.opponent = attacker;
+
+                if (defender != null && defender != m_player)
+                    newEvent.opponent = defender;
 
                 // Check if the new event being added is the latest event. A full check needs to be done
                 // if the current event doesn't match. Rarely the site may first report the items in the wrong order.
@@ -463,7 +472,7 @@ namespace PS2StatTracker {
                 } else
                     m_eventLog.Add(newEvent);
 
-                if (!m_preparingSession || m_countEvents) {
+                if (!m_preparingSession) {
                     // Add session weapon stats unless this event was a death or team kill.
                     if(i < numEvents - 1)
                         await AddSessionWeapon(newEvent);
@@ -480,8 +489,6 @@ namespace PS2StatTracker {
         }
 
         public async Task GetPlayerWeapons() {
-            //ShowUpdateText("Updating Weapons...");
-
             m_player = await CreatePlayer(m_player.id, true, true);
             // Update stats of the session weapon other than headshots/kills.
             foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons) {
@@ -493,11 +500,6 @@ namespace PS2StatTracker {
                         m_sessionStats.startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
                 }
             }
-            /*
-            await UpdateWeaponTextFields(m_player.weapons, this.weaponsGridView);
-            await UpdateWeaponTextFields(m_sessionWeapons, this.sessionWeaponsGridView);
-            HideUpdateText();
-            UpdateOverlay();*/
         }
 
         void UpdateOverallStats(float kills, float headshots, float deaths) {
@@ -531,7 +533,6 @@ namespace PS2StatTracker {
                 m_initializing = true;
                 if (numEvents <= 0)
                     numEvents = 1;
-                //ShowUpdateText("Initializing...");
                 m_player = null;
                 m_sessionStats.startPlayer = null;
                 m_playerCache.Clear();
@@ -555,6 +556,21 @@ namespace PS2StatTracker {
 
                 // Load events.
                 await GetEventStats(numEvents);
+
+                // Make sure to start weapon changes off of recorded events.
+                if (!m_preparingSession && !m_countEvents) {
+                    // TODO: Fix created session miscalculating weapon growth on session resume.
+                    /*
+                    foreach (KeyValuePair<string, Weapon> weapon in m_sessionStats.weapons) {
+                        if(m_player.weapons.ContainsKey(weapon.Key))
+                        {
+                            Weapon sesWep = m_player.weapons[weapon.Key];
+                            sesWep.headShots += weapon.Value.headShots;
+                            sesWep.kills += weapon.Value.kills;
+                            m_player.weapons[weapon.Key] = sesWep;
+                        }
+                    }*/
+                }
 
                 m_initialized = true;
                 m_initializing = false;
