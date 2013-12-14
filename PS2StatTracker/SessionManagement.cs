@@ -139,6 +139,8 @@ namespace PS2StatTracker {
     }
 
     public partial class StatTracker {
+        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public const string VEHICLE_OFFSET = "V";
         public class eventJson {
             public eventJson() {
@@ -216,12 +218,19 @@ namespace PS2StatTracker {
                 m_httpClient = new System.Net.Http.HttpClient();
                 m_httpClient.BaseAddress = new Uri("http://census.soe.com/get/ps2:v2/");
             }
-            string result = null;
-            using (HttpResponseMessage response = await m_httpClient.GetAsync(address)) {
-                response.EnsureSuccessStatusCode();
-                result = await response.Content.ReadAsStringAsync();
+            int attempts = 3;
+            while (attempts > 0) {
+                attempts--;
+                using (HttpResponseMessage response = await m_httpClient.GetAsync(address)) {
+                    if (response.IsSuccessStatusCode)
+                        return await response.Content.ReadAsStringAsync();
+                    else if (attempts < 1)
+                        response.EnsureSuccessStatusCode(); // throws an exception when IsSuccessStatusCode is false
+                    else
+                        await Task.Delay(1000);
+                }
             }
-            return result;
+            return null; // Will never execute, but it makes the compiler happy
         }
 
         async Task<Player> CreatePlayer(string id, bool updateWeapons = false, bool forceUpdate = false) {
