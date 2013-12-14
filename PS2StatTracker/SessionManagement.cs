@@ -348,23 +348,30 @@ namespace PS2StatTracker {
         public async Task<string> GetVehicleName(string id) {
             // Check local cache.
             if (id != null) {
+                if (!id.Contains(VEHICLE_OFFSET))
+                    id = id.Insert(0, VEHICLE_OFFSET);
+
                 if (m_itemCache.ContainsKey(id))
                     return m_itemCache[id];
 
                 string useId = id;
 
-                if (useId.Contains(VEHICLE_OFFSET)) {
+                // Remove the VEHICLE_OFFSET from the ID for the API request.
+                if(id.Contains(VEHICLE_OFFSET))
                     useId = useId.Remove(0, 1);
-                }
 
                 string result = await GetAsyncRequest("vehicle/?vehicle_id=" + useId + "&c:show=name.en");
 
                 Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
-                if (jObject["vehicle_list"].HasValues) {
-                    string name = jObject["vehicle_list"][0]["name"]["en"].ToString();
-                    // Add the object to the local cache.
-                    m_itemCache[VEHICLE_OFFSET + useId] = name;
-                    return name;
+
+                if (jObject != null && jObject.HasValues) {
+
+                    if (jObject["vehicle_list"].HasValues) {
+                        string name = jObject["vehicle_list"][0]["name"]["en"].ToString();
+                        // Add the object to the local cache.
+                        m_itemCache[VEHICLE_OFFSET + useId] = name;
+                        return name;
+                    }
                 }
             }
             return "Unknown";
@@ -458,6 +465,10 @@ namespace PS2StatTracker {
                 // Weapon IDs take priority over vehicle IDs. Weapon IDs such as breaker rocket pods
                 // also show up with vehicle IDs like Reavers. A Reaver should only count if no
                 // other weapon was used.
+                if(attacker.name.Contains("Rico"))
+                {
+                    int t= 5;
+                }
                 if (jsonEvent.attacker_vehicle_id != "0" && jsonEvent.attacker_weapon_id == "0") {
                     newEvent.methodID = jsonEvent.attacker_vehicle_id;
                     newEvent.method = await GetVehicleName(jsonEvent.attacker_vehicle_id);
