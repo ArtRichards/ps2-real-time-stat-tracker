@@ -83,7 +83,7 @@ namespace PS2StatTracker
         private void AddMouseEventDown(Control control) {
             control.MouseDown += OnMouseDown;
             foreach (Control ctrl in control.Controls) {
-                if (ctrl.GetType() == typeof(Label) || ctrl.GetType() == typeof(Panel)) {
+                if (ctrl is Label || ctrl is Panel || ctrl is ContainerControl) {
                     AddMouseEventDown(ctrl);
                 }
             }
