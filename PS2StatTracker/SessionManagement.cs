@@ -465,10 +465,6 @@ namespace PS2StatTracker {
                 // Weapon IDs take priority over vehicle IDs. Weapon IDs such as breaker rocket pods
                 // also show up with vehicle IDs like Reavers. A Reaver should only count if no
                 // other weapon was used.
-                if(attacker.name.Contains("Rico"))
-                {
-                    int t= 5;
-                }
                 if (jsonEvent.attacker_vehicle_id != "0" && jsonEvent.attacker_weapon_id == "0") {
                     newEvent.methodID = jsonEvent.attacker_vehicle_id;
                     newEvent.method = await GetVehicleName(jsonEvent.attacker_vehicle_id);
@@ -503,12 +499,12 @@ namespace PS2StatTracker {
                 if (newEvent == m_currentEvent)
                     break;
 
-                // If an iteration has gone through then new information has been gathered.
-                m_hasUpdated = true;
-
                 // Don't add the same event. The API can sometimes report it twice.
                 if (m_eventLog.Contains(newEvent))
                     continue;
+
+                // If an iteration has gone through then new information has been gathered.
+                m_hasUpdated = true;
 
                 // Determine the order in which to add the event.
                 if (m_sessionStarted) {
@@ -570,60 +566,8 @@ namespace PS2StatTracker {
                 m_sessionStats.startKDR = ratio;
         }
 
-        void CancelInitialize() {
-            m_initializing = false;
-            m_preparingSession = false;
-        }
 
-        public async Task Initialize(int numEvents = 1) {
-            if (m_userID.Length > 0) {
-                m_initializing = true;
-                if (numEvents <= 0)
-                    numEvents = 1;
-                m_player = null;
-                m_sessionStats.startPlayer = null;
-                m_playerCache.Clear();
-                ClearSession();
-                Disconnect();
-                m_lastEventFound = false;
-                // Get this player's information.
-                m_player = await CreatePlayer(m_userID, true);
-
-                if (m_player == null) {
-                    //ShowUpdateText("Invalid ID");
-                    CancelInitialize();
-                    return;
-                }
-
-                // Copy player information so it can be compared to later.
-                m_sessionStats.startPlayer = (Player)m_player.Clone();
-
-                // Set start hsr and kdr values.
-                UpdateOverallStats(0, 0, 0);
-
-                // Load events.
-                await GetEventStats(numEvents);
-
-                // Make sure to start weapon changes off of recorded events.
-                if (!m_preparingSession && !m_countEvents) {
-                    // TODO: Fix created session miscalculating weapon growth on session resume.
-                    /*
-                    foreach (KeyValuePair<string, Weapon> weapon in m_sessionStats.weapons) {
-                        if(m_player.weapons.ContainsKey(weapon.Key))
-                        {
-                            Weapon sesWep = m_player.weapons[weapon.Key];
-                            sesWep.headShots += weapon.Value.headShots;
-                            sesWep.kills += weapon.Value.kills;
-                            m_player.weapons[weapon.Key] = sesWep;
-                        }
-                    }*/
-                }
-
-                m_initialized = true;
-                m_initializing = false;
-            }
-        }
-
+        // Will return either a weapon or vehicle ID.
         public string GetBestWeaponID(Weapon weapon) {
             if (weapon.id != null && weapon.id != "0") {
                 return weapon.id;
@@ -725,6 +669,52 @@ namespace PS2StatTracker {
             m_sessionStats.weapons[id] = sessionWeapon;
         }
 
+        void CancelInitialize() {
+            m_initializing = false;
+            m_preparingSession = false;
+        }
+
+        public async Task Initialize(int numEvents = 1) {
+            if (m_userID.Length > 0) {
+                m_initializing = true;
+                if (numEvents <= 0)
+                    numEvents = 1;
+                m_player = null;
+                m_sessionStats.startPlayer = null;
+                m_playerCache.Clear();
+                ClearSession();
+                Disconnect();
+                m_lastEventFound = false;
+                // Get this player's information.
+                m_player = await CreatePlayer(m_userID, true);
+
+                if (m_player == null) {
+                    //ShowUpdateText("Invalid ID");
+                    CancelInitialize();
+                    return;
+                }
+
+                // Copy player information so it can be compared to later.
+                m_sessionStats.startPlayer = (Player)m_player.Clone();
+
+                // Set start hsr and kdr values.
+                UpdateOverallStats(0, 0, 0);
+
+                // Load events.
+                await GetEventStats(numEvents);
+
+                // Make sure to start weapon changes off of recorded events.
+                if (!m_preparingSession && !m_countEvents) {
+                    foreach (KeyValuePair<string, Weapon> weapon in m_sessionStats.weapons) {
+                        m_sessionStats.startSesWeapons[weapon.Key] = (Weapon)weapon.Value.Clone();
+                    }
+                }
+
+                m_initialized = true;
+                m_initializing = false;
+            }
+        }
+
         public async Task StartSession() {
             if (m_sessionStarted == false) {
                 m_preparingSession = true;
@@ -750,6 +740,7 @@ namespace PS2StatTracker {
             m_activeSeconds = 0;
             m_eventLog.Clear();
             m_sessionStats.weapons.Clear();
+            m_sessionStats.startSesWeapons.Clear();
             m_sessionStats.startHSR = m_sessionStats.startKDR = 0.0f;
         }
 

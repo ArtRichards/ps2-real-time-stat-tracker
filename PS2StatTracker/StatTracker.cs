@@ -11,10 +11,13 @@ namespace PS2StatTracker {
             public Player startPlayer;      // Start player stats.
             public Dictionary<string,
                 Weapon> weapons;
+            public Dictionary<string,
+                Weapon> startSesWeapons;
             public float startHSR, startKDR;
 
             public SessionStats() {
                 weapons = new Dictionary<string, Weapon>();
+                startSesWeapons = new Dictionary<string, Weapon>();
                 startPlayer = new Player();
             }
         }

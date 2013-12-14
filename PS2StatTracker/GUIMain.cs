@@ -204,6 +204,7 @@ namespace PS2StatTracker
             if (weapons == null)
                 return;
 
+            // Maintain the sort order of the sorted column after a refresh.
             DataGridViewColumn oldSortedColumn = gridView.SortedColumn;
             System.ComponentModel.ListSortDirection direction;
 
@@ -271,12 +272,13 @@ namespace PS2StatTracker
                 string hsrStr = currentHSR.ToString("#0.###%");
                 if (gridView.Name == "sessionWeaponsGridView" && (m_statTracker.SessionStarted() ||
                     m_statTracker.CountingEvents())) {
+                        string bestWeaponID = m_statTracker.GetBestWeaponID(weapon);
                     // HSR
-                    float[] absHSR = m_statTracker.GetWeaponHSR(m_statTracker.GetBestWeaponID(weapon),
-                        m_statTracker.GetSessionStats().startPlayer.weapons);
+                    float[] absHSR = m_statTracker.GetWeaponHSR(bestWeaponID, m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
-                    absHSR[0] += weapon.headShots;
-                    absHSR[1] += weapon.kills;
+                    float[] startHSR = m_statTracker.GetWeaponHSR(bestWeaponID, m_statTracker.GetSessionStats().startSesWeapons);
+                    absHSR[0] += weapon.headShots - startHSR[0];
+                    absHSR[1] += weapon.kills - startHSR[1];
                     float newTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
                     float hsrDif = newTotalHSR - oldTotalHSR;
 
@@ -290,7 +292,7 @@ namespace PS2StatTracker
                         gridView.Rows[i].Cells[2].Style.ForeColor = Color.Black;
 
                     // ACC
-                    float[] absACC = m_statTracker.GetWeaponACC(m_statTracker.GetBestWeaponID(weapon),
+                    float[] absACC = m_statTracker.GetWeaponACC(bestWeaponID,
                             m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalACC = absACC[0] / (absACC[1] == 0.0f ? 1 : absACC[1]);
                     absACC[0] += weapon.hitsCount;
