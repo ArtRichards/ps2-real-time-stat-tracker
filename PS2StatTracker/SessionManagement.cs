@@ -250,7 +250,7 @@ namespace PS2StatTracker {
             player.battleRankPer = float.Parse(pJson.battle_rank.percent_to_next) / 100.0f;
             player.kdr = kdr;
             player.name = pJson.name.first;
-            if (pJson.outfit == null) {
+            if (pJson.outfit == null || pJson.outfit.alias.Length == 0) {
                 player.outfit = "n/a";
                 player.fullName = player.name;
             } else {
