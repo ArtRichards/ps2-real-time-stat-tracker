@@ -34,11 +34,11 @@ namespace PS2StatTracker {
         }
 
         internal static void HandleException(Exception e) {
-            HandleException(null, e, false);
+            HandleException(null, e, e.InnerException.GetType() == typeof(OperationCanceledException));
         }
 
         internal static void HandleException(IWin32Window parent, Exception e) {
-            HandleException(parent, e, false);
+            HandleException(parent, e, e.InnerException.GetType() == typeof(OperationCanceledException));
         }
 
         internal static void HandleException(IWin32Window parent, Exception e, bool suppressPopup) {

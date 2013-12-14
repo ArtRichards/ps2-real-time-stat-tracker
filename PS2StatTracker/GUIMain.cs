@@ -6,12 +6,14 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PS2StatTracker
 {
     public partial class GUIMain : Form {
+
         public string RemoveWhiteSpace(string input) {
             string output;
             output = input.Replace(" ", string.Empty);
@@ -54,18 +56,23 @@ namespace PS2StatTracker
         }
 
         // Update this with new versions.
-        string VERSION_NUM = "0.5.7.1";
+        string VERSION_NUM = "0.5.9.1";
         string PROGRAM_TITLE = "Real Time Stat Tracker";
         StatTracker m_statTracker;
         GUIOverlay m_overlay;
         Color m_highColor;
         Color m_lowColor;
+        List<Task> m_tasks;
+        CancellationTokenSource m_cts;
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public GUIMain(StatTracker tracker) {
             InitializeComponent();
+            m_tasks = new List<Task>();
             m_statTracker = tracker;
             m_overlay = null;
+            m_cts = new CancellationTokenSource();
+
             // Load version.
             this.versionLabel.Text = PROGRAM_TITLE + " V " + VERSION_NUM;
             m_highColor = Color.FromArgb(0, 192, 0);
@@ -83,6 +90,7 @@ namespace PS2StatTracker
         private void AddMouseEventDown(Control control) {
             control.MouseDown += OnMouseDown;
             foreach (Control ctrl in control.Controls) {
+                // ControlContainer required for splitter sides. MouseDownEvent handles the splitter itself.
                 if (ctrl is Label || ctrl is Panel || ctrl is ContainerControl) {
                     AddMouseEventDown(ctrl);
                 }
@@ -115,19 +123,19 @@ namespace PS2StatTracker
         // on the current state of the program.
         private void ManageSessionButtons() {
             if (m_statTracker.PreparingSession() || m_statTracker.IsInitializing()) {
-                this.connectButton.Enabled = false;
+                this.resumeButton.Enabled = false;
                 this.startSessionButton.Enabled = false;
             } else {
-                this.connectButton.Enabled = true;
+                this.resumeButton.Enabled = true;
                 this.startSessionButton.Enabled = true;
             }
             if (m_statTracker.HasFoundLastEvent()) {
                 if (m_statTracker.SessionStarted()) {
                     this.startSessionButton.Text = "End Session";
-                    this.connectButton.Visible = false;
+                    this.resumeButton.Visible = false;
                 } else {
                     this.startSessionButton.Text = "Start";
-                    this.connectButton.Visible = true;
+                    this.resumeButton.Visible = true;
                 }
             }
         }
@@ -231,6 +239,12 @@ namespace PS2StatTracker
             gridView.Columns.Add("fireCountCol", "Fired");
             gridView.Columns.Add("hitsCount", "Hits");
 
+            // Setting the first column to a fill weight and minimum width
+            // while setting the other columns to conform to all cells allows
+            // the first stats to show up and be scrolled, but all columns will stretch
+            // to the size of the gridview even when resizing.
+            gridView.Columns[0].FillWeight = 15;
+            gridView.Columns[0].MinimumWidth = 100;
             // Sort the new gridview.
             int sortedIndex = 1;
             for (int i = 1; i < gridView.ColumnCount; i++) {
@@ -422,9 +436,12 @@ namespace PS2StatTracker
 
         private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs evt) {
             try {
-                if (evt.Button == MouseButtons.Left) {
-                    ReleaseCapture();
-                    SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                // Make sure the splitter can still move.
+                if (sender.GetType() != typeof(SplitContainer)) {
+                    if (evt.Button == MouseButtons.Left) {
+                        ReleaseCapture();
+                        SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                    }
                 }
             } catch (Exception e) {
                 Program.HandleException(this, e);
@@ -499,19 +516,102 @@ namespace PS2StatTracker
             ShowUpdateText("Initializing...");
         }
 
+        private async Task UpdateTracker() {
+            m_statTracker.IncreaseActiveSeconds(timer1.Interval / 1000);
+            await m_statTracker.Update();
+            if (m_statTracker.HasUpdated()) {
+                await UpdateKillboard();
+            }
+            if (m_statTracker.HaveWeaponsUpdated()) {
+                // Update overall weapons.
+                await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+            }
+        }
+
+        private async Task CreateSession(GUISession session) {
+                    // Shutdown an existing session.
+                    if (m_statTracker.SessionStarted()) {
+                        await m_statTracker.StartSession();
+                        timer1.Stop();
+                    }
+                    RegisterUserAndPrepareForInitialize();
+                    m_statTracker.SetCountEvents(session.countStatsCheckBox.Checked);
+                    m_statTracker.StopPreparing();
+                    await m_statTracker.Initialize((int)session.pastEventsNumber.Value + 1);
+                    if (m_statTracker.HasInitialized()) {
+                        await PrepareSession();
+                        // Update overall weapons.
+                        await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+                        UpdateMiscFields();
+                        ManageSessionButtons();
+                        HideUpdateText();
+                    } else
+                        ShowUpdateText("Invalid ID");
+            ManageSessionButtons();
+        }
+
+        private async Task CreateNewSession() {
+            if (!m_statTracker.SessionStarted())
+                RegisterUserAndPrepareForInitialize();
+
+            await m_statTracker.StartSession();
+
+            if (!m_statTracker.HasInitialized())
+                ShowUpdateText("Invalid ID");
+
+            // Starting session for first time.
+            if (m_statTracker.SessionStarted()) {
+                await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+                UpdateMiscFields();
+                ClearUser();
+                await PrepareSession();
+                timer1.Start();
+                HideUpdateText();
+            } else { // Ending a session.
+                timer1.Stop();
+            }
+            ManageSessionButtons();
+        }
+
+        private async Task ResumeSession() {
+            // Resumes a session.
+            await m_statTracker.ResumeSession();
+            if (m_statTracker.SessionStarted()) {
+                await PrepareSession();
+                timer1.Start();
+                ManageSessionButtons();
+            }
+        }
+
+        private async Task UpdateWeapons() {
+            if (m_statTracker.SessionStarted()) {
+                await m_statTracker.GetPlayerWeapons();
+                await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+            }
+        }
+
+        private async Task UpdateEvents() {
+            if (m_statTracker.SessionStarted()) {
+                await m_statTracker.GetEventStats();
+                await UpdateKillboard();
+            }
+        }
+
         //////////////////////////////////
         // Button clicks.
         //////////////////////////////////
 
-        private async void button1_Click(object sender, EventArgs evt) {
+        private async void resumeButton_Click(object sender, EventArgs evt) {
             try {
-                // Resumes a session.
-                await m_statTracker.ResumeSession();
-                if (m_statTracker.SessionStarted()) {
-                    await PrepareSession();
-                    timer1.Start();
-                    ManageSessionButtons();
-                }
+                // Wait for running tasks.
+                await Task.WhenAll(m_tasks);
+                // Create the new task and add it to the queue.
+                Task task;
+                m_tasks.Add(task = ResumeSession());
+                // Run the event.
+                await Task.Run(() => task);
+                // Remove it from the queue.
+                m_tasks.Remove(task);
             } catch (Exception e) {
                 Program.HandleException(this, e);
             }
@@ -519,26 +619,15 @@ namespace PS2StatTracker
 
         private async void startSessionButton_Click(object sender, EventArgs evt) {
             try {
-                if(!m_statTracker.SessionStarted())
-                    RegisterUserAndPrepareForInitialize();
-
-                await m_statTracker.StartSession();
-                
-                if(!m_statTracker.HasInitialized())
-                    ShowUpdateText("Invalid ID");
-
-                // Starting session for first time.
-                if (m_statTracker.SessionStarted()) {
-                    await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
-                    UpdateMiscFields();
-                    ClearUser();
-                    await PrepareSession();
-                    timer1.Start();
-                    HideUpdateText();
-                } else { // Ending a session.
-                    timer1.Stop();
-                }
-                ManageSessionButtons();
+                // Wait for running tasks.
+                await Task.WhenAll(m_tasks);
+                // Create the new task and add it to the queue.
+                Task task;
+                m_tasks.Add(task = CreateNewSession());
+                // Run the event.
+                await Task.Run(() => task);
+                // Remove it from the queue.
+                m_tasks.Remove(task);
             } catch (Exception e) {
                 Program.HandleException(this, e);
             }
@@ -546,15 +635,16 @@ namespace PS2StatTracker
 
         private async void timer1_Tick(object sender, EventArgs evt) {
             try {
-                m_statTracker.IncreaseActiveSeconds(timer1.Interval / 1000);
-                await m_statTracker.Update();
-                if (m_statTracker.HasUpdated()) {
-                    await UpdateKillboard();
-                }
-                if (m_statTracker.HaveWeaponsUpdated()) {
-                    // Update overall weapons.
-                    await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
-                }
+                // Wait for running tasks.
+                await Task.WhenAll(m_tasks);
+                // Create the new task and add it to the queue.
+                Task task;
+                m_tasks.Add(task = UpdateTracker());
+                // Run the event.
+                await Task.Run(() => task);
+                // Remove it from the queue.
+                m_tasks.Remove(task);
+
             } catch (Exception e) {
                 timer1.Stop(); // HandleException won't return until user clicks Ok. Stop before-hand to prevent error message flood.
                 Program.HandleException(this, e);
@@ -573,8 +663,15 @@ namespace PS2StatTracker
 
         private async void updateEventsToolStripMenuItem_Click(object sender, EventArgs evt) {
             try {
-                await m_statTracker.GetEventStats();
-                await UpdateKillboard();
+                // Wait for running tasks.
+                await Task.WhenAll(m_tasks);
+                // Create the new task and add it to the queue.
+                Task task;
+                m_tasks.Add(task = UpdateEvents());
+                // Run the event.
+                await Task.Run(() => task);
+                // Remove it from the queue.
+                m_tasks.Remove(task);
             } catch (Exception e) {
                 Program.HandleException(this, e);
             }
@@ -582,9 +679,15 @@ namespace PS2StatTracker
 
         private async void updateWeaponsToolStripMenuItem_Click(object sender, EventArgs evt) {
             try {
-                await m_statTracker.GetPlayerWeapons();
-                // Update overall weapons.
-                await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+                // Wait for running tasks.
+                await Task.WhenAll(m_tasks);
+                // Create the new task and add it to the queue.
+                Task task;
+                m_tasks.Add(task = UpdateWeapons());
+                // Run the event.
+                await Task.Run(() => task);
+                // Remove it from the queue.
+                m_tasks.Remove(task);
             } catch (Exception e) {
                 Program.HandleException(this, e);
             }
@@ -652,28 +755,17 @@ namespace PS2StatTracker
                 using (GUISession session = new GUISession()) {
                     session.ShowDialog(this);
                     if (session.confirmed == true) {
-                        // Shutdown an existing session.
-                        if (m_statTracker.SessionStarted()) {
-                            await m_statTracker.StartSession();
-                            timer1.Stop();
-                        }
-                        RegisterUserAndPrepareForInitialize();
-                        m_statTracker.SetCountEvents(session.countStatsCheckBox.Checked);
-                        m_statTracker.StopPreparing();
-                        await m_statTracker.Initialize((int)session.pastEventsNumber.Value + 1);
-                        if (m_statTracker.HasInitialized()){
-                            await PrepareSession();
-                            // Update overall weapons.
-                            await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
-                            UpdateMiscFields();
-                            ManageSessionButtons();
-                            HideUpdateText();
-                        }
-                        else
-                            ShowUpdateText("Invalid ID");
+                        // Wait for running tasks.
+                        await Task.WhenAll(m_tasks);
+                        // Create the new task and add it to the queue.
+                        Task task;
+                        m_tasks.Add(task = CreateSession(session));
+                        // Run the event.
+                        await Task.Run(() => task);
+                        // Remove it from the queue.
+                        m_tasks.Remove(task);
                     }
                 }
-                ManageSessionButtons();
             } catch (Exception e) {
                 Program.HandleException(this, e);
             }
