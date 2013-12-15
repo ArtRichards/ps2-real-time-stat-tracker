@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>V 0.6.0
+    <value>V 0.6.0.1
+Corrected issue where weapon updates would cause a crash and also miscalculate headshot ratio growth.
+
+V 0.6.0
 Added on-line indicator for the user and all opponents in the event log.
 Added automatic updates.
 Reworked images so they are better filtered.

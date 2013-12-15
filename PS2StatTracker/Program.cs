@@ -10,7 +10,7 @@ namespace PS2StatTracker
 {
     public class GlobalVariables {
         // Update this with new versions.
-        public const string VERSION_NUM = "0.6.0.0";
+        public const string VERSION_NUM = "0.6.0.1";
         public const string PROGRAM_TITLE = "Real Time Stat Tracker";
     }
 

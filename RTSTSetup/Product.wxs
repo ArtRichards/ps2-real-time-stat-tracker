@@ -4,7 +4,7 @@
 <?define ProductExe         = "PS2RTST.exe"?>
 <?define ProductFullName    = "PS2 Real Time Stat Tracker"?>
 <?define ProductName        = "PS2 Stat Tracker"?>
-<?define ProductVersion     = "0.5.9.1"?>
+<?define ProductVersion     = "0.6.0.1"?>
 <?define ProductUpgradeCode = "7ABE6142-74CC-4411-B914-326780EBAC2B"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" UpgradeCode="$(var.ProductUpgradeCode)"

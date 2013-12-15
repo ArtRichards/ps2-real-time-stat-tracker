@@ -240,9 +240,18 @@ namespace PS2StatTracker {
 
         async Task<Player> CreatePlayer(string id, bool updateWeapons = false, bool forceUpdate = false,
             bool skipHS_KDR = false) {
+
+            Player existingPlayer = null;
+            kdrJson kdr = null;
+
             // Check local cache.
-            if (!forceUpdate && m_playerCache.ContainsKey(id))
-                return m_playerCache[id];
+            if (m_playerCache.ContainsKey(id)) {
+                existingPlayer = m_playerCache[id];
+                kdr = existingPlayer.kdr;
+
+                if (!forceUpdate)
+                    return existingPlayer;
+            }
 
             // Assemble a player object taking json values and converting them to correct data types.
             playerJson pJson = await GetPlayerJson(id, updateWeapons);
@@ -252,10 +261,11 @@ namespace PS2StatTracker {
             }
 
             Player player = new Player();
+
             // Do not overwrite the kdr unless requested to do so.
-            kdrJson kdr = player.kdr;
-            if(!skipHS_KDR)
+            if(!skipHS_KDR || kdr == null)
                 kdr = await GetTotalKDR(id);
+
             player.battleRank = Int32.Parse(pJson.battle_rank.value);
             player.battleRankPer = float.Parse(pJson.battle_rank.percent_to_next) / 100.0f;
             player.kdr = kdr;
@@ -322,8 +332,11 @@ namespace PS2StatTracker {
                     }
                 }
 
-                if(!skipHS_KDR)
+                if (!skipHS_KDR) {
                     player.CalculateHeadshots();
+                } else {
+                    player.totalHeadshots = existingPlayer.totalHeadshots;
+                }
             }
 
             // Add to local cache.
@@ -480,18 +493,18 @@ namespace PS2StatTracker {
             return kdr;
         }
 
-        public async Task GetEventStats(int numEvents = 50) {
+        public async Task<bool> GetEventStats(int numEvents = 50) {
             string result = await GetAsyncRequest("characters_event/?character_id=" + m_userID + "&c:limit=" + numEvents + "&type=KILL,DEATH");
 
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
             if (jObject == null || !jObject.HasValues)
-                return;
+                return false;
 
             Newtonsoft.Json.Linq.JToken jToken = jObject["characters_event_list"];
 
             if (jToken == null || !jToken.HasValues)
-                return;
+                return false;
 
             // Create a list of each json object.
             List<eventJson> jsonEvents = new List<eventJson>();
@@ -576,6 +589,8 @@ namespace PS2StatTracker {
             }
             // Update loaded players' online status.
             await CheckOnlineStatus();
+
+            return true;
         }
 
         public async Task GetPlayerWeapons() {

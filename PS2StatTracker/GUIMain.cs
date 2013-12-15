@@ -555,7 +555,8 @@ namespace PS2StatTracker
             }
             if (m_statTracker.HaveWeaponsUpdated()) {
                 // Update overall weapons.
-                await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+                if(m_statTracker.GetPlayer() != null)
+                    await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
             }
         }
 
@@ -699,8 +700,9 @@ namespace PS2StatTracker
 
         private async void timer1_Tick(object sender, EventArgs evt) {
             try {
-                // Wait for running tasks.
-                await Task.WhenAll(m_tasks);
+                // Do not queue up updates.
+                if(m_tasks.Count > 0)
+                    return;
                 // Create the new task and add it to the queue.
                 Task task;
                 m_tasks.Add(task = UpdateTracker());
