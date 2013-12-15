@@ -55,9 +55,6 @@ namespace PS2StatTracker
             return output;
         }
 
-        // Update this with new versions.
-        string VERSION_NUM = "0.5.9.1";
-        string PROGRAM_TITLE = "Real Time Stat Tracker";
         StatTracker m_statTracker;
         GUIOverlay m_overlay;
         Color m_highColor;
@@ -74,16 +71,19 @@ namespace PS2StatTracker
             m_cts = new CancellationTokenSource();
 
             // Load version.
-            this.versionLabel.Text = PROGRAM_TITLE + " V " + VERSION_NUM;
+            this.versionLabel.Text = GlobalVariables.PROGRAM_TITLE + " V " + GlobalVariables.VERSION_NUM;
             m_highColor = Color.FromArgb(0, 192, 0);
             m_lowColor = Color.Red;
 
             // Prevent X images showing up.
-            ((DataGridViewImageColumn)this.eventLogGridView.Columns[3]).DefaultCellStyle.NullValue = null;
-
+            ((DataGridViewImageColumn)this.eventLogGridView.Columns[0]).DefaultCellStyle.NullValue = null;
+            ((DataGridViewImageColumn)this.eventLogGridView.Columns[4]).DefaultCellStyle.NullValue = null;
             // Handle mouse movement and resizing on borderless window.
             this.menuStrip1.MouseDown += OnMouseDown;
             AddMouseEventDown(this);
+
+            // Check for new updates. Even though this is not awaited it still allows other program operation to run.
+            UpdateCheckManagement(false);
         }
 
         // Recursively adds mouse events to controls.
@@ -119,6 +119,12 @@ namespace PS2StatTracker
             usernameTextBox.Items.Clear();
         }
 
+        Bitmap GetOnOffBitmap(bool type) {
+            if (type)
+                return Properties.Resources.statusOn;
+            return Properties.Resources.statusOff;
+        }
+
         // Determines if a button should be active or visible based
         // on the current state of the program.
         private void ManageSessionButtons() {
@@ -150,7 +156,7 @@ namespace PS2StatTracker
             List<EventLog> eventLog = m_statTracker.GetEventLog();
             for (int i = 0; i < eventLog.Count - 1; i++) {
                 if (eventLog[i].IsKill()) {
-                    if (eventLog[i].defender != null && eventLog[i].defender.faction != player.faction) {
+                    if (eventLog[i].defender == null || (eventLog[i].defender != null && eventLog[i].defender.faction != player.faction)) {
                         kills++;
                         killHS += eventLog[i].headshot ? 1 : 0;
                     }
@@ -339,7 +345,7 @@ namespace PS2StatTracker
             gridView.ClearSelection();
         }
 
-        public async Task UpdateKillboard(){
+        public async Task UpdateEventboard(){
             List<EventLog> eventLog = m_statTracker.GetEventLog();
             Player player = m_statTracker.GetPlayer();
             // Update killboard.
@@ -366,25 +372,46 @@ namespace PS2StatTracker
                     }
 
                     if (eventLog[i].opponent != null) {
+                        // Online status.
+                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[0]).Value = GetOnOffBitmap(eventLog[i].opponent.isOnline);
+                        // Battle rank.
+                        this.eventLogGridView.Rows[i].Cells[1].Value = eventLog[i].opponent.battleRank;
+                        // Set kdr field.
+                        float kdr = 0.0f;
                         if (eventLog[i].opponent.kdr != null) {
-                            float kdr = (float)eventLog[i].opponent.kdr.kills / (float)eventLog[i].opponent.kdr.actualDeaths;
-                            this.eventLogGridView.Rows[i].Cells[4].Value = kdr.ToString("0.0");
+                            if((float)eventLog[i].opponent.kdr.actualDeaths != 0.0f)
+                                kdr = (float)eventLog[i].opponent.kdr.kills / (float)eventLog[i].opponent.kdr.actualDeaths;
                         }
-                        this.eventLogGridView.Rows[i].Cells[0].Value = eventLog[i].opponent.battleRank;
+                        this.eventLogGridView.Rows[i].Cells[5].Value = kdr.ToString("0.0");
                     }
-                    this.eventLogGridView.Rows[i].Cells[1].Value = eventName;
-                    this.eventLogGridView.Rows[i].Cells[2].Value = eventLog[i].method;
+                    // Event name.
+                    this.eventLogGridView.Rows[i].Cells[2].Value = eventName;
+
+                    // Event method.
+                    this.eventLogGridView.Rows[i].Cells[3].Value = eventLog[i].method;
                     this.eventLogGridView.Rows[i].Cells[3].Style.ForeColor = Color.Beige;
-                    if (eventLog[i].headshot)
-                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[3]).Value = Properties.Resources.hsImage;
+
+                    // Headshot image.
+                    if (eventLog[i].headshot) {
+                        ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[4]).Value = Properties.Resources.hsImage;
+                    }
 
                     // Set row color depending on kill or death.
                     for (int j = 0; j < this.eventLogGridView.Rows[i].Cells.Count; j++) {
-                        if (eventLog[i].death || eventLog[i].suicide) // Death.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                        else if (eventLog[i].defender != null && eventLog[i].defender.faction == player.faction) // Friendly kill.
-                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
-                        else // Enemy kill.
+                        // Death.
+                        if (eventLog[i].death || eventLog[i].suicide) {
+                            // Friendly death.
+                            if(eventLog[i].attacker != null && eventLog[i].attacker.faction == player.faction)
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Orange;
+                            // Enemy death.
+                            else
+                                this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Red;
+                        }
+                        // Friendly kill.
+                        else if (eventLog[i].defender != null && eventLog[i].defender.faction == player.faction)
+                            this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.LightGreen;
+                        // Enemy kill.
+                        else
                             this.eventLogGridView.Rows[i].Cells[j].Style.BackColor = Color.Green;
                     }
                 }
@@ -395,6 +422,10 @@ namespace PS2StatTracker
             await UpdateWeaponTextFields(m_statTracker.GetSessionStats().weapons, this.sessionWeaponsGridView);
 
             UpdateOverallStatsDisplay();
+
+            // Update player online status
+            this.onlineStatusImage.Image = GetOnOffBitmap(m_statTracker.GetPlayer().isOnline);
+            this.onlineStatusImage.Visible = true;
 
             UpdateOverlay();
         }
@@ -483,7 +514,7 @@ namespace PS2StatTracker
             this.hsrGrowthLabel.Visible = true;
             this.kdrGrowthLabel.Visible = true;
             SetPlayerInformation();
-            await UpdateKillboard();
+            await UpdateEventboard();
         }
 
         void ClearUser() {
@@ -520,7 +551,7 @@ namespace PS2StatTracker
             m_statTracker.IncreaseActiveSeconds(timer1.Interval / 1000);
             await m_statTracker.Update();
             if (m_statTracker.HasUpdated()) {
-                await UpdateKillboard();
+                await UpdateEventboard();
             }
             if (m_statTracker.HaveWeaponsUpdated()) {
                 // Update overall weapons.
@@ -593,8 +624,41 @@ namespace PS2StatTracker
         private async Task UpdateEvents() {
             if (m_statTracker.SessionStarted()) {
                 await m_statTracker.GetEventStats();
-                await UpdateKillboard();
+                await UpdateEventboard();
             }
+        }
+
+        public async Task CheckAndDownloadNewVersion(bool displayDialogue) {
+            UpdateChecker updater = new UpdateChecker();
+            VersionInfo info;
+            info = await updater.CheckForNewVersion();
+            if (info.isNew) {
+                // Create update information to display.
+                string updateResult = "Version " + info.version + " was found!\n\n";
+                updateResult += info.updateInfo;
+                GUIConfirm confirm = new GUIConfirm();
+                confirm.infoLabel.Text = GlobalVariables.PROGRAM_TITLE + " Updater";
+                confirm.textBox.Text = updateResult;
+                confirm.infoLabel2.Text = "Do you wish to update?";
+                confirm.ShowDialog(this);
+                if (confirm.confirmed)
+                    await updater.DownloadFile(true);
+            } else {
+                if (displayDialogue)
+                    MessageBox.Show("The latest version is installed.");
+            }
+        }
+
+        public async Task UpdateCheckManagement(bool displayDialogue) {
+            // Wait for running tasks.
+            await Task.WhenAll(m_tasks);
+            // Create the new task and add it to the queue.
+            Task task;
+            m_tasks.Add(task = CheckAndDownloadNewVersion(displayDialogue));
+            // Run the event.
+            await Task.Run(() => task);
+            // Remove it from the queue.
+            m_tasks.Remove(task);
         }
 
         //////////////////////////////////
@@ -713,8 +777,8 @@ namespace PS2StatTracker
         private void aboutToolStripMenuItem_Click(object sender, EventArgs evt) {
             try {
                 using (GUIAbout about = new GUIAbout()) {
-                    about.SetTitle(PROGRAM_TITLE);
-                    about.SetVersion("Version " + VERSION_NUM);
+                    about.SetTitle(GlobalVariables.PROGRAM_TITLE);
+                    about.SetVersion("Version " + GlobalVariables.VERSION_NUM);
                     about.ShowDialog(this);
                 }
             } catch (Exception e) {
@@ -775,7 +839,7 @@ namespace PS2StatTracker
         {
             if (m_overlay == null)
             {
-                m_overlay = new GUIOverlay();
+                m_overlay = new GUIOverlay(m_statTracker);
                 m_overlay.FormClosed += new FormClosedEventHandler(overlay_FormClosed);
                 m_overlay.Show(this);
             }
@@ -789,16 +853,28 @@ namespace PS2StatTracker
 
         // Called from UpdateEvents and UpdateWeapons.
         private void UpdateOverlay()
-        {/*
-            if (m_overlay != null && m_player != null && m_sessionStarted)
+        {
+            if (m_overlay != null && m_statTracker.SessionStarted())
             {
-                m_overlay.SetStats(m_player, this.killsTextBox.Text, this.deathsTextBox.Text, this.kdrTextBox.Text,
-                    this.hsTextBox.Text, this.eventLogGridView, m_sessionWeapons, m_eventLog);
-            }*/
+                m_overlay.UpdateStats();
+            }
         }
 
         private void GUIMain_FormClosing(object sender, FormClosingEventArgs e) {
             SaveConfig();
+        }
+
+        // Accept letters, digits, backspace and any other control keys (ctrl -c, etc)
+        // Special characters like <> cause issues with API requests.
+        private void usernameTextBox_KeyPress(object sender, KeyPressEventArgs e) {
+            var regex = new System.Text.RegularExpressions.Regex(@"[^a-zA-Z0-9\s]");
+            if (!Char.IsControl((char)e.KeyChar) && regex.IsMatch(((char)e.KeyChar).ToString())) {
+                e.Handled = true;
+            }
+        }
+
+        private async void updateToolStripMenuItem_Click(object sender, EventArgs e) {
+            await UpdateCheckManagement(true);
         }
     }
 }

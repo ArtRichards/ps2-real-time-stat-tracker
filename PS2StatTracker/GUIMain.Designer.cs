@@ -32,8 +32,8 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUIMain));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.resumeButton = new System.Windows.Forms.Button();
             this.killsTextBox = new System.Windows.Forms.RichTextBox();
@@ -103,15 +103,17 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eventLogGridView = new System.Windows.Forms.DataGridView();
+            this.usernameTextBox = new System.Windows.Forms.ComboBox();
+            this.versionLabel = new System.Windows.Forms.Label();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.onlineStatusImage = new System.Windows.Forms.PictureBox();
+            this.onlineCol = new System.Windows.Forms.DataGridViewImageColumn();
             this.brCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.playerCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.methodCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.hsCol = new System.Windows.Forms.DataGridViewImageColumn();
             this.kdrCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.usernameTextBox = new System.Windows.Forms.ComboBox();
-            this.versionLabel = new System.Windows.Forms.Label();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.sessionWeaponsTab.SuspendLayout();
@@ -127,6 +129,7 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.onlineStatusImage)).BeginInit();
             this.SuspendLayout();
             // 
             // resumeButton
@@ -134,9 +137,9 @@
             this.resumeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.resumeButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.resumeButton.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.resumeButton.Location = new System.Drawing.Point(250, 0);
+            this.resumeButton.Location = new System.Drawing.Point(257, 0);
             this.resumeButton.Name = "resumeButton";
-            this.resumeButton.Size = new System.Drawing.Size(83, 23);
+            this.resumeButton.Size = new System.Drawing.Size(77, 23);
             this.resumeButton.TabIndex = 0;
             this.resumeButton.Text = "Resume";
             this.resumeButton.UseVisualStyleBackColor = true;
@@ -365,7 +368,7 @@
             this.tabControl1.MinimumSize = new System.Drawing.Size(400, 340);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(400, 342);
+            this.tabControl1.Size = new System.Drawing.Size(401, 342);
             this.tabControl1.TabIndex = 24;
             // 
             // sessionWeaponsTab
@@ -375,7 +378,7 @@
             this.sessionWeaponsTab.Location = new System.Drawing.Point(4, 23);
             this.sessionWeaponsTab.Name = "sessionWeaponsTab";
             this.sessionWeaponsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.sessionWeaponsTab.Size = new System.Drawing.Size(392, 315);
+            this.sessionWeaponsTab.Size = new System.Drawing.Size(393, 315);
             this.sessionWeaponsTab.TabIndex = 0;
             this.sessionWeaponsTab.Text = "Session Weapons";
             // 
@@ -398,7 +401,7 @@
             this.sessionWeaponsGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sessionWeaponsGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.Silver;
             this.sessionWeaponsGridView.ShowEditingIcon = false;
-            this.sessionWeaponsGridView.Size = new System.Drawing.Size(380, 303);
+            this.sessionWeaponsGridView.Size = new System.Drawing.Size(381, 303);
             this.sessionWeaponsGridView.TabIndex = 22;
             // 
             // allWeaponsTab
@@ -408,7 +411,7 @@
             this.allWeaponsTab.Location = new System.Drawing.Point(4, 23);
             this.allWeaponsTab.Name = "allWeaponsTab";
             this.allWeaponsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.allWeaponsTab.Size = new System.Drawing.Size(392, 315);
+            this.allWeaponsTab.Size = new System.Drawing.Size(393, 315);
             this.allWeaponsTab.TabIndex = 1;
             this.allWeaponsTab.Text = "All Weapons";
             // 
@@ -431,7 +434,7 @@
             this.weaponsGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponsGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.Silver;
             this.weaponsGridView.ShowEditingIcon = false;
-            this.weaponsGridView.Size = new System.Drawing.Size(380, 303);
+            this.weaponsGridView.Size = new System.Drawing.Size(381, 303);
             this.weaponsGridView.TabIndex = 21;
             // 
             // miscTab
@@ -442,7 +445,7 @@
             this.miscTab.Location = new System.Drawing.Point(4, 23);
             this.miscTab.Name = "miscTab";
             this.miscTab.Padding = new System.Windows.Forms.Padding(3);
-            this.miscTab.Size = new System.Drawing.Size(392, 315);
+            this.miscTab.Size = new System.Drawing.Size(393, 315);
             this.miscTab.TabIndex = 2;
             this.miscTab.Text = "Miscellaneous";
             // 
@@ -471,7 +474,7 @@
             this.panel3.Controls.Add(this.reviveKDRTextBox);
             this.panel3.Location = new System.Drawing.Point(5, 21);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(371, 75);
+            this.panel3.Size = new System.Drawing.Size(372, 75);
             this.panel3.TabIndex = 38;
             // 
             // teamRelianceLabel
@@ -553,9 +556,9 @@
             this.startSessionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.startSessionButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.startSessionButton.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startSessionButton.Location = new System.Drawing.Point(250, 26);
+            this.startSessionButton.Location = new System.Drawing.Point(257, 26);
             this.startSessionButton.Name = "startSessionButton";
-            this.startSessionButton.Size = new System.Drawing.Size(83, 23);
+            this.startSessionButton.Size = new System.Drawing.Size(77, 23);
             this.startSessionButton.TabIndex = 25;
             this.startSessionButton.Text = "Start";
             this.startSessionButton.UseVisualStyleBackColor = true;
@@ -568,11 +571,11 @@
             this.updatingLabel.BackColor = System.Drawing.Color.Transparent;
             this.updatingLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.updatingLabel.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.updatingLabel.Location = new System.Drawing.Point(235, 60);
+            this.updatingLabel.Location = new System.Drawing.Point(239, 60);
             this.updatingLabel.Name = "updatingLabel";
-            this.updatingLabel.Size = new System.Drawing.Size(103, 14);
+            this.updatingLabel.Size = new System.Drawing.Size(93, 14);
             this.updatingLabel.TabIndex = 18;
-            this.updatingLabel.Text = "Updating Events...";
+            this.updatingLabel.Text = "Status Update...";
             this.updatingLabel.Visible = false;
             // 
             // playerNameLabel
@@ -581,7 +584,7 @@
             this.playerNameLabel.BackColor = System.Drawing.Color.Transparent;
             this.playerNameLabel.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playerNameLabel.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.playerNameLabel.Location = new System.Drawing.Point(59, 4);
+            this.playerNameLabel.Location = new System.Drawing.Point(68, 4);
             this.playerNameLabel.Name = "playerNameLabel";
             this.playerNameLabel.Size = new System.Drawing.Size(77, 14);
             this.playerNameLabel.TabIndex = 26;
@@ -864,11 +867,10 @@
             // 
             // updateToolStripMenuItem
             // 
-            this.updateToolStripMenuItem.Enabled = false;
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
             this.updateToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.updateToolStripMenuItem.Text = "Update";
-            this.updateToolStripMenuItem.Visible = false;
+            this.updateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -903,6 +905,7 @@
             this.eventLogGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.eventLogGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.eventLogGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.onlineCol,
             this.brCol,
             this.playerCol,
             this.methodCol,
@@ -928,52 +931,8 @@
             this.eventLogGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
             this.eventLogGridView.ShowEditingIcon = false;
             this.eventLogGridView.ShowRowErrors = false;
-            this.eventLogGridView.Size = new System.Drawing.Size(329, 263);
+            this.eventLogGridView.Size = new System.Drawing.Size(330, 263);
             this.eventLogGridView.TabIndex = 23;
-            // 
-            // brCol
-            // 
-            this.brCol.FillWeight = 10F;
-            this.brCol.HeaderText = "BR";
-            this.brCol.MinimumWidth = 30;
-            this.brCol.Name = "brCol";
-            this.brCol.ReadOnly = true;
-            // 
-            // playerCol
-            // 
-            this.playerCol.FillWeight = 30F;
-            this.playerCol.HeaderText = "Player";
-            this.playerCol.Name = "playerCol";
-            this.playerCol.ReadOnly = true;
-            this.playerCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // methodCol
-            // 
-            this.methodCol.FillWeight = 30F;
-            this.methodCol.HeaderText = "Method";
-            this.methodCol.Name = "methodCol";
-            this.methodCol.ReadOnly = true;
-            // 
-            // hsCol
-            // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.hsCol.DefaultCellStyle = dataGridViewCellStyle2;
-            this.hsCol.FillWeight = 10F;
-            this.hsCol.HeaderText = "HS";
-            this.hsCol.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.hsCol.MinimumWidth = 30;
-            this.hsCol.Name = "hsCol";
-            this.hsCol.ReadOnly = true;
-            this.hsCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.hsCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // kdrCol
-            // 
-            this.kdrCol.FillWeight = 10F;
-            this.kdrCol.HeaderText = "KDR";
-            this.kdrCol.MinimumWidth = 35;
-            this.kdrCol.Name = "kdrCol";
-            this.kdrCol.ReadOnly = true;
             // 
             // usernameTextBox
             // 
@@ -985,8 +944,9 @@
             this.usernameTextBox.FormattingEnabled = true;
             this.usernameTextBox.Location = new System.Drawing.Point(6, 27);
             this.usernameTextBox.Name = "usernameTextBox";
-            this.usernameTextBox.Size = new System.Drawing.Size(239, 22);
+            this.usernameTextBox.Size = new System.Drawing.Size(240, 22);
             this.usernameTextBox.TabIndex = 33;
+            this.usernameTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.usernameTextBox_KeyPress);
             // 
             // versionLabel
             // 
@@ -1018,6 +978,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.onlineStatusImage);
             this.splitContainer1.Panel2.Controls.Add(this.resumeButton);
             this.splitContainer1.Panel2.Controls.Add(this.usernameLabel);
             this.splitContainer1.Panel2.Controls.Add(this.usernameTextBox);
@@ -1027,10 +988,75 @@
             this.splitContainer1.Panel2.Controls.Add(this.updatingLabel);
             this.splitContainer1.Panel2.Controls.Add(this.playerNameLabel);
             this.splitContainer1.Panel2MinSize = 310;
-            this.splitContainer1.Size = new System.Drawing.Size(736, 342);
-            this.splitContainer1.SplitterDistance = 400;
+            this.splitContainer1.Size = new System.Drawing.Size(738, 342);
+            this.splitContainer1.SplitterDistance = 401;
             this.splitContainer1.SplitterWidth = 2;
             this.splitContainer1.TabIndex = 35;
+            // 
+            // onlineStatusImage
+            // 
+            this.onlineStatusImage.Image = ((System.Drawing.Image)(resources.GetObject("onlineStatusImage.Image")));
+            this.onlineStatusImage.Location = new System.Drawing.Point(57, 6);
+            this.onlineStatusImage.Name = "onlineStatusImage";
+            this.onlineStatusImage.Size = new System.Drawing.Size(10, 10);
+            this.onlineStatusImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.onlineStatusImage.TabIndex = 34;
+            this.onlineStatusImage.TabStop = false;
+            this.onlineStatusImage.Visible = false;
+            // 
+            // onlineCol
+            // 
+            this.onlineCol.FillWeight = 8F;
+            this.onlineCol.HeaderText = "";
+            this.onlineCol.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.onlineCol.Name = "onlineCol";
+            this.onlineCol.ReadOnly = true;
+            this.onlineCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.onlineCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // brCol
+            // 
+            this.brCol.FillWeight = 17.54169F;
+            this.brCol.HeaderText = "BR";
+            this.brCol.MinimumWidth = 30;
+            this.brCol.Name = "brCol";
+            this.brCol.ReadOnly = true;
+            // 
+            // playerCol
+            // 
+            this.playerCol.FillWeight = 70.16679F;
+            this.playerCol.HeaderText = "Player";
+            this.playerCol.Name = "playerCol";
+            this.playerCol.ReadOnly = true;
+            this.playerCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // methodCol
+            // 
+            this.methodCol.FillWeight = 61.39594F;
+            this.methodCol.HeaderText = "Method";
+            this.methodCol.Name = "methodCol";
+            this.methodCol.ReadOnly = true;
+            // 
+            // hsCol
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.hsCol.DefaultCellStyle = dataGridViewCellStyle2;
+            this.hsCol.FillWeight = 17.54169F;
+            this.hsCol.HeaderText = "HS";
+            this.hsCol.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.hsCol.MinimumWidth = 20;
+            this.hsCol.Name = "hsCol";
+            this.hsCol.ReadOnly = true;
+            this.hsCol.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.hsCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // kdrCol
+            // 
+            this.kdrCol.FillWeight = 17.54169F;
+            this.kdrCol.HeaderText = "KDR";
+            this.kdrCol.MinimumWidth = 35;
+            this.kdrCol.Name = "kdrCol";
+            this.kdrCol.ReadOnly = true;
             // 
             // GUIMain
             // 
@@ -1075,6 +1101,7 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.onlineStatusImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1155,6 +1182,8 @@
         private System.Windows.Forms.ToolStripMenuItem streamingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startOverlayToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.PictureBox onlineStatusImage;
+        private System.Windows.Forms.DataGridViewImageColumn onlineCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn brCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn playerCol;
         private System.Windows.Forms.DataGridViewTextBoxColumn methodCol;

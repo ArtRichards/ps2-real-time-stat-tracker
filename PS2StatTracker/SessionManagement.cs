@@ -74,7 +74,6 @@ namespace PS2StatTracker {
             suicide;
     };
 
-
     public struct Weapon : ICloneable {
         public void Initialize() {
             kills = fireCount = headShots = hitsCount = lastFireCount = playTime = deaths = 0.0f;
@@ -114,6 +113,7 @@ namespace PS2StatTracker {
         public int battleRank;
         public float battleRankPer;
         public float totalHeadshots;
+        public bool isOnline;
         public kdrJson kdr;
         public Dictionary<string,
             Weapon> weapons;
@@ -203,6 +203,11 @@ namespace PS2StatTracker {
             public string time_created_date { get; set; }
         }
 
+        public class onlineStatusJson {
+            public string character_id { get; set; }
+            public string online_status { get; set; }
+        }
+
         public class playerJson {
             public nameJson name { get; set; }
             public string faction_id { get; set; }
@@ -233,19 +238,24 @@ namespace PS2StatTracker {
             return null; // Will never execute, but it makes the compiler happy
         }
 
-        async Task<Player> CreatePlayer(string id, bool updateWeapons = false, bool forceUpdate = false) {
+        async Task<Player> CreatePlayer(string id, bool updateWeapons = false, bool forceUpdate = false,
+            bool skipHS_KDR = false) {
             // Check local cache.
             if (!forceUpdate && m_playerCache.ContainsKey(id))
                 return m_playerCache[id];
 
             // Assemble a player object taking json values and converting them to correct data types.
             playerJson pJson = await GetPlayerJson(id, updateWeapons);
-            Player player = new Player();
+            
             if (pJson == null) {
                 return null;
             }
 
-            kdrJson kdr = await GetTotalKDR(id);
+            Player player = new Player();
+            // Do not overwrite the kdr unless requested to do so.
+            kdrJson kdr = player.kdr;
+            if(!skipHS_KDR)
+                kdr = await GetTotalKDR(id);
             player.battleRank = Int32.Parse(pJson.battle_rank.value);
             player.battleRankPer = float.Parse(pJson.battle_rank.percent_to_next) / 100.0f;
             player.kdr = kdr;
@@ -312,7 +322,8 @@ namespace PS2StatTracker {
                     }
                 }
 
-                player.CalculateHeadshots();
+                if(!skipHS_KDR)
+                    player.CalculateHeadshots();
             }
 
             // Add to local cache.
@@ -377,6 +388,40 @@ namespace PS2StatTracker {
             return "Unknown";
         }
 
+        // Updates the player cache with their online status.
+        async Task<bool> CheckOnlineStatus() {
+            string site = "characters_online_status/?character_id=" + m_player.id;
+
+            foreach (KeyValuePair<string, Player> player in m_playerCache) {
+                if (player.Value != m_player) {
+                    site += "&character_id=" + player.Value.id;
+                }
+            }
+
+            string result = await GetAsyncRequest(site);
+            Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
+
+            if (!jObject.HasValues)
+                return false;
+
+            Newtonsoft.Json.Linq.JToken jToken = jObject["characters_online_status_list"];
+            List<onlineStatusJson> onlineList = new List<onlineStatusJson>();
+            if (jToken != null && jToken.HasValues)
+                onlineList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<onlineStatusJson>>(jToken.ToString());
+
+            // Update the player cache including m_player.
+            foreach (onlineStatusJson status in onlineList) {
+                bool currentVal = int.Parse(status.online_status) == 1 ? true : false;
+                if (m_playerCache[status.character_id].isOnline != currentVal) {
+                    m_playerCache[status.character_id].isOnline = currentVal;
+                    // Make sure the tracker signals an update has occurred.
+                    m_hasUpdated = true;
+                }
+            }
+
+            return true;
+        }
+
         async Task<playerJson> GetPlayerJson(string id, bool getWeapons = false) {
             string site = "character/" + id;
 
@@ -388,7 +433,7 @@ namespace PS2StatTracker {
             string result = await GetAsyncRequest(site);
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
-            if (!jObject.HasValues)
+            if (jObject == null || !jObject.HasValues)
                 return null;
 
             Newtonsoft.Json.Linq.JToken jToken = jObject["character_list"];
@@ -529,10 +574,13 @@ namespace PS2StatTracker {
                 m_currentEvent = m_eventLog[0];
                 m_lastEventFound = true;
             }
+            // Update loaded players' online status.
+            await CheckOnlineStatus();
         }
 
         public async Task GetPlayerWeapons() {
-            m_player = await CreatePlayer(m_player.id, true, true);
+            // if m_player is valid then kdr and hsr will not be overwritten.
+            m_player = await CreatePlayer(m_player.id, true, true, m_player != null);
             // Update stats of the session weapon other than headshots/kills.
             foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons) {
                 string id = GetBestWeaponID(currentWep.Value);
@@ -626,12 +674,16 @@ namespace PS2StatTracker {
                     // Update overall stats. Should only be called once overall stats have been set initially.
                 else {
                     // Do not give kills or headshots for team kills.
-                    if (newEvent.defender != null && newEvent.defender.faction != m_player.faction)
+                    // TODO: If you kill someone that is so brand new that even their ID does not come through,
+                    // the defender will be null. So if the defender is null then a kill is currently counted. However,
+                    // the defender might be a team mate. The only fix I know of is to keep track of this and check it
+                    // occasionally and reverse the kill once the name is resolved and same faction is discovered.
+                    if (newEvent.defender == null || (newEvent.defender != null && newEvent.defender.faction != m_player.faction))
                         UpdateOverallStats(newWeapon.kills, newWeapon.headShots, 0);
                 }
             }
             // Add session weapon stats unless this event was a death or team kill.
-            if (!newEvent.death && newEvent.defender != null && newEvent.defender.faction != m_player.faction)
+            if (!newEvent.death && (newEvent.defender == null || (newEvent.defender != null && newEvent.defender.faction != m_player.faction)))
                 await AddSessionWeapon(newWeapon, oldWeapon);
         }
 
@@ -689,7 +741,6 @@ namespace PS2StatTracker {
                 m_player = await CreatePlayer(m_userID, true);
 
                 if (m_player == null) {
-                    //ShowUpdateText("Invalid ID");
                     CancelInitialize();
                     return;
                 }

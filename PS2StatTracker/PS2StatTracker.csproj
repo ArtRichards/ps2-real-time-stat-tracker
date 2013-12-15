@@ -23,8 +23,9 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationVersion>0.6.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -48,6 +49,18 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>recursion.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>5AEED1F37174AED60F1A9B2F15B4C47C36E97351</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>PS2StatTracker_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
@@ -75,6 +88,12 @@
     </Compile>
     <Compile Include="GUIAbout.Designer.cs">
       <DependentUpon>GUIAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIConfirm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIConfirm.Designer.cs">
+      <DependentUpon>GUIConfirm.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIMain.cs">
       <SubType>Form</SubType>
@@ -122,6 +141,9 @@
       <DependentUpon>GUIChangelog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUIConfirm.resx">
+      <DependentUpon>GUIConfirm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUIMain.resx">
       <DependentUpon>GUIMain.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -154,6 +176,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="PS2StatTracker_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -180,7 +203,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\Resources\avatar.png" />
-    <None Include="Properties\Resources\hsImage.jpg" />
+    <None Include="Images\hsImage.png" />
+    <None Include="Images\statusOn.png" />
+    <None Include="Images\statusOff.png" />
     <Content Include="recursion.ico" />
   </ItemGroup>
   <ItemGroup>

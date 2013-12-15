@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PS2StatTracker {
-    public partial class GUISession : Form {
-        public bool confirmed = false;
-
-        public GUISession() {
+    public partial class GUIConfirm : Form {
+        public GUIConfirm() {
             InitializeComponent();
         }
+
+        public bool confirmed = false;
 
         private void cancelButton_Click(object sender, EventArgs e) {
             confirmed = false;

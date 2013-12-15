@@ -118,7 +118,26 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>V 0.5.7.1
+    <value>V 0.6.0
+Added on-line indicator for the user and all opponents in the event log.
+Added automatic updates.
+Reworked images so they are better filtered.
+Special characters are no longer accepted as input for a user id.
+Re-enabled basic streaming overlay.
+Killing a brand new character will count as a kill, however the system will not be able to determine if it was a teammate. This is a limitation of the API.
+
+--Color Changes--
+Team killing will show up as light green.
+Getting team killed will now show up as orange.
+
+V 0.5.9
+Refactored code separating stat tracker into an object managed by the GUI.
+Async tasks now are better managed to prevent operations occuring out of order while in parallel.
+Added vertical splitter bar for resizing between the event board and weapon grid.
+The weapon grid now better displays information across different sizes.
+Added BR, KDR, and outfit information to the event board.
+
+V 0.5.7.1
 Condensed session functions and corrected a new issue preventing the start session from automatically starting.
 
 V 0.5.7
