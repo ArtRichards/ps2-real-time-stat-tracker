@@ -26,7 +26,6 @@ namespace PS2StatTracker
         string fileInfoAddress = "http://recursion.recursion.tk/rtstver.txt";
         string fileSave = "rtstupdate.msi";
 
-        int attempts = 3;
         int versionField = 0;
         int md5Field = 1;
         public async Task<VersionInfo> CheckForNewVersion() {
@@ -48,9 +47,7 @@ namespace PS2StatTracker
                     {
                         versionInfo.updateInfo += fields[i] + "\n";
                     }
-                    // Retry.
-                } else if (attempts >= 1)
-                    await Task.Delay(1000);
+                }
             }
 
             return versionInfo;
@@ -66,10 +63,7 @@ namespace PS2StatTracker
                     // Launch the update.
                     if(execute)
                         System.Diagnostics.Process.Start(fileSave);
-                } else if (attempts < 1)
-                    response.EnsureSuccessStatusCode(); // throws an exception when IsSuccessStatusCode is false
-                else
-                    await Task.Delay(1000);
+                }
             }
         }
     }
