@@ -213,6 +213,7 @@
             this.eventLogGridView.ShowRowErrors = false;
             this.eventLogGridView.Size = new System.Drawing.Size(219, 115);
             this.eventLogGridView.TabIndex = 24;
+            this.eventLogGridView.TabStop = false;
             // 
             // playerCol
             // 
@@ -285,7 +286,7 @@
             this.weaponAccNum.BackColor = System.Drawing.Color.DarkGray;
             this.weaponAccNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponAccNum.ForeColor = System.Drawing.Color.Black;
-            this.weaponAccNum.Location = new System.Drawing.Point(2, 93);
+            this.weaponAccNum.Location = new System.Drawing.Point(0, 93);
             this.weaponAccNum.Name = "weaponAccNum";
             this.weaponAccNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.weaponAccNum.Size = new System.Drawing.Size(20, 20);
@@ -298,7 +299,7 @@
             this.weaponAccLabel.BackColor = System.Drawing.Color.DarkGray;
             this.weaponAccLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponAccLabel.ForeColor = System.Drawing.Color.Black;
-            this.weaponAccLabel.Location = new System.Drawing.Point(3, 78);
+            this.weaponAccLabel.Location = new System.Drawing.Point(1, 78);
             this.weaponAccLabel.Name = "weaponAccLabel";
             this.weaponAccLabel.Size = new System.Drawing.Size(34, 18);
             this.weaponAccLabel.TabIndex = 41;
@@ -335,7 +336,7 @@
             this.weaponSessionLabel.BackColor = System.Drawing.Color.DarkGray;
             this.weaponSessionLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponSessionLabel.ForeColor = System.Drawing.Color.Black;
-            this.weaponSessionLabel.Location = new System.Drawing.Point(3, 20);
+            this.weaponSessionLabel.Location = new System.Drawing.Point(1, 20);
             this.weaponSessionLabel.Name = "weaponSessionLabel";
             this.weaponSessionLabel.Size = new System.Drawing.Size(71, 18);
             this.weaponSessionLabel.TabIndex = 38;
@@ -434,7 +435,7 @@
             this.weaponHSRNum.BackColor = System.Drawing.Color.DarkGray;
             this.weaponHSRNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponHSRNum.ForeColor = System.Drawing.Color.Black;
-            this.weaponHSRNum.Location = new System.Drawing.Point(39, 54);
+            this.weaponHSRNum.Location = new System.Drawing.Point(37, 54);
             this.weaponHSRNum.Name = "weaponHSRNum";
             this.weaponHSRNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.weaponHSRNum.Size = new System.Drawing.Size(20, 20);
@@ -447,7 +448,7 @@
             this.weaponHSRLabel.BackColor = System.Drawing.Color.DarkGray;
             this.weaponHSRLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponHSRLabel.ForeColor = System.Drawing.Color.Black;
-            this.weaponHSRLabel.Location = new System.Drawing.Point(40, 39);
+            this.weaponHSRLabel.Location = new System.Drawing.Point(38, 39);
             this.weaponHSRLabel.Name = "weaponHSRLabel";
             this.weaponHSRLabel.Size = new System.Drawing.Size(39, 18);
             this.weaponHSRLabel.TabIndex = 29;
@@ -459,7 +460,7 @@
             this.weaponName.BackColor = System.Drawing.Color.DarkGray;
             this.weaponName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponName.ForeColor = System.Drawing.Color.Black;
-            this.weaponName.Location = new System.Drawing.Point(78, 1);
+            this.weaponName.Location = new System.Drawing.Point(76, 1);
             this.weaponName.Name = "weaponName";
             this.weaponName.Size = new System.Drawing.Size(55, 18);
             this.weaponName.TabIndex = 28;
@@ -471,7 +472,7 @@
             this.weaponKillsNum.BackColor = System.Drawing.Color.DarkGray;
             this.weaponKillsNum.Font = new System.Drawing.Font("Verdana", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponKillsNum.ForeColor = System.Drawing.Color.Black;
-            this.weaponKillsNum.Location = new System.Drawing.Point(2, 54);
+            this.weaponKillsNum.Location = new System.Drawing.Point(0, 54);
             this.weaponKillsNum.Name = "weaponKillsNum";
             this.weaponKillsNum.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.weaponKillsNum.Size = new System.Drawing.Size(20, 20);
@@ -484,7 +485,7 @@
             this.lastWeaponLabel.BackColor = System.Drawing.Color.DarkGray;
             this.lastWeaponLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lastWeaponLabel.ForeColor = System.Drawing.Color.Black;
-            this.lastWeaponLabel.Location = new System.Drawing.Point(3, 1);
+            this.lastWeaponLabel.Location = new System.Drawing.Point(1, 1);
             this.lastWeaponLabel.Name = "lastWeaponLabel";
             this.lastWeaponLabel.Size = new System.Drawing.Size(75, 18);
             this.lastWeaponLabel.TabIndex = 26;
@@ -496,7 +497,7 @@
             this.weaponKillsLabel.BackColor = System.Drawing.Color.DarkGray;
             this.weaponKillsLabel.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weaponKillsLabel.ForeColor = System.Drawing.Color.Black;
-            this.weaponKillsLabel.Location = new System.Drawing.Point(3, 39);
+            this.weaponKillsLabel.Location = new System.Drawing.Point(1, 39);
             this.weaponKillsLabel.Name = "weaponKillsLabel";
             this.weaponKillsLabel.Size = new System.Drawing.Size(35, 18);
             this.weaponKillsLabel.TabIndex = 26;

@@ -428,7 +428,7 @@ namespace PS2StatTracker {
                 if (m_playerCache[status.character_id].isOnline != currentVal) {
                     m_playerCache[status.character_id].isOnline = currentVal;
                     // Make sure the tracker signals an update has occurred.
-                    m_hasUpdated = true;
+                    m_hasOnlineStatusChanged = true;
                 }
             }
 
@@ -562,7 +562,7 @@ namespace PS2StatTracker {
                     continue;
 
                 // If an iteration has gone through then new information has been gathered.
-                m_hasUpdated = true;
+                m_hasEventUpdated = true;
 
                 // Determine the order in which to add the event.
                 if (m_sessionStarted) {

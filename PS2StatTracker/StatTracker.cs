@@ -39,7 +39,8 @@ namespace PS2StatTracker {
         bool m_initialized;
         bool m_initializing;
         bool m_preparingSession;
-        bool m_hasUpdated;
+        bool m_hasEventUpdated;
+        bool m_hasOnlineStatusChanged;
         bool m_weaponsUpdated;
 
         public SessionStats GetSessionStats() {
@@ -144,9 +145,18 @@ namespace PS2StatTracker {
             }
         }
 
-        public bool HasUpdated() {
-            bool returnVal = m_hasUpdated;
-            m_hasUpdated = false;
+        public bool HasEventUpdated() {
+            bool returnVal = m_hasEventUpdated;
+            m_hasEventUpdated = false;
+            // Event updates will include online status updates.
+            if (returnVal)
+                m_hasOnlineStatusChanged = false;
+            return returnVal;
+        }
+
+        public bool HasOnlineStatusChanged() {
+            bool returnVal = m_hasOnlineStatusChanged;
+            m_hasOnlineStatusChanged = false;
             return returnVal;
         }
 

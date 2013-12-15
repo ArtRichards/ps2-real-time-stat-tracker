@@ -80,6 +80,7 @@ namespace PS2StatTracker
             ((DataGridViewImageColumn)this.eventLogGridView.Columns[4]).DefaultCellStyle.NullValue = null;
             // Handle mouse movement and resizing on borderless window.
             this.menuStrip1.MouseDown += OnMouseDown;
+            this.onlineStatusImage.MouseDown += OnMouseDown;
             AddMouseEventDown(this);
 
             // Check for new updates. Even though this is not awaited it still allows other program operation to run.
@@ -97,6 +98,8 @@ namespace PS2StatTracker
             }
         }
 
+        // There were some issues using the normal .ToString formatting with percentage signs and
+        // under 4 decimal places.
         public string PercentString(float input, int digits = 3) {
             string digitCount = "";
             for (int i = 0; i < digits; i++) {
@@ -195,7 +198,7 @@ namespace PS2StatTracker
 
             this.totalKillsTextBox.Text = player.kdr.kills.ToString();
             this.totalHSTextBox.Text = ratio.ToString("#0.###%");
-            this.hsrGrowthLabel.Text = PercentString(dif);
+            this.hsrGrowthLabel.Text = dif.ToString("+#0.0000;-#0.0000");
 
             // KDR
             ratio = (float)player.kdr.kills / (float)player.kdr.actualDeaths;
@@ -292,7 +295,7 @@ namespace PS2StatTracker
                 string hsrStr = currentHSR.ToString("#0.###%");
                 if (gridView.Name == "sessionWeaponsGridView" && (m_statTracker.SessionStarted() ||
                     m_statTracker.CountingEvents())) {
-                        string bestWeaponID = m_statTracker.GetBestWeaponID(weapon);
+                    string bestWeaponID = m_statTracker.GetBestWeaponID(weapon);
                     // HSR
                     float[] absHSR = m_statTracker.GetWeaponHSR(bestWeaponID, m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
@@ -345,45 +348,35 @@ namespace PS2StatTracker
             gridView.ClearSelection();
         }
 
-        public async Task UpdateEventboard(){
+        public async Task UpdateEventboard(bool updateBoardOnly = false){
             List<EventLog> eventLog = m_statTracker.GetEventLog();
             Player player = m_statTracker.GetPlayer();
             // Update killboard.
             this.eventLogGridView.Rows.Clear();
             if (eventLog.Count > 1) {
                 this.eventLogGridView.Rows.Add(eventLog.Count - 1);
-
                 for (int i = 0; i < eventLog.Count - 1; i++) {
                     string eventName = "";
-                    if (eventLog[i].death) {
-                        if (eventLog[i].attacker == null)
-                            eventName = "n/a";
-                        else
-                        {
-                            eventName = eventLog[i].attacker.fullName;
-                        }
-                    } else {
-                        if (eventLog[i].defender == null)
-                            eventName = "n/a";
-                        else
-                        {
-                            eventName = eventLog[i].defender.fullName;
-                        }
-                    }
-
+                    float kdr = 0.0f;
                     if (eventLog[i].opponent != null) {
+                        eventName = eventLog[i].opponent.fullName;
                         // Online status.
                         ((DataGridViewImageCell)eventLogGridView.Rows[i].Cells[0]).Value = GetOnOffBitmap(eventLog[i].opponent.isOnline);
                         // Battle rank.
                         this.eventLogGridView.Rows[i].Cells[1].Value = eventLog[i].opponent.battleRank;
-                        // Set kdr field.
-                        float kdr = 0.0f;
+                        // Get kdr.
                         if (eventLog[i].opponent.kdr != null) {
-                            if((float)eventLog[i].opponent.kdr.actualDeaths != 0.0f)
+                            if ((float)eventLog[i].opponent.kdr.actualDeaths != 0.0f)
                                 kdr = (float)eventLog[i].opponent.kdr.kills / (float)eventLog[i].opponent.kdr.actualDeaths;
                         }
-                        this.eventLogGridView.Rows[i].Cells[5].Value = kdr.ToString("0.0");
+                        
+                    } else {
+                        eventName = "n/a";
                     }
+
+                    // Set kdr field.
+                    this.eventLogGridView.Rows[i].Cells[5].Value = kdr.ToString("0.0");
+
                     // Event name.
                     this.eventLogGridView.Rows[i].Cells[2].Value = eventName;
 
@@ -418,10 +411,12 @@ namespace PS2StatTracker
             }
             this.eventLogGridView.ClearSelection();
 
-            UpdateEventTextFields();
-            await UpdateWeaponTextFields(m_statTracker.GetSessionStats().weapons, this.sessionWeaponsGridView);
+            if (!updateBoardOnly) {
+                UpdateEventTextFields();
+                await UpdateWeaponTextFields(m_statTracker.GetSessionStats().weapons, this.sessionWeaponsGridView);
 
-            UpdateOverallStatsDisplay();
+                UpdateOverallStatsDisplay();
+            }
 
             // Update player online status
             this.onlineStatusImage.Image = GetOnOffBitmap(m_statTracker.GetPlayer().isOnline);
@@ -550,8 +545,13 @@ namespace PS2StatTracker
         private async Task UpdateTracker() {
             m_statTracker.IncreaseActiveSeconds(timer1.Interval / 1000);
             await m_statTracker.Update();
-            if (m_statTracker.HasUpdated()) {
+            if (m_statTracker.HasEventUpdated()) {
                 await UpdateEventboard();
+            } else {
+                // Only refresh event board.
+                if (m_statTracker.HasOnlineStatusChanged()) {
+                    await UpdateEventboard(true);
+                }
             }
             if (m_statTracker.HaveWeaponsUpdated()) {
                 // Update overall weapons.
@@ -843,6 +843,7 @@ namespace PS2StatTracker
             {
                 m_overlay = new GUIOverlay(m_statTracker);
                 m_overlay.FormClosed += new FormClosedEventHandler(overlay_FormClosed);
+                UpdateOverlay();
                 m_overlay.Show(this);
             }
         }
@@ -858,7 +859,7 @@ namespace PS2StatTracker
         {
             if (m_overlay != null && m_statTracker.SessionStarted())
             {
-                m_overlay.UpdateStats();
+                m_overlay.UpdateStatsView();
             }
         }
 

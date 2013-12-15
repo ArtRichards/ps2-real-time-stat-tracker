@@ -33,7 +33,7 @@ namespace PS2StatTracker
             this.eventLogGridView.Columns[1].MinimumWidth = 60;
         }
 
-        public void ResetStats() {
+        public void ResetStatsView() {
             this.panel1.Visible = false;
             this.killsNumber.Text = "0";
             this.kdrNum.Text = "0";
@@ -41,7 +41,58 @@ namespace PS2StatTracker
             this.deathsNum.Text = "0";
         }
 
-        public void UpdateStats() {
+        private void DisplayLastWeaponStats() {
+            Player player = m_statTracker.GetPlayer();
+            List<EventLog> eventLog = m_statTracker.GetEventLog();
+
+            // Display Weapon info.
+            Weapon lastWeapon = GetLastWeapon(m_statTracker.GetSessionStats().weapons, eventLog);
+
+            if (!lastWeapon.IsNull()) {
+                this.weaponName.Text = lastWeapon.name;
+                // Session Weapon Stats.
+                this.weaponKillsNum.Text = lastWeapon.kills.ToString();
+                this.weaponHSRNum.Text = ((float)lastWeapon.headShots / (float)lastWeapon.kills).ToString("#0.#%");
+                // Only display accuracy if it has updated from the API.
+                if (lastWeapon.fireCount > 0) {
+                    this.weaponAccNum.Text = (lastWeapon.hitsCount / lastWeapon.fireCount).ToString("#0.#%");
+                    this.weaponAccNum.Visible = true;
+                    this.weaponAccLabel.Visible = true;
+                } else {
+                    this.weaponAccNum.Visible = false;
+                    this.weaponAccLabel.Visible = false;
+                }
+                // Total Weapon Stats.
+                string id = m_statTracker.GetBestWeaponID(lastWeapon);
+                if (player.weapons.ContainsKey(id)) {
+                    Weapon totalWeapon = player.weapons[id];
+                    // Calculate the new totals based on start session weapons and existing totals.
+                    if (m_statTracker.GetSessionStats().weapons.ContainsKey(id)) {
+                        Weapon sesWeapon = m_statTracker.GetSessionStats().weapons[id];
+                        // HSR
+                        float[] absHSR = m_statTracker.GetWeaponHSR(id, m_statTracker.GetSessionStats().startPlayer.weapons);
+                        float[] startHSR = m_statTracker.GetWeaponHSR(id, m_statTracker.GetSessionStats().startSesWeapons);
+                        absHSR[0] += sesWeapon.headShots - startHSR[0];
+                        float newTotalKills = (absHSR[1] += sesWeapon.kills - startHSR[1]);
+                        float newTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
+
+                        this.weaponKillsTotalNum.Text = newTotalKills.ToString();
+                        this.weaponTotalHSRNum.Text = newTotalHSR.ToString("#0.#%");
+                    } else { // If a session weapon for some reason does not exist, use just the total stats.
+                        this.weaponKillsTotalNum.Text = totalWeapon.kills.ToString();
+                        this.weaponTotalHSRNum.Text = ((float)totalWeapon.headShots / (float)totalWeapon.kills).ToString("#0.#%");
+                    }
+
+                    this.weaponTotalKDRNum.Text = (totalWeapon.kills / totalWeapon.deaths).ToString("0.0");
+                    this.weaponTotalAccNum.Text = (totalWeapon.hitsCount / totalWeapon.fireCount).ToString("#0.#%");
+                    this.panel1.Visible = true;
+                }
+            } else {
+                this.panel1.Visible = false;
+            }
+        }
+
+        private bool UpdateSessionStatsAndEventboard() {
             int kills = 0;
             int deaths = 0;
             int killHS = 0;
@@ -56,13 +107,14 @@ namespace PS2StatTracker
 
             this.eventLogGridView.Rows.Clear();
             if (killboardCount <= 1) {
-                ResetStats();
-                return;
+                ResetStatsView();
+                return false;
             }
 
             this.eventLogGridView.Rows.Add(killboardCount - 1);
 
             for (int i = 0; i < eventLog.Count - 1; i++) {
+                // Calculate overall session stats.
                 if (eventLog[i].IsKill()) {
                     if (eventLog[i].defender == null || (eventLog[i].defender != null && eventLog[i].defender.faction != player.faction)) {
                         kills++;
@@ -73,6 +125,7 @@ namespace PS2StatTracker
                     suicide += eventLog[i].suicide ? 1 : 0;
                 }
 
+                // Only display content which fits on the killboard.
                 if (i >= killboardCount - 1)
                     continue;
 
@@ -81,19 +134,12 @@ namespace PS2StatTracker
 
                 // Display the event log.
                 string eventName = "";
-                if (eventLog[i].death) {
-                    if (eventLog[i].attacker == null)
-                        eventName = "n/a";
-                    else {
-                        eventName = eventLog[i].attacker.fullName;
-                    }
+                if (eventLog[i].opponent != null) {
+                    eventName = eventLog[i].opponent.fullName;
                 } else {
-                    if (eventLog[i].defender == null)
-                        eventName = "n/a";
-                    else {
-                        eventName = eventLog[i].defender.fullName;
-                    }
+                    eventName = "n/a";
                 }
+
                 // Event name.
                 this.eventLogGridView.Rows[i].Cells[0].Value = eventName;
 
@@ -126,8 +172,6 @@ namespace PS2StatTracker
                 }
             }
 
-            this.eventLogGridView.ClearSelection();
-
             // Display session stats.
             this.killsNumber.Text = kills.ToString();
             this.deathsNum.Text = deaths.ToString();
@@ -136,41 +180,19 @@ namespace PS2StatTracker
             this.kdrNum.Text = kdr.ToString("0.0");
             this.hsrNum.Text = hs.ToString("#0.#%");
 
-            // Display Weapon info.
-            Weapon lastWeapon = GetLastWeapon(m_statTracker.GetSessionStats().weapons, eventLog);
+            return true;
+        }
 
-            if (!lastWeapon.IsNull()) {
-                this.weaponName.Text = lastWeapon.name;
-                // Session
-                this.weaponKillsNum.Text = lastWeapon.kills.ToString();
-                this.weaponHSRNum.Text = ((float)lastWeapon.headShots / (float)lastWeapon.kills).ToString("#0.#%");
-                if (lastWeapon.fireCount > 0) {
-                    this.weaponAccNum.Text = (lastWeapon.hitsCount / lastWeapon.fireCount).ToString("#0.#%");
-                    this.weaponAccNum.Visible = true;
-                    this.weaponAccLabel.Visible = true;
-                } else {
-                    this.weaponAccNum.Visible = false;
-                    this.weaponAccLabel.Visible = false;
-                }
-                // Total
-                string id = m_statTracker.GetBestWeaponID(lastWeapon);
-                if (player.weapons.ContainsKey(id)) {
-                    Weapon totalWeapon = player.weapons[id];
-                    this.weaponKillsTotalNum.Text = totalWeapon.kills.ToString();
-                    this.weaponTotalKDRNum.Text = (totalWeapon.kills / totalWeapon.deaths).ToString("0.0");
-                    this.weaponTotalHSRNum.Text = (totalWeapon.headShots / totalWeapon.kills).ToString("#0.#%");
-                    this.weaponTotalAccNum.Text = (totalWeapon.hitsCount / totalWeapon.fireCount).ToString("#0.#%");
-                    this.panel1.Visible = true;
-                }
-            } else {
-                this.panel1.Visible = false;
-            }
+        public void UpdateStatsView() {
+
+            if(UpdateSessionStatsAndEventboard())
+                DisplayLastWeaponStats();
             this.eventLogGridView.ClearSelection();
         }
 
         Weapon GetLastWeapon(Dictionary<string, Weapon> weapons, List<EventLog> log)
         {
-            // Search from most recent down.
+            // Search from most recent down. Skip deaths.
             for (int i = 0; i < log.Count; i++)
             {
                 if (log[i].IsKill())
