@@ -10,11 +10,9 @@ using System.Windows.Forms;
 
 namespace PS2StatTracker
 {
-    public partial class GUIOverlay : Form
-    {
+    public partial class GUIOverlay : Form {
         StatTracker m_statTracker;
-        public GUIOverlay(StatTracker tracker)
-        {
+        public GUIOverlay(StatTracker tracker) {
             InitializeComponent();
             m_statTracker = tracker;
 
@@ -25,8 +23,7 @@ namespace PS2StatTracker
             this.eventLogGridView.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.False;
             this.eventLogGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 
-            for (int i = 0; i < this.eventLogGridView.Columns.Count; i++)
-            {
+            for (int i = 0; i < this.eventLogGridView.Columns.Count; i++) {
                 this.eventLogGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
             this.eventLogGridView.Columns[0].MinimumWidth = 60;
@@ -185,22 +182,18 @@ namespace PS2StatTracker
 
         public void UpdateStatsView() {
 
-            if(UpdateSessionStatsAndEventboard())
+            if (UpdateSessionStatsAndEventboard())
                 DisplayLastWeaponStats();
             this.eventLogGridView.ClearSelection();
         }
 
-        Weapon GetLastWeapon(Dictionary<string, Weapon> weapons, List<EventLog> log)
-        {
+        Weapon GetLastWeapon(Dictionary<string, Weapon> weapons, List<EventLog> log) {
             // Search from most recent down. Skip deaths.
-            for (int i = 0; i < log.Count; i++)
-            {
-                if (log[i].IsKill())
-                {
+            for (int i = 0; i < log.Count; i++) {
+                if (log[i].IsKill()) {
                     string id = log[i].isVehicle ? "V" : "";
                     id += log[i].methodID;
-                    if (weapons.ContainsKey(id))
-                    {
+                    if (weapons.ContainsKey(id)) {
                         return weapons[id];
                     }
                 }

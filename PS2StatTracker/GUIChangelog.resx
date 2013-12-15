@@ -118,7 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>V 0.6.0.1
+    <value>V 0.6.0.5
+Resolved a crash -- Online status updates will break apart API requests to prevent the uri from going over the maximum limit.
+
+V 0.6.0.4
+Online status changes only update the killboard. (Lowers weapon grid flickering)
+Session HSR growth indicator is now more accurate.
+Overlay updates last weapon used total kills and headshots in real-time now.
+Minor code cleanup for eventboards.
+
+V 0.6.0.1
 Corrected issue where weapon updates would cause a crash and also miscalculate headshot ratio growth.
 
 V 0.6.0

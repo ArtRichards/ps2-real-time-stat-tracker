@@ -403,35 +403,48 @@ namespace PS2StatTracker {
 
         // Updates the player cache with their online status.
         async Task<bool> CheckOnlineStatus() {
-            string site = "characters_online_status/?character_id=" + m_player.id;
-
-            foreach (KeyValuePair<string, Player> player in m_playerCache) {
-                if (player.Value != m_player) {
-                    site += "&character_id=" + player.Value.id;
+            List<string> sites = new List<string>();
+            
+            int siteIndex = 0;
+            int maxUri = 1900;
+            for(int i = 0; i < m_playerCache.Count; i++) {
+                Player player = m_playerCache.ElementAt(i).Value;
+                if (player != null && player.id != null) {
+                    // Add a new url.
+                    if (sites.Count <= siteIndex) {
+                        sites.Add("characters_online_status/?character_id=" + m_player.id);
+                    } else {
+                        sites[siteIndex] += "&character_id=" + player.id;
+                    }
+                }
+                // If the url has become too long.
+                if (sites.Count > siteIndex && sites[siteIndex].Length >= maxUri) {
+                    siteIndex++;
                 }
             }
 
-            string result = await GetAsyncRequest(site);
-            Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
+            foreach (string site in sites) {
+                string result = await GetAsyncRequest(site);
+                Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
-            if (!jObject.HasValues)
-                return false;
+                if (jObject == null || !jObject.HasValues)
+                    continue;
 
-            Newtonsoft.Json.Linq.JToken jToken = jObject["characters_online_status_list"];
-            List<onlineStatusJson> onlineList = new List<onlineStatusJson>();
-            if (jToken != null && jToken.HasValues)
-                onlineList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<onlineStatusJson>>(jToken.ToString());
+                Newtonsoft.Json.Linq.JToken jToken = jObject["characters_online_status_list"];
+                List<onlineStatusJson> onlineList = new List<onlineStatusJson>();
+                if (jToken != null && jToken.HasValues)
+                    onlineList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<onlineStatusJson>>(jToken.ToString());
 
-            // Update the player cache including m_player.
-            foreach (onlineStatusJson status in onlineList) {
-                bool currentVal = int.Parse(status.online_status) == 1 ? true : false;
-                if (m_playerCache[status.character_id].isOnline != currentVal) {
-                    m_playerCache[status.character_id].isOnline = currentVal;
-                    // Make sure the tracker signals an update has occurred.
-                    m_hasOnlineStatusChanged = true;
+                // Update the player cache including m_player.
+                foreach (onlineStatusJson status in onlineList) {
+                    bool currentVal = int.Parse(status.online_status) == 1 ? true : false;
+                    if (m_playerCache[status.character_id].isOnline != currentVal) {
+                        m_playerCache[status.character_id].isOnline = currentVal;
+                        // Make sure the tracker signals an update has occurred.
+                        m_hasOnlineStatusChanged = true;
+                    }
                 }
             }
-
             return true;
         }
 
