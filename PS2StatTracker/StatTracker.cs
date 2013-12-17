@@ -28,6 +28,9 @@ namespace PS2StatTracker {
             string> m_itemCache;            // Cache of item IDs to their name.
         Dictionary<string, Player>
             m_playerCache;                  // Cache of player IDs to their struct. 
+        Dictionary<long, string> m_weaponCache;
+        Dictionary<long, string> m_allItemsCache;
+        Dictionary<long, string> m_vehicleCache;
         EventLog m_currentEvent;
         SessionStats m_sessionStats;
         Player m_player;                    // Current player stats.
@@ -51,6 +54,9 @@ namespace PS2StatTracker {
             m_eventLog = new List<EventLog>();
             m_playerCache = new Dictionary<string, Player>();
             m_itemCache = new Dictionary<string, string>();
+            m_weaponCache = new Dictionary<long, string>();
+            m_allItemsCache = new Dictionary<long, string>();
+            m_vehicleCache = new Dictionary<long, string>();
             m_currentEvent = new EventLog();
             m_player = new Player();
             m_sessionStats = new SessionStats();

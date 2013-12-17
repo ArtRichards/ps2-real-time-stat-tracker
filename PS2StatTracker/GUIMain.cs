@@ -238,6 +238,8 @@ namespace PS2StatTracker
                 direction = System.ComponentModel.ListSortDirection.Descending;
             }
 
+            gridView.Visible = false;
+            gridView.SuspendLayout();
             gridView.Columns.Clear();
 
             gridView.Columns.Add("nameCol", "Name");
@@ -280,10 +282,9 @@ namespace PS2StatTracker
 
             for (int i = 0; i < weapons.Count; i++) {
                 Weapon weapon = weapons.ElementAt(i).Value;
-                string bestID = m_statTracker.GetBestWeaponID(weapon);
 
                 // Will get either item or vehicle name.
-                gridView.Rows[i].Cells[0].Value = await m_statTracker.GetItemName(m_statTracker.GetBestWeaponID(weapon));
+                gridView.Rows[i].Cells[0].Value = await m_statTracker.GetWeaponNameAsync(weapon);
 
                 gridView.Rows[i].Cells[1].Value = weapon.kills;
 
@@ -346,6 +347,8 @@ namespace PS2StatTracker
                 SortOrder.Ascending : SortOrder.Descending;
 
             gridView.ClearSelection();
+            gridView.ResumeLayout();
+            gridView.Visible = true;
         }
 
         public async Task UpdateEventboard(bool updateBoardOnly = false){

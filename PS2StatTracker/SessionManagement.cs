@@ -9,6 +9,7 @@ using System.Net;
 using System.IO;
 using System.Net.Http;
 using Newtonsoft;
+using Newtonsoft.Json;
 
 namespace PS2StatTracker {
     public class kdrJson {
@@ -87,6 +88,27 @@ namespace PS2StatTracker {
         public object Clone() {
             return this.MemberwiseClone();
         }
+
+        public string ID {
+            get {
+                if (id != null && id != "0")
+                    return id;
+                if (vehicleId != null && vehicleId != "0")
+                    return vehicleId;
+                return "0";
+            }
+        }
+
+        public bool IsVehicle {
+            get {
+                if (id != null && id != "0")
+                    return false;
+                if (vehicleId != null && vehicleId != "0")
+                    return true;
+                return false;
+            }
+        }
+
         public
             string id,
             vehicleId,
@@ -216,8 +238,89 @@ namespace PS2StatTracker {
             public outfitJson outfit { get; set; }
         }
 
+        public class WeaponsJson {
+            public int returned { get; set; }
+            public List<WeaponDataSheet> weapon_datasheet_list { get; set; }
+
+            public class WeaponDataSheet {
+                public long item_id { get; set; }
+                public Item item { get; set; }
+
+                public class Item {
+                    [JsonConverter(typeof(BoolConverter))]
+                    public bool is_vehicle_weapon { get; set; }
+                    public Name name { get; set; }
+
+                    public class Name {
+                        public string en { get; set; }
+                    }
+                }
+            }
+        }
+
+        public class VehiclesJson {
+            public int returned { get; set; }
+            public List<Vehicle> vehicle_list { get; set; }
+
+            public class Vehicle {
+                public long vehicle_id { get; set; }
+                public Name name { get; set; }
+
+                public class Name {
+                    public string en { get; set; }
+                }
+            }
+        }
+
+        public class ItemsJson {
+            public int returned { get; set; }
+            public List<Item> item_list { get; set; }
+
+            public class Item {
+                public long item_id { get; set; }
+                public Name name { get; set; }
+                public class Name {
+                    public string en { get; set; }
+                }
+            }
+        }
+
+        public class BoolConverter : JsonConverter {
+            public override bool CanConvert(Type objectType) {
+                return objectType == typeof(bool);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+                if (reader.TokenType == JsonToken.Null)
+                    return false;
+                if (reader.TokenType == JsonToken.Integer) {
+                    int intValue = (int)reader.Value;
+                    if (intValue == 0)
+                        return false;
+                    return true;
+                }
+                if (reader.TokenType == JsonToken.String) {
+                    string stringValue = (string)reader.Value;
+                    bool value;
+                    if (stringValue == "1")
+                        return true;
+                    else if (stringValue == "0")
+                        return false;
+                    if (bool.TryParse((string)reader.Value, out value)) // works for "True", "False", "true", "false"
+                        return value;
+                    return false;
+                }
+                throw new JsonReaderException(string.Format("Unexcepted token {0}", reader.TokenType));
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
+                writer.WriteValue(value);
+            }
+        }
+
         private HttpClient m_httpClient;
         internal async Task<string> GetAsyncRequest(string address) {
+            log.Debug(address);
             if (m_httpClient == null) {
                 ServicePointManager.DefaultConnectionLimit = 20000;
                 m_httpClient = new System.Net.Http.HttpClient();
@@ -236,6 +339,109 @@ namespace PS2StatTracker {
                 }
             }
             return null; // Will never execute, but it makes the compiler happy
+        }
+
+        async Task RefreshWeaponCacheAsync() {
+            if (m_weaponCache == null)
+                m_weaponCache = new Dictionary<long, string>();
+            else
+                m_weaponCache.Clear();
+
+            string result = await GetAsyncRequest("weapon_datasheet/?c:show=item_id&c:limit=10000&c:join=type:item^inject_at:item^show:name.en'is_vehicle_weapon^outer:0");
+            WeaponsJson weapons = JsonConvert.DeserializeObject<WeaponsJson>(result);
+            if (weapons != null && weapons.weapon_datasheet_list != null) {
+                foreach (var weapon in weapons.weapon_datasheet_list) {
+                    if (weapon.item != null && weapon.item.name != null) {
+                        if (!m_weaponCache.ContainsKey(weapon.item_id))
+                            m_weaponCache.Add(weapon.item_id, weapon.item.name.en);
+                    }
+                }
+            }
+        }
+
+        async Task RefreshItemCacheAsync() {
+            if (m_allItemsCache == null)
+                m_allItemsCache = new Dictionary<long, string>();
+            else
+                m_allItemsCache.Clear();
+            log.Debug("Start loading all items cache");
+            Task t1 = PopulateItemCacheAsync("item/?c:show=item_id,name.en&c:limit=5000&c:start=0");
+            Task t2 = PopulateItemCacheAsync("item/?c:show=item_id,name.en&c:limit=5000&c:start=5000");
+            Task t3 = PopulateItemCacheAsync("item/?c:show=item_id,name.en&c:limit=5000&c:start=10000");
+            await Task.WhenAll(t1, t2, t3);
+            log.Debug("Finished loading all items cache");
+        }
+
+        async Task PopulateItemCacheAsync(string apiRequest) {
+            string result = await GetAsyncRequest(apiRequest);
+            ItemsJson items = await JsonConvert.DeserializeObjectAsync<ItemsJson>(result);
+            if (items != null && items.item_list != null) {
+                foreach (var item in items.item_list) {
+                    if (item.name != null) {
+                        if (!m_allItemsCache.ContainsKey(item.item_id))
+                            m_allItemsCache.Add(item.item_id, item.name.en);
+                    }
+                }
+            }
+        }
+
+        async Task RefreshVehicleCacheAsync() {
+            if (m_vehicleCache == null)
+                m_vehicleCache = new Dictionary<long, string>();
+            else
+                m_vehicleCache.Clear();
+
+            string result = await GetAsyncRequest("vehicle/?c:show=name.en,vehicle_id&c:limit=100&c:lang=en");
+            VehiclesJson vehicles = JsonConvert.DeserializeObject<VehiclesJson>(result);
+            if (vehicles != null && vehicles.vehicle_list != null) {
+                foreach (var vehicle in vehicles.vehicle_list) {
+                    if (vehicle.name != null) {
+                        if (!m_vehicleCache.ContainsKey(vehicle.vehicle_id))
+                            m_vehicleCache.Add(vehicle.vehicle_id, vehicle.name.en);
+                    }
+                }
+            }
+        }
+
+        public async Task<string> GetWeaponNameAsync(Weapon weapon) {
+            if (weapon.IsNull() || weapon.ID == "0")
+                return "Unknown";
+            
+            long id = long.Parse(weapon.ID);
+            string result;
+            if (weapon.IsVehicle) {
+                if (m_vehicleCache.TryGetValue(id, out result))
+                    return result;
+                result = await GetAsyncRequest("vehicle/?vehicle_id=" + id + "&c:show=name.en");
+                VehiclesJson vehicles = JsonConvert.DeserializeObject<VehiclesJson>(result);
+                if (vehicles != null && vehicles.vehicle_list != null) {
+                    var vehicle = vehicles.vehicle_list[0];
+                    if (vehicle.name != null && vehicle.name.en != null) {
+                        string name = vehicle.name.en;
+                        m_vehicleCache.Add(id, name);
+                        return name;
+                    }
+                }
+            } else {
+                if (m_weaponCache.TryGetValue(id, out result))
+                    return result;
+                if (m_allItemsCache.TryGetValue(id, out result)) {
+                    m_weaponCache.Add(id, result);
+                    return result;
+                }
+                log.DebugFormat("Can't find item_id {0}, checking API", id);
+                result = await GetAsyncRequest("item/?item_id=" + id + "&c:show=name.en,item_id");
+                ItemsJson items = JsonConvert.DeserializeObject<ItemsJson>(result);
+                if (items != null && items.item_list != null) {
+                    var item = items.item_list[0];
+                    if (item.name != null && item.name.en != null) {
+                        string name = item.name.en;
+                        m_weaponCache.Add(id, name);
+                        return name;
+                    }
+                }
+            }
+            return "Unknown";
         }
 
         async Task<Player> CreatePlayer(string id, bool updateWeapons = false, bool forceUpdate = false,
@@ -345,24 +551,26 @@ namespace PS2StatTracker {
         }
 
         public async Task<string> GetItemName(string id) {
-            string useId = id;
-
-            if (useId.Contains(VEHICLE_OFFSET)) {
-                return await GetVehicleName(useId);
-            }
+            if (string.IsNullOrEmpty(id))
+                return "Unknown";
+            if (id.Contains(VEHICLE_OFFSET))
+                return await GetVehicleName(id);
 
             // Check local cache.
-            if (m_itemCache.ContainsKey(id))
-                return m_itemCache[id];
+            string result;
+            long numId = long.Parse(id);
+            if (m_weaponCache.TryGetValue(numId, out result))
+                return result;
 
-            string result = await GetAsyncRequest("item/?item_id=" + useId + "&c:show=name.en");
+            result = await GetAsyncRequest("item/?item_id=" + id + "&c:show=name.en");
 
             Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
             if (jObject["item_list"].HasValues) {
                 if (jObject["item_list"][0].HasValues && jObject["item_list"][0]["name"].HasValues) {
                     string name = jObject["item_list"][0]["name"]["en"].ToString();
                     // Add the object to the local cache.
-                    m_itemCache[id] = name;
+                    //m_itemCache[id] = name;
+                    m_weaponCache.Add(numId, name);
                     return name;
                 }
             }
@@ -370,32 +578,32 @@ namespace PS2StatTracker {
         }
 
         public async Task<string> GetVehicleName(string id) {
+            if (string.IsNullOrEmpty(id))
+                return "Unknown";
             // Check local cache.
-            if (id != null) {
-                if (!id.Contains(VEHICLE_OFFSET))
-                    id = id.Insert(0, VEHICLE_OFFSET);
+            if (!id.Contains(VEHICLE_OFFSET))
+                id = id.Insert(0, VEHICLE_OFFSET);
 
-                if (m_itemCache.ContainsKey(id))
-                    return m_itemCache[id];
+            string cached;
+            if (m_itemCache.TryGetValue(id, out cached))
+                return cached;
 
-                string useId = id;
+            string useId = id;
 
-                // Remove the VEHICLE_OFFSET from the ID for the API request.
-                if(id.Contains(VEHICLE_OFFSET))
-                    useId = useId.Remove(0, 1);
+            // Remove the VEHICLE_OFFSET from the ID for the API request.
+            if (id.Contains(VEHICLE_OFFSET))
+                useId = useId.Remove(0, 1);
 
-                string result = await GetAsyncRequest("vehicle/?vehicle_id=" + useId + "&c:show=name.en");
+            string result = await GetAsyncRequest("vehicle/?vehicle_id=" + useId + "&c:show=name.en");
 
-                Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
+            Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
 
-                if (jObject != null && jObject.HasValues) {
-
-                    if (jObject["vehicle_list"].HasValues) {
-                        string name = jObject["vehicle_list"][0]["name"]["en"].ToString();
-                        // Add the object to the local cache.
-                        m_itemCache[VEHICLE_OFFSET + useId] = name;
-                        return name;
-                    }
+            if (jObject != null && jObject.HasValues) {
+                if (jObject["vehicle_list"].HasValues) {
+                    string name = jObject["vehicle_list"][0]["name"]["en"].ToString();
+                    // Add the object to the local cache.
+                    m_itemCache[VEHICLE_OFFSET + useId] = name;
+                    return name;
                 }
             }
             return "Unknown";
@@ -538,10 +746,12 @@ namespace PS2StatTracker {
                 // other weapon was used.
                 if (jsonEvent.attacker_vehicle_id != "0" && jsonEvent.attacker_weapon_id == "0") {
                     newEvent.methodID = jsonEvent.attacker_vehicle_id;
+                    log.Debug("Calling GetVehicleName");
                     newEvent.method = await GetVehicleName(jsonEvent.attacker_vehicle_id);
                     newEvent.isVehicle = true;
                 } else {
                     newEvent.methodID = jsonEvent.attacker_weapon_id;
+                    log.Debug("Calling GetItemName");
                     newEvent.method = await GetItemName(jsonEvent.attacker_weapon_id);
                 }
                 newEvent.headshot = Int32.Parse(jsonEvent.is_headshot) == 1 ? true : false;
@@ -689,7 +899,7 @@ namespace PS2StatTracker {
                 newWeapon.vehicleId = newEvent.methodID;
             } else
                 newWeapon.id = newEvent.methodID;
-
+            log.Debug("Calling GetItemName");
             newWeapon.name = await GetItemName(GetBestWeaponID(newWeapon));
             newWeapon.kills += newEvent.IsKill() ? 1 : 0;
             newWeapon.headShots += newEvent.headshot ? 1 : 0;
@@ -743,7 +953,7 @@ namespace PS2StatTracker {
 
             sessionWeapon.fireCount += fired;
             sessionWeapon.hitsCount += hits;
-
+            log.Debug("Calling GetItemName");
             sessionWeapon.name = await GetItemName(GetBestWeaponID(sessionWeapon));
 
             m_sessionStats.weapons[id] = sessionWeapon;
@@ -765,6 +975,12 @@ namespace PS2StatTracker {
                 ClearSession();
                 Disconnect();
                 m_lastEventFound = false;
+
+                Task t1 = RefreshWeaponCacheAsync();
+                Task t2 = RefreshVehicleCacheAsync();
+                Task t3 = RefreshItemCacheAsync();
+                await Task.WhenAll(t1, t2, t3);
+
                 // Get this player's information.
                 m_player = await CreatePlayer(m_userID, true);
 
