@@ -60,7 +60,7 @@ namespace PS2StatTracker
                     this.weaponAccLabel.Visible = false;
                 }
                 // Total Weapon Stats.
-                string id = m_statTracker.GetBestWeaponID(lastWeapon);
+                long id = lastWeapon.ID;
                 if (player.weapons.ContainsKey(id)) {
                     Weapon totalWeapon = player.weapons[id];
                     // Calculate the new totals based on start session weapons and existing totals.
@@ -187,18 +187,16 @@ namespace PS2StatTracker
             this.eventLogGridView.ClearSelection();
         }
 
-        Weapon GetLastWeapon(Dictionary<string, Weapon> weapons, List<EventLog> log) {
+        Weapon GetLastWeapon(Dictionary<long, Weapon> weapons, List<EventLog> log) {
             // Search from most recent down. Skip deaths.
+            Weapon weapon;
             for (int i = 0; i < log.Count; i++) {
                 if (log[i].IsKill()) {
-                    string id = log[i].isVehicle ? "V" : "";
-                    id += log[i].methodID;
-                    if (weapons.ContainsKey(id)) {
-                        return weapons[id];
-                    }
+                    if (weapons.TryGetValue(log[i].methodID, out weapon))
+                        return weapon;
                 }
             }
-            Weapon weapon = new Weapon();
+            weapon = new Weapon();
             weapon.Initialize();
             return weapon;
         }

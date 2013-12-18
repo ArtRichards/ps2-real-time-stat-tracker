@@ -48,7 +48,6 @@ namespace PS2StatTracker {
         public void Initialize() {
             timeStamp = "";
             method = "";
-            methodID = "";
             location = "";
             headshot = false;
             death = false;
@@ -66,9 +65,8 @@ namespace PS2StatTracker {
         public
         string timeStamp,
             method,
-            methodID,
             location;
-
+        public long methodID;
         public
         bool headshot,
             death,
@@ -89,30 +87,28 @@ namespace PS2StatTracker {
             return this.MemberwiseClone();
         }
 
-        public string ID {
+        public long ID {
             get {
-                if (id != null && id != "0")
-                    return id;
-                if (vehicleId != null && vehicleId != "0")
+                if (IsVehicle)
                     return vehicleId;
-                return "0";
+                else
+                    return id;
             }
         }
 
         public bool IsVehicle {
             get {
-                if (id != null && id != "0")
+                if (id != 0)
                     return false;
-                if (vehicleId != null && vehicleId != "0")
+                if (vehicleId != 0)
                     return true;
                 return false;
             }
         }
 
-        public
-            string id,
-            vehicleId,
-            name;
+        public long id;
+        public long vehicleId;
+        public string name;
         public
             float kills,
             killsNC,
@@ -129,29 +125,28 @@ namespace PS2StatTracker {
     public class Player : ICloneable {
         public string fullName;
         public string name;
-        public string id;
-        public string faction;
+        public long id;
+        public long faction;
         public string outfit;
         public int battleRank;
         public float battleRankPer;
         public float totalHeadshots;
         public bool isOnline;
         public kdrJson kdr;
-        public Dictionary<string,
-            Weapon> weapons;
+        public Dictionary<long, Weapon> weapons;
 
         public void CalculateHeadshots() {
             float val = 0;
-            foreach (KeyValuePair<string, Weapon> weapon in weapons) {
-                val += weapon.Value.headShots;
+            foreach (var weapon in weapons.Values) {
+                val += weapon.headShots;
             }
             totalHeadshots = val;
         }
         public object Clone() {
             Player outPlayer = new Player();
             outPlayer = (Player)this.MemberwiseClone();
-            outPlayer.weapons = new Dictionary<string, Weapon>();
-            foreach (KeyValuePair<string, Weapon> element in this.weapons) {
+            outPlayer.weapons = new Dictionary<long, Weapon>();
+            foreach (KeyValuePair<long, Weapon> element in this.weapons) {
                 Weapon weapon = new Weapon();
                 weapon = (Weapon)element.Value.Clone();
                 outPlayer.weapons.Add(element.Key, weapon);
@@ -166,26 +161,21 @@ namespace PS2StatTracker {
         public const string VEHICLE_OFFSET = "V";
         public class eventJson {
             public eventJson() {
-                attacker_character_id = "0";
-                attacker_vehicle_id = "0";
-                character_id = "0";
                 is_critical = "0";
                 is_headshot = "0";
                 timestamp = "0";
                 table_type = "0";
-                world_id = "0";
-                zone_id = "0";
             }
-            public string attacker_character_id { get; set; }
-            public string attacker_vehicle_id { get; set; }
-            public string attacker_weapon_id { get; set; }
-            public string character_id { get; set; }
+            public long attacker_character_id { get; set; }
+            public long attacker_vehicle_id { get; set; }
+            public long attacker_weapon_id { get; set; }
+            public long character_id { get; set; }
             public string is_critical { get; set; }
             public string is_headshot { get; set; }
             public string timestamp { get; set; }
             public string table_type { get; set; }
-            public string world_id { get; set; }
-            public string zone_id { get; set; }
+            public long world_id { get; set; }
+            public long zone_id { get; set; }
         }
 
         public class nameJson {
@@ -199,13 +189,13 @@ namespace PS2StatTracker {
         }
 
         public class weaponJson {
-            public string item_id { get; set; }
+            public long item_id { get; set; }
             public string stat_name { get; set; }
-            public string value { get; set; }
-            public string value_nc { get; set; }
-            public string value_tr { get; set; }
-            public string value_vs { get; set; }
-            public string vehicle_id { get; set; }
+            public int value { get; set; }
+            public int value_nc { get; set; }
+            public int value_tr { get; set; }
+            public int value_vs { get; set; }
+            public long vehicle_id { get; set; }
         }
 
         public class weaponListJson {
@@ -217,22 +207,22 @@ namespace PS2StatTracker {
             public string name { get; set; }
             public string alias { get; set; }
             public string alias_lower { get; set; }
-            public string leader_character_id { get; set; }
+            public long leader_character_id { get; set; }
             public string member_count { get; set; }
             public string name_lower { get; set; }
-            public string outfit_id { get; set; }
+            public long outfit_id { get; set; }
             public string time_created { get; set; }
             public string time_created_date { get; set; }
         }
 
         public class onlineStatusJson {
-            public string character_id { get; set; }
+            public long character_id { get; set; }
             public string online_status { get; set; }
         }
 
         public class playerJson {
             public nameJson name { get; set; }
-            public string faction_id { get; set; }
+            public long faction_id { get; set; }
             public brJson battle_rank { get; set; }
             public weaponListJson stats { get; set; }
             public outfitJson outfit { get; set; }
@@ -404,10 +394,10 @@ namespace PS2StatTracker {
         }
 
         public async Task<string> GetWeaponNameAsync(Weapon weapon) {
-            if (weapon.IsNull() || weapon.ID == "0")
+            if (weapon.ID == 0)
                 return "Unknown";
             
-            long id = long.Parse(weapon.ID);
+            long id = weapon.ID;
             string result;
             if (weapon.IsVehicle) {
                 if (m_vehicleCache.TryGetValue(id, out result))
@@ -444,7 +434,7 @@ namespace PS2StatTracker {
             return "Unknown";
         }
 
-        async Task<Player> CreatePlayer(string id, bool updateWeapons = false, bool forceUpdate = false,
+        async Task<Player> CreatePlayer(long id, bool updateWeapons = false, bool forceUpdate = false,
             bool skipHS_KDR = false) {
 
             Player existingPlayer = null;
@@ -493,26 +483,28 @@ namespace PS2StatTracker {
             if (pJson.stats != null) {
                 // Populate weapons.
                 if (player.weapons == null)
-                    player.weapons = new Dictionary<string, Weapon>();
+                    player.weapons = new Dictionary<long, Weapon>();
 
                 // Update weapon specific stats.
                 foreach (weaponJson jweapon in pJson.stats.weapon_stat) {
-                    Weapon currentWep = player.weapons.ContainsKey(jweapon.item_id) ? player.weapons[jweapon.item_id] : new Weapon();
+                    Weapon currentWep;
+                    if (!player.weapons.TryGetValue(jweapon.item_id, out currentWep))
+                        currentWep = new Weapon();
                     // Group the different stats under the same ID.
                     if (jweapon.stat_name == "weapon_fire_count")
-                        currentWep.fireCount = float.Parse(jweapon.value);
+                        currentWep.fireCount = jweapon.value;
                     else if (jweapon.stat_name == "weapon_hit_count")
-                        currentWep.hitsCount = float.Parse(jweapon.value);
+                        currentWep.hitsCount = jweapon.value;
                     else if (jweapon.stat_name == "weapon_play_time")
-                        currentWep.playTime = float.Parse(jweapon.value);
+                        currentWep.playTime = jweapon.value;
                     else if (jweapon.stat_name == "weapon_deaths")
-                        currentWep.deaths = float.Parse(jweapon.value);
+                        currentWep.deaths = jweapon.value;
 
                     currentWep.id = jweapon.item_id;
                     currentWep.vehicleId = jweapon.vehicle_id;
 
                     if (!currentWep.IsNull()) {
-                        player.weapons[GetBestWeaponID(currentWep)] = currentWep;
+                        player.weapons[currentWep.ID] = currentWep;
                     }
                 }
 
@@ -521,20 +513,19 @@ namespace PS2StatTracker {
                     Weapon currentWep = player.weapons.ContainsKey(jweapon.item_id) ? player.weapons[jweapon.item_id] : new Weapon();
                     // Group the different stats under the same ID.
                     if (jweapon.stat_name == "weapon_kills") {
-                        currentWep.killsNC = float.Parse(jweapon.value_nc);
-                        currentWep.killsTR = float.Parse(jweapon.value_tr);
-                        currentWep.killsVS = float.Parse(jweapon.value_vs);
+                        currentWep.killsNC = jweapon.value_nc;
+                        currentWep.killsTR = jweapon.value_tr;
+                        currentWep.killsVS = jweapon.value_vs;
                         currentWep.kills = currentWep.killsNC + currentWep.killsTR + currentWep.killsVS;
                     } else if (jweapon.stat_name == "weapon_headshots") {
-                        currentWep.headShots = float.Parse(jweapon.value_nc) + float.Parse(jweapon.value_tr) +
-                            float.Parse(jweapon.value_vs);
+                        currentWep.headShots = jweapon.value_nc + jweapon.value_tr + jweapon.value_vs;
                     }
 
                     currentWep.id = jweapon.item_id;
                     currentWep.vehicleId = jweapon.vehicle_id;
 
                     if (!currentWep.IsNull()) {
-                        player.weapons[GetBestWeaponID(currentWep)] = currentWep;
+                        player.weapons[currentWep.ID] = currentWep;
                     }
                 }
 
@@ -550,65 +541,6 @@ namespace PS2StatTracker {
             return player;
         }
 
-        public async Task<string> GetItemName(string id) {
-            if (string.IsNullOrEmpty(id))
-                return "Unknown";
-            if (id.Contains(VEHICLE_OFFSET))
-                return await GetVehicleName(id);
-
-            // Check local cache.
-            string result;
-            long numId = long.Parse(id);
-            if (m_weaponCache.TryGetValue(numId, out result))
-                return result;
-
-            result = await GetAsyncRequest("item/?item_id=" + id + "&c:show=name.en");
-
-            Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
-            if (jObject["item_list"].HasValues) {
-                if (jObject["item_list"][0].HasValues && jObject["item_list"][0]["name"].HasValues) {
-                    string name = jObject["item_list"][0]["name"]["en"].ToString();
-                    // Add the object to the local cache.
-                    //m_itemCache[id] = name;
-                    m_weaponCache.Add(numId, name);
-                    return name;
-                }
-            }
-            return "Unknown";
-        }
-
-        public async Task<string> GetVehicleName(string id) {
-            if (string.IsNullOrEmpty(id))
-                return "Unknown";
-            // Check local cache.
-            if (!id.Contains(VEHICLE_OFFSET))
-                id = id.Insert(0, VEHICLE_OFFSET);
-
-            string cached;
-            if (m_itemCache.TryGetValue(id, out cached))
-                return cached;
-
-            string useId = id;
-
-            // Remove the VEHICLE_OFFSET from the ID for the API request.
-            if (id.Contains(VEHICLE_OFFSET))
-                useId = useId.Remove(0, 1);
-
-            string result = await GetAsyncRequest("vehicle/?vehicle_id=" + useId + "&c:show=name.en");
-
-            Newtonsoft.Json.Linq.JObject jObject = Newtonsoft.Json.Linq.JObject.Parse(result);
-
-            if (jObject != null && jObject.HasValues) {
-                if (jObject["vehicle_list"].HasValues) {
-                    string name = jObject["vehicle_list"][0]["name"]["en"].ToString();
-                    // Add the object to the local cache.
-                    m_itemCache[VEHICLE_OFFSET + useId] = name;
-                    return name;
-                }
-            }
-            return "Unknown";
-        }
-
         // Updates the player cache with their online status.
         async Task<bool> CheckOnlineStatus() {
             List<string> sites = new List<string>();
@@ -617,7 +549,7 @@ namespace PS2StatTracker {
             int maxUri = 1900;
             for(int i = 0; i < m_playerCache.Count; i++) {
                 Player player = m_playerCache.ElementAt(i).Value;
-                if (player != null && player.id != null) {
+                if (player != null && player.id != 0) {
                     // Add a new url.
                     if (sites.Count <= siteIndex) {
                         sites.Add("characters_online_status/?character_id=" + m_player.id);
@@ -656,7 +588,7 @@ namespace PS2StatTracker {
             return true;
         }
 
-        async Task<playerJson> GetPlayerJson(string id, bool getWeapons = false) {
+        async Task<playerJson> GetPlayerJson(long id, bool getWeapons = false) {
             string site = "character/" + id;
 
             if (getWeapons)
@@ -678,7 +610,7 @@ namespace PS2StatTracker {
             return null;
         }
 
-        async Task<kdrJson> GetTotalKDR(string id) {
+        async Task<kdrJson> GetTotalKDR(long id) {
             kdrJson kdr = new kdrJson();
 
             // Get total real deaths. Not fake deaths. Get good.
@@ -744,16 +676,15 @@ namespace PS2StatTracker {
                 // Weapon IDs take priority over vehicle IDs. Weapon IDs such as breaker rocket pods
                 // also show up with vehicle IDs like Reavers. A Reaver should only count if no
                 // other weapon was used.
-                if (jsonEvent.attacker_vehicle_id != "0" && jsonEvent.attacker_weapon_id == "0") {
-                    newEvent.methodID = jsonEvent.attacker_vehicle_id;
-                    log.Debug("Calling GetVehicleName");
-                    newEvent.method = await GetVehicleName(jsonEvent.attacker_vehicle_id);
-                    newEvent.isVehicle = true;
-                } else {
-                    newEvent.methodID = jsonEvent.attacker_weapon_id;
-                    log.Debug("Calling GetItemName");
-                    newEvent.method = await GetItemName(jsonEvent.attacker_weapon_id);
-                }
+                Weapon weapon = new Weapon();
+                weapon.Initialize();
+                if (jsonEvent.attacker_vehicle_id != 0 && jsonEvent.attacker_weapon_id == 0)
+                    weapon.vehicleId = jsonEvent.attacker_vehicle_id;
+                else
+                    weapon.id = jsonEvent.attacker_weapon_id;
+                newEvent.methodID = weapon.ID;
+                newEvent.isVehicle = weapon.IsVehicle;
+                newEvent.method = await GetWeaponNameAsync(weapon);
                 newEvent.headshot = Int32.Parse(jsonEvent.is_headshot) == 1 ? true : false;
                 newEvent.timeStamp = jsonEvent.timestamp;
                 newEvent.attacker = attacker;
@@ -820,13 +751,13 @@ namespace PS2StatTracker {
             // if m_player is valid then kdr and hsr will not be overwritten.
             m_player = await CreatePlayer(m_player.id, true, true, m_player != null);
             // Update stats of the session weapon other than headshots/kills.
-            foreach (KeyValuePair<string, Weapon> currentWep in m_player.weapons) {
-                string id = GetBestWeaponID(currentWep.Value);
+            foreach (var currentWep in m_player.weapons.Values) {
+                long id = currentWep.ID;
                 if (m_sessionStats.weapons.ContainsKey(id)) {
                     if (m_sessionStats.startPlayer.weapons.ContainsKey(id))
-                        await AddSessionWeapon(currentWep.Value, m_sessionStats.startPlayer.weapons[id], true);
+                        await AddSessionWeapon(currentWep, m_sessionStats.startPlayer.weapons[id], true);
                     else
-                        m_sessionStats.startPlayer.weapons.Add(id, (Weapon)currentWep.Value.Clone());
+                        m_sessionStats.startPlayer.weapons.Add(id, (Weapon)currentWep.Clone());
                 }
             }
         }
@@ -852,33 +783,20 @@ namespace PS2StatTracker {
                 m_sessionStats.startKDR = ratio;
         }
 
-
-        // Will return either a weapon or vehicle ID.
-        public string GetBestWeaponID(Weapon weapon) {
-            if (weapon.id != null && weapon.id != "0") {
-                return weapon.id;
-            }
-            if (weapon.vehicleId != null && weapon.vehicleId != "0") {
-                return VEHICLE_OFFSET + weapon.vehicleId;
-            }
-
-            return "0";
-        }
-
         // [hits, fired]
-        public float[] GetWeaponACC(string name, Dictionary<string, Weapon> weapons) {
+        public float[] GetWeaponACC(long weaponId, Dictionary<long, Weapon> weapons) {
             float[] returnVal = { 0, 0 };
 
-            if (weapons.ContainsKey(name)) {
-                returnVal[0] = weapons[name].hitsCount;
-                returnVal[1] = weapons[name].fireCount;
+            if (weapons.ContainsKey(weaponId)) {
+                returnVal[0] = weapons[weaponId].hitsCount;
+                returnVal[1] = weapons[weaponId].fireCount;
             }
 
             return returnVal;
         }
 
         // [headshots, kills]
-        public float[] GetWeaponHSR(string id, Dictionary<string, Weapon> weapons) {
+        public float[] GetWeaponHSR(long id, Dictionary<long, Weapon> weapons) {
             float[] returnVal = { 0, 0 };
 
             if (weapons.ContainsKey(id)) {
@@ -895,12 +813,11 @@ namespace PS2StatTracker {
             oldWeapon.Initialize();
             newWeapon.Initialize();
             if (newEvent.isVehicle) {
-                newWeapon.id = "0";
+                newWeapon.id = 0;
                 newWeapon.vehicleId = newEvent.methodID;
             } else
                 newWeapon.id = newEvent.methodID;
-            log.Debug("Calling GetItemName");
-            newWeapon.name = await GetItemName(GetBestWeaponID(newWeapon));
+            newWeapon.name = await GetWeaponNameAsync(newWeapon);
             newWeapon.kills += newEvent.IsKill() ? 1 : 0;
             newWeapon.headShots += newEvent.headshot ? 1 : 0;
 
@@ -934,7 +851,7 @@ namespace PS2StatTracker {
             if (kills < 0 || hits < 0 || hs < 0 || fired < 0)
                 return;
 
-            string id = GetBestWeaponID(updatedWeapon);
+            long id = updatedWeapon.ID;
 
             Weapon sessionWeapon;
             if (!m_sessionStats.weapons.ContainsKey(id)) {
@@ -953,8 +870,7 @@ namespace PS2StatTracker {
 
             sessionWeapon.fireCount += fired;
             sessionWeapon.hitsCount += hits;
-            log.Debug("Calling GetItemName");
-            sessionWeapon.name = await GetItemName(GetBestWeaponID(sessionWeapon));
+            sessionWeapon.name = await GetWeaponNameAsync(sessionWeapon);
 
             m_sessionStats.weapons[id] = sessionWeapon;
         }
@@ -965,7 +881,7 @@ namespace PS2StatTracker {
         }
 
         public async Task Initialize(int numEvents = 1) {
-            if (m_userID.Length > 0) {
+            if (m_userID != 0) {
                 m_initializing = true;
                 if (numEvents <= 0)
                     numEvents = 1;
@@ -1000,7 +916,7 @@ namespace PS2StatTracker {
 
                 // Make sure to start weapon changes off of recorded events.
                 if (!m_preparingSession && !m_countEvents) {
-                    foreach (KeyValuePair<string, Weapon> weapon in m_sessionStats.weapons) {
+                    foreach (var weapon in m_sessionStats.weapons) {
                         m_sessionStats.startSesWeapons[weapon.Key] = (Weapon)weapon.Value.Clone();
                     }
                 }

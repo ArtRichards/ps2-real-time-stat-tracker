@@ -217,7 +217,7 @@ namespace PS2StatTracker
             this.kdrGrowthLabel.Text = dif.ToString("+#0.0000;-#0.0000");
         }
 
-        public async Task UpdateWeaponTextFields(Dictionary<string, Weapon> weapons, DataGridView gridView) {
+        public async Task UpdateWeaponTextFields(Dictionary<long, Weapon> weapons, DataGridView gridView) {
             if (weapons == null)
                 return;
 
@@ -238,8 +238,6 @@ namespace PS2StatTracker
                 direction = System.ComponentModel.ListSortDirection.Descending;
             }
 
-            gridView.Visible = false;
-            gridView.SuspendLayout();
             gridView.Columns.Clear();
 
             gridView.Columns.Add("nameCol", "Name");
@@ -294,9 +292,8 @@ namespace PS2StatTracker
                 // Calculate hsr change.
                 float currentHSR = weapon.headShots / weapon.kills;
                 string hsrStr = currentHSR.ToString("#0.###%");
-                if (gridView.Name == "sessionWeaponsGridView" && (m_statTracker.SessionStarted() ||
-                    m_statTracker.CountingEvents())) {
-                    string bestWeaponID = m_statTracker.GetBestWeaponID(weapon);
+                if (gridView.Name == "sessionWeaponsGridView" && (m_statTracker.SessionStarted() || m_statTracker.CountingEvents())) {
+                    long bestWeaponID = weapon.ID;
                     // HSR
                     float[] absHSR = m_statTracker.GetWeaponHSR(bestWeaponID, m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
@@ -316,8 +313,7 @@ namespace PS2StatTracker
                         gridView.Rows[i].Cells[2].Style.ForeColor = Color.Black;
 
                     // ACC
-                    float[] absACC = m_statTracker.GetWeaponACC(bestWeaponID,
-                            m_statTracker.GetSessionStats().startPlayer.weapons);
+                    float[] absACC = m_statTracker.GetWeaponACC(bestWeaponID, m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalACC = absACC[0] / (absACC[1] == 0.0f ? 1 : absACC[1]);
                     absACC[0] += weapon.hitsCount;
                     absACC[1] += weapon.fireCount;
@@ -347,8 +343,6 @@ namespace PS2StatTracker
                 SortOrder.Ascending : SortOrder.Descending;
 
             gridView.ClearSelection();
-            gridView.ResumeLayout();
-            gridView.Visible = true;
         }
 
         public async Task UpdateEventboard(bool updateBoardOnly = false){
@@ -500,7 +494,7 @@ namespace PS2StatTracker
 
         // Adds the username to the dropdown list.
         void SaveUserName() {
-            if (m_statTracker.GetUserID().Length == 0) return;
+            if (m_statTracker.GetUserID() == 0) return;
             string fullUser = m_statTracker.GetUserID() + " | " + m_statTracker.GetPlayer().fullName;
             if (!this.usernameTextBox.Items.Contains(fullUser)) {
                 this.usernameTextBox.Items.Add(fullUser);
@@ -540,7 +534,7 @@ namespace PS2StatTracker
             // Make sure buttons are not available while processing.
             ManageSessionButtons();
 
-            m_statTracker.SetUserID(RemoveWhiteSpace(result[0]));
+            m_statTracker.SetUserID(long.Parse(result[0]));
 
             ShowUpdateText("Initializing...");
         }
@@ -564,24 +558,24 @@ namespace PS2StatTracker
         }
 
         private async Task CreateSession(GUISession session) {
-                    // Shutdown an existing session.
-                    if (m_statTracker.SessionStarted()) {
-                        await m_statTracker.StartSession();
-                        timer1.Stop();
-                    }
-                    RegisterUserAndPrepareForInitialize();
-                    m_statTracker.SetCountEvents(session.countStatsCheckBox.Checked);
-                    m_statTracker.StopPreparing();
-                    await m_statTracker.Initialize((int)session.pastEventsNumber.Value + 1);
-                    if (m_statTracker.HasInitialized()) {
-                        await PrepareSession();
-                        // Update overall weapons.
-                        await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
-                        UpdateMiscFields();
-                        ManageSessionButtons();
-                        HideUpdateText();
-                    } else
-                        ShowUpdateText("Invalid ID");
+            // Shutdown an existing session.
+            if (m_statTracker.SessionStarted()) {
+                await m_statTracker.StartSession();
+                timer1.Stop();
+            }
+            RegisterUserAndPrepareForInitialize();
+            m_statTracker.SetCountEvents(session.countStatsCheckBox.Checked);
+            m_statTracker.StopPreparing();
+            await m_statTracker.Initialize((int)session.pastEventsNumber.Value + 1);
+            if (m_statTracker.HasInitialized()) {
+                await PrepareSession();
+                // Update overall weapons.
+                await UpdateWeaponTextFields(m_statTracker.GetPlayer().weapons, this.weaponsGridView);
+                UpdateMiscFields();
+                ManageSessionButtons();
+                HideUpdateText();
+            } else
+                ShowUpdateText("Invalid ID");
             ManageSessionButtons();
         }
 

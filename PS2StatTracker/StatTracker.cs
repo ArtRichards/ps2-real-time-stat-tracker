@@ -9,32 +9,27 @@ namespace PS2StatTracker {
         public class SessionStats {
             public int headshotsReceived;
             public Player startPlayer;      // Start player stats.
-            public Dictionary<string,
-                Weapon> weapons;
-            public Dictionary<string,
-                Weapon> startSesWeapons;
+            public Dictionary<long, Weapon> weapons;
+            public Dictionary<long, Weapon> startSesWeapons;
             public float startHSR, startKDR;
 
             public SessionStats() {
-                weapons = new Dictionary<string, Weapon>();
-                startSesWeapons = new Dictionary<string, Weapon>();
+                weapons = new Dictionary<long, Weapon>();
+                startSesWeapons = new Dictionary<long, Weapon>();
                 startPlayer = new Player();
             }
         }
 
         List<EventLog> m_eventLog;
 
-        Dictionary<string,
-            string> m_itemCache;            // Cache of item IDs to their name.
-        Dictionary<string, Player>
-            m_playerCache;                  // Cache of player IDs to their struct. 
+        Dictionary<long, Player> m_playerCache;                  // Cache of player IDs to their struct. 
         Dictionary<long, string> m_weaponCache;
         Dictionary<long, string> m_allItemsCache;
         Dictionary<long, string> m_vehicleCache;
         EventLog m_currentEvent;
         SessionStats m_sessionStats;
         Player m_player;                    // Current player stats.
-        string m_userID;
+        long m_userID;
         int m_activeSeconds;
         bool m_countEvents;                 // True if events should be counted toward stats even if a session has not started.
         bool m_lastEventFound;
@@ -52,15 +47,14 @@ namespace PS2StatTracker {
 
         public StatTracker() {
             m_eventLog = new List<EventLog>();
-            m_playerCache = new Dictionary<string, Player>();
-            m_itemCache = new Dictionary<string, string>();
+            m_playerCache = new Dictionary<long, Player>();
             m_weaponCache = new Dictionary<long, string>();
             m_allItemsCache = new Dictionary<long, string>();
             m_vehicleCache = new Dictionary<long, string>();
             m_currentEvent = new EventLog();
             m_player = new Player();
             m_sessionStats = new SessionStats();
-            m_userID = "";
+            m_userID = 0;
             m_sessionStarted = false;
             m_lastEventFound = false;
             m_initialized = false;
@@ -114,12 +108,12 @@ namespace PS2StatTracker {
         }
 
         // Extracts the user ID.
-        public void SetUserID(string name) {
-            m_userID = name;
+        public void SetUserID(long id) {
+            m_userID = id;
         }
 
         // Gets the user ID.
-        public string GetUserID() {
+        public long GetUserID() {
             return m_userID;
         }
 
