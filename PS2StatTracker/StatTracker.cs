@@ -9,13 +9,13 @@ namespace PS2StatTracker {
         public class SessionStats {
             public int headshotsReceived;
             public Player startPlayer;      // Start player stats.
-            public Dictionary<long, Weapon> weapons;
-            public Dictionary<long, Weapon> startSesWeapons;
+            public Dictionary<WeaponKey, Weapon> weapons;
+            public Dictionary<WeaponKey, Weapon> startSesWeapons;
             public float startHSR, startKDR;
 
             public SessionStats() {
-                weapons = new Dictionary<long, Weapon>();
-                startSesWeapons = new Dictionary<long, Weapon>();
+                weapons = new Dictionary<WeaponKey, Weapon>();
+                startSesWeapons = new Dictionary<WeaponKey, Weapon>();
                 startPlayer = new Player();
             }
         }

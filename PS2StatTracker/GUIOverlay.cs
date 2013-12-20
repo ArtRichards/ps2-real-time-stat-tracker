@@ -60,15 +60,15 @@ namespace PS2StatTracker
                     this.weaponAccLabel.Visible = false;
                 }
                 // Total Weapon Stats.
-                long id = lastWeapon.ID;
-                if (player.weapons.ContainsKey(id)) {
-                    Weapon totalWeapon = player.weapons[id];
+                WeaponKey key = lastWeapon.Key;
+                if (player.weapons.ContainsKey(key)) {
+                    Weapon totalWeapon = player.weapons[key];
                     // Calculate the new totals based on start session weapons and existing totals.
-                    if (m_statTracker.GetSessionStats().weapons.ContainsKey(id)) {
-                        Weapon sesWeapon = m_statTracker.GetSessionStats().weapons[id];
+                    if (m_statTracker.GetSessionStats().weapons.ContainsKey(key)) {
+                        Weapon sesWeapon = m_statTracker.GetSessionStats().weapons[key];
                         // HSR
-                        float[] absHSR = m_statTracker.GetWeaponHSR(id, m_statTracker.GetSessionStats().startPlayer.weapons);
-                        float[] startHSR = m_statTracker.GetWeaponHSR(id, m_statTracker.GetSessionStats().startSesWeapons);
+                        float[] absHSR = m_statTracker.GetWeaponHSR(key, m_statTracker.GetSessionStats().startPlayer.weapons);
+                        float[] startHSR = m_statTracker.GetWeaponHSR(key, m_statTracker.GetSessionStats().startSesWeapons);
                         absHSR[0] += sesWeapon.headShots - startHSR[0];
                         float newTotalKills = (absHSR[1] += sesWeapon.kills - startHSR[1]);
                         float newTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
@@ -187,12 +187,14 @@ namespace PS2StatTracker
             this.eventLogGridView.ClearSelection();
         }
 
-        Weapon GetLastWeapon(Dictionary<long, Weapon> weapons, List<EventLog> log) {
+        Weapon GetLastWeapon(Dictionary<WeaponKey, Weapon> weapons, List<EventLog> log) {
             // Search from most recent down. Skip deaths.
             Weapon weapon;
             for (int i = 0; i < log.Count; i++) {
-                if (log[i].IsKill()) {
-                    if (weapons.TryGetValue(log[i].methodID, out weapon))
+                EventLog e = log[i];
+                if (e.IsKill()) {
+                    WeaponKey key = new WeaponKey(e.methodID, e.isVehicle);
+                    if (weapons.TryGetValue(key, out weapon))
                         return weapon;
                 }
             }

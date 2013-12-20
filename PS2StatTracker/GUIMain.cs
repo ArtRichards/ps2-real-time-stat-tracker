@@ -217,7 +217,7 @@ namespace PS2StatTracker
             this.kdrGrowthLabel.Text = dif.ToString("+#0.0000;-#0.0000");
         }
 
-        public async Task UpdateWeaponTextFields(Dictionary<long, Weapon> weapons, DataGridView gridView) {
+        public async Task UpdateWeaponTextFields(Dictionary<WeaponKey, Weapon> weapons, DataGridView gridView) {
             if (weapons == null)
                 return;
 
@@ -293,11 +293,11 @@ namespace PS2StatTracker
                 float currentHSR = weapon.headShots / weapon.kills;
                 string hsrStr = currentHSR.ToString("#0.###%");
                 if (gridView.Name == "sessionWeaponsGridView" && (m_statTracker.SessionStarted() || m_statTracker.CountingEvents())) {
-                    long bestWeaponID = weapon.ID;
+                    WeaponKey key = weapon.Key;
                     // HSR
-                    float[] absHSR = m_statTracker.GetWeaponHSR(bestWeaponID, m_statTracker.GetSessionStats().startPlayer.weapons);
+                    float[] absHSR = m_statTracker.GetWeaponHSR(key, m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
-                    float[] startHSR = m_statTracker.GetWeaponHSR(bestWeaponID, m_statTracker.GetSessionStats().startSesWeapons);
+                    float[] startHSR = m_statTracker.GetWeaponHSR(key, m_statTracker.GetSessionStats().startSesWeapons);
                     absHSR[0] += weapon.headShots - startHSR[0];
                     absHSR[1] += weapon.kills - startHSR[1];
                     float newTotalHSR = absHSR[0] / (absHSR[1] == 0.0f ? 1 : absHSR[1]);
@@ -313,7 +313,7 @@ namespace PS2StatTracker
                         gridView.Rows[i].Cells[2].Style.ForeColor = Color.Black;
 
                     // ACC
-                    float[] absACC = m_statTracker.GetWeaponACC(bestWeaponID, m_statTracker.GetSessionStats().startPlayer.weapons);
+                    float[] absACC = m_statTracker.GetWeaponACC(key, m_statTracker.GetSessionStats().startPlayer.weapons);
                     float oldTotalACC = absACC[0] / (absACC[1] == 0.0f ? 1 : absACC[1]);
                     absACC[0] += weapon.hitsCount;
                     absACC[1] += weapon.fireCount;
@@ -522,6 +522,8 @@ namespace PS2StatTracker
         }
 
         private void RegisterUserAndPrepareForInitialize() {
+            if (string.IsNullOrEmpty(this.usernameTextBox.Text))
+                return;
             string[] result = this.usernameTextBox.Text.Split('|');
 
             if (result.Length <= 0) {
